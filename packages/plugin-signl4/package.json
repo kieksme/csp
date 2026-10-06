@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-signl4",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -35,7 +35,7 @@
   },
   "cspPlugin": {
     "id": "signl4",
-    "sdkVersion": "^0.1.0",
+    "sdkVersion": "^0.2.0",
     "browser": "./browser",
     "server": "./server"
   },
