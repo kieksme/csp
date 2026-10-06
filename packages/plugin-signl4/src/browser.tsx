@@ -1,3 +1,4 @@
+import { cspPlugin } from '../package.json';
 import { useEffect, useState } from 'react';
 import { useLive, DataState } from '@kieksme/csp-sdk/browser';
 import {
@@ -164,7 +165,7 @@ function Team(ctx: BrowserContext) {
 }
 export default {
   id: 'signl4',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   sections: [
     {
       id: 'schedule',

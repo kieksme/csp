@@ -1,8 +1,9 @@
+import { cspPlugin } from '../package.json';
 import { z } from 'zod';
 import type { ServerPlugin } from '@kieksme/csp-sdk';
 export default {
   id: 'content',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   configSchema: z.object({ CSP_CONTENT_PATH: z.string().min(1) }),
   setup(ctx) {
     ctx.knowledge.set('content', async () => [

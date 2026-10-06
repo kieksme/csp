@@ -11,6 +11,9 @@ import { tmpdir } from 'node:os';
 import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 const root = process.cwd();
+const { version: sdkVersion } = JSON.parse(
+  await readFile(join(root, 'packages/sdk/package.json'), 'utf8'),
+);
 const temp = await mkdtemp(join(tmpdir(), 'csp-packed-'));
 async function run(
   cmd: string,
@@ -109,20 +112,20 @@ try {
       exports: { './browser': './browser.js', './server': './server.js' },
       cspPlugin: {
         id: 'external',
-        sdkVersion: '^0.1.0',
+        sdkVersion: `^${sdkVersion}`,
         browser: './browser',
         server: './server',
       },
-      dependencies: { '@kieksme/csp-sdk': '0.1.0' },
+      dependencies: { '@kieksme/csp-sdk': sdkVersion },
     }),
   );
   await writeFile(
     join(fixture, 'browser.js'),
-    "import React from 'react'; export default {id:'external',sdkVersion:'^0.1.0',sections:[{id:'external',title:'External plugin',label:'External',order:90,component:()=>React.createElement('p',null,'External fixture')}]};",
+    `import React from 'react'; export default {id:'external',sdkVersion:'^${sdkVersion}',sections:[{id:'external',title:'External plugin',label:'External',order:90,component:()=>React.createElement('p',null,'External fixture')}]};`,
   );
   await writeFile(
     join(fixture, 'server.js'),
-    "import {z} from 'zod'; export default {id:'external',sdkVersion:'^0.1.0',configSchema:z.object({}),setup(ctx){ctx.app.get('/api/v1/external',async()=>({external:true}));}};",
+    `import {z} from 'zod'; export default {id:'external',sdkVersion:'^${sdkVersion}',configSchema:z.object({}),setup(ctx){ctx.app.get('/api/v1/external',async()=>({external:true}));}};`,
   );
   const fixturePkg = JSON.parse(
     await readFile(join(fixture, 'package.json'), 'utf8'),

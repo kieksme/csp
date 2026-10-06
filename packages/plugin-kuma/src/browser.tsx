@@ -1,3 +1,4 @@
+import { cspPlugin } from '../package.json';
 import { useLive, DataState } from '@kieksme/csp-sdk/browser';
 import type { BrowserContext, BrowserPlugin, Status } from '@kieksme/csp-sdk';
 function StatusView(ctx: BrowserContext) {
@@ -46,7 +47,7 @@ function StatusView(ctx: BrowserContext) {
 }
 export default {
   id: 'kuma',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   sections: [
     {
       id: 'status',

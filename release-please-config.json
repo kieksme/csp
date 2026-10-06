@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "include-component-in-tag": false,
+  "packages": {
+    ".": {
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "packages/cli/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/core/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-chat/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-chat/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-contact/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-contact/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-content/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-content/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-kuma/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-kuma/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-signl4/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-signl4/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
+        },
+        {
+          "type": "json",
+          "path": "packages/sdk/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "apps/demo/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "apps/northstar/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "templates/customer/package.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { cspPlugin } from '../package.json';
 import { useEffect, useRef, useState } from 'react';
 import type { BrowserPlugin, BrowserContext, Source } from '@kieksme/csp-sdk';
 interface Message {
@@ -166,7 +167,7 @@ function Chat(ctx: BrowserContext) {
 }
 export default {
   id: 'chat',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   sections: [
     {
       id: 'chat',

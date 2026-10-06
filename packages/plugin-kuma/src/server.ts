@@ -1,3 +1,4 @@
+import { cspPlugin } from '../package.json';
 import { z } from 'zod';
 import {
   jsonRequest,
@@ -73,7 +74,7 @@ export function normalizeStatus(
 }
 export default {
   id: 'kuma',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   configSchema,
   setup(ctx) {
     const c = configSchema.parse(ctx.env);

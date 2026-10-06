@@ -1,3 +1,4 @@
+import { cspPlugin } from '../package.json';
 import { z } from 'zod';
 import {
   jsonRequest,
@@ -159,7 +160,7 @@ function demoTeam(): Person[] {
 }
 export default {
   id: 'signl4',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   configSchema,
   setup(ctx: ServerContext) {
     const c = configSchema.parse(ctx.env);
