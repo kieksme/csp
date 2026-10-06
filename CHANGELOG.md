@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/kieksme/csp/compare/v0.2.1...v0.3.0) (2026-10-06)
+
+
+### Features
+
+* **release:** publish @kieksme/csp-* to npmjs and GitHub Packages ([eb59fb2](https://github.com/kieksme/csp/commit/eb59fb2495d140a21bd23a9ec100c3d3070cfb0a))
+* **release:** publish packages to GitHub Packages and npmjs ([e0d6d72](https://github.com/kieksme/csp/commit/e0d6d72d0ec58fc90f732f12137402857a48649c))
+
+
+### Bug Fixes
+
+* **release:** use repository secret NPM_AUTH_TOKEN ([dc4fe87](https://github.com/kieksme/csp/commit/dc4fe87b76161a41a68c64f00db7229363fab443))
+
 ## [0.2.1](https://github.com/kieksme/csp/compare/v0.2.0...v0.2.1) (2026-10-06)
 
 
