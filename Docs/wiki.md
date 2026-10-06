@@ -19,10 +19,10 @@ GitHub rendert `_Sidebar.md` und `_Footer.md` automatisch. `_Header.md` ist kein
 
 1. Im Produktrepo unter **Settings → General → Features** das **Wiki** aktivieren.
 2. Im Wiki die erste Seite speichern. Erst dadurch steht das separate Wiki-Git-Repository zum Klonen bereit. `Home` darf anschließend vom automatischen Abgleich ersetzt werden.
-3. Einen klassischen GitHub Personal Access Token des berechtigten Kontos mit `public_repo` für ein öffentliches Repository beziehungsweise `repo` für ein privates Repository erstellen. Das Konto benötigt Schreibzugriff auf das Wiki. Falls die Organisation SSO erzwingt, den Token entsprechend autorisieren.
-4. Den Wert als Repository-Secret **`WIKI_TOKEN`** unter **Settings → Secrets and variables → Actions → Secrets** hinterlegen. Ablaufdatum und Rotation berücksichtigen.
 
-Der automatische `GITHUB_TOKEN` wird weiterhin für Release Please verwendet. Für den separaten Wiki-Git-Push verwendet dieser Ablauf ausdrücklich `WIKI_TOKEN`. Der Token steht nur dem Abgleichschritt zur Verfügung und wird nicht in Remote-URLs oder im Wiki gespeichert.
+Der Wiki-Abgleich verwendet den von GitHub automatisch bereitgestellten `GITHUB_TOKEN`. Ein zusätzliches Secret oder ein persönlicher Token ist nicht erforderlich. Für das Wiki desselben Repositorys genügt `contents: write`; diese Berechtigung ist sowohl am aufrufenden Wiki-Job in `release.yml` als auch am Abgleichjob in `sync-wiki.yml` gesetzt. Organisationsrichtlinien müssen diese Schreibrechte erlauben.
+
+Der Token wird nur dem Abgleichschritt als Umgebungsvariable übergeben und nicht in Remote-URLs oder im Wiki gespeichert. Ein anderes Zielrepository würde separate Zugangsdaten benötigen; dieser Workflow spiegelt ausschließlich ins Wiki des eigenen Repositorys.
 
 ## Automatischer Ablauf
 
