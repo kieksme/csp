@@ -94,6 +94,8 @@ Provider-Schlüssel gehören ausschließlich in die Runtime-Konfiguration des AP
 
 ## Pakete
 
+Alle acht Pakete verwenden das Präfix `@kieksme/csp-` und werden mit identischen Versionen bei npmjs und GitHub Packages veröffentlicht. Standardmäßig installieren die gezeigten Befehle von npmjs. Für GitHub Packages sind eine Scope-Zuordnung und Authentifizierung nötig; siehe [Contribute.md](Contribute.md#github-packages-zugriff-und-installation).
+
 | Paket                         | Aufgabe                                                      |
 | ----------------------------- | ------------------------------------------------------------ |
 | `@kieksme/csp-sdk`            | Verträge, Schemas, Live-Cache, UI-Hooks, vCard               |

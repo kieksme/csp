@@ -1,4 +1,4 @@
-name: Release npm packages
+name: Release packages
 on:
   push:
     branches: [main]
@@ -30,6 +30,7 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
   publish:
+    name: Publish to ${{ matrix.target }}
     needs: release
     if: needs.release.outputs.release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.publish_tag != '')
     runs-on: ubuntu-latest
@@ -37,6 +38,15 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: npmjs
+            registry: https://registry.npmjs.org
+          - target: GitHub Packages
+            registry: https://npm.pkg.github.com
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,7 +56,7 @@ jobs:
         with:
           node-version: '22'
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+          registry-url: ${{ matrix.registry }}
           scope: '@kieksme'
       - run: pnpm install --frozen-lockfile
       # Older release tags may still lint the generated changelog.
@@ -54,6 +64,7 @@ jobs:
         run: pnpm exec prettier --write CHANGELOG.md --ignore-path /dev/null
       - run: pnpm check && pnpm test:packages
       - name: Check npm publishing credentials
+        if: matrix.target == 'npmjs'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -62,6 +73,32 @@ jobs:
             exit 1
           fi
           npm whoami --registry=https://registry.npmjs.org
-      - run: pnpm release
+      # publishConfig.registry takes precedence over CLI registry options.
+      # Set it only after validation so both jobs publish to their own registry.
+      - name: Select publishing registry
+        env:
+          PUBLISH_REGISTRY: ${{ matrix.registry }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, readdir, writeFile } from 'node:fs/promises';
+          for (const directory of await readdir('packages')) {
+            const path = `packages/${directory}/package.json`;
+            const pkg = JSON.parse(await readFile(path, 'utf8'));
+            if (pkg.private || !/^@kieksme\/csp-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(pkg.name)) {
+              throw new Error(`Invalid publishing package: ${pkg.name}`);
+            }
+            pkg.publishConfig = { ...pkg.publishConfig, registry: process.env.PUBLISH_REGISTRY, access: 'public' };
+            pkg.repository = { ...pkg.repository, type: 'git', url: `git+https://github.com/${process.env.GITHUB_REPOSITORY}.git` };
+            await writeFile(path, JSON.stringify(pkg, null, 2) + '\n');
+          }
+          NODE
+      - name: Publish to npmjs
+        if: matrix.target == 'npmjs'
+        run: pnpm -r --filter "./packages/**" publish --access public --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to GitHub Packages
+        if: matrix.target == 'GitHub Packages'
+        run: pnpm -r --filter "./packages/**" publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
