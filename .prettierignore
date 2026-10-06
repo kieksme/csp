@@ -1,0 +1,7 @@
+node_modules
+**/dist
+**/dist-api
+packages/cli/template
+pnpm-lock.yaml
+test-results
+playwright-report

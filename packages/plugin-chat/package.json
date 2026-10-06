@@ -1,0 +1,51 @@
+{
+  "name": "@kieksme/csp-plugin-chat",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup src/browser.tsx src/server.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom"
+  },
+  "dependencies": {
+    "@kieksme/csp-sdk": "workspace:^",
+    "zod": "^3.25.76",
+    "openai": "^6.3.0"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "cspPlugin": {
+    "id": "chat",
+    "sdkVersion": "^0.1.0",
+    "browser": "./browser",
+    "server": "./server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kieksme/customer-service-portal.git",
+    "directory": "packages/plugin-chat"
+  },
+  "bugs": {
+    "url": "https://github.com/kieksme/customer-service-portal/issues"
+  }
+}
