@@ -3,6 +3,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      publish_tag:
+        description: 'Existing release tag to retry publishing (for example v0.2.0); empty runs Release Please only'
+        type: string
+        required: false
 permissions:
   contents: read
 concurrency:
@@ -26,7 +31,7 @@ jobs:
       tag_name: ${{ steps.release.outputs.tag_name }}
   publish:
     needs: release
-    if: needs.release.outputs.release_created == 'true'
+    if: needs.release.outputs.release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.publish_tag != '')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -35,15 +40,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.release.outputs.tag_name }}
+          ref: ${{ inputs.publish_tag || needs.release.outputs.tag_name }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: pnpm
           registry-url: https://registry.npmjs.org
+          scope: '@kieksme'
       - run: pnpm install --frozen-lockfile
+      # Older release tags may still lint the generated changelog.
+      - name: Normalize generated release notes
+        run: pnpm exec prettier --write CHANGELOG.md --ignore-path /dev/null
       - run: pnpm check && pnpm test:packages
+      - name: Check npm publishing credentials
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo '::error::Set NPM_TOKEN with write access to the npm organization @kieksme (including creation of new packages).'
+            exit 1
+          fi
+          npm whoami --registry=https://registry.npmjs.org
       - run: pnpm release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
