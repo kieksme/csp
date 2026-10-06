@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/kieksme/csp/compare/v0.2.0...v0.2.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **release:** unblock npm publishing under @kieksme/csp- ([724364c](https://github.com/kieksme/csp/commit/724364ce18f86484118f536660fd97e1fd71a87d))
+* **release:** unblock npm publishing under kieksme scope ([5be748a](https://github.com/kieksme/csp/commit/5be748a2f724e998803f693575953b02b7ddd47a))
+
 ## [0.2.0](https://github.com/kieksme/customer-service-portal/compare/v0.1.0...v0.2.0) (2026-10-06)
 
 
