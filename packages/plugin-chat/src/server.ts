@@ -1,3 +1,4 @@
+import { cspPlugin } from '../package.json';
 import { z } from 'zod';
 import type { ServerPlugin, Source } from '@kieksme/csp-sdk';
 import { createProvider, type Message } from './providers.js';
@@ -124,7 +125,7 @@ export function withAbort<T>(
 }
 export default {
   id: 'chat',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   configSchema,
   setup(ctx) {
     const c = configSchema.parse(ctx.env);

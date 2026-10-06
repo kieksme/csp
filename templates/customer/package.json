@@ -36,5 +36,6 @@
     "dist-api",
     "content.json",
     "public"
-  ]
+  ],
+  "version": "0.1.0"
 }

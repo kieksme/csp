@@ -1,3 +1,4 @@
+import { cspPlugin } from '../package.json';
 import type { BrowserPlugin, BrowserContext } from '@kieksme/csp-sdk';
 function Contact({ config }: BrowserContext) {
   return (
@@ -23,7 +24,7 @@ function Contact({ config }: BrowserContext) {
 }
 export default {
   id: 'contact',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   sections: [
     {
       id: 'contact',

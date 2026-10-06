@@ -34,9 +34,13 @@ Live-Datenfehler sind über `stale`/`error` sichtbar und können von der externe
 
 1. Paketnamen vor der ersten Veröffentlichung mit `node scripts/check-package-names.mjs` prüfen. Nicht veröffentlicht heißt nicht, dass Publishing-Rechte für `@kieksme` bestätigt sind.
 2. npm-Scope-Rechte und `NPM_TOKEN` als GitHub-Secret einrichten; öffentlichen Paketinhalt prüfen. Reale Kundeninhalte bleiben in Kundenrepos.
-3. Änderung als Conventional Commit und PR liefern, Release-Notiz mit `pnpm changeset` hinzufügen.
-4. Changesets erstellt auf `main` einen Versionierungs-PR und veröffentlicht nach dessen Merge die gebauten Pakete. SDK und Plugin-Pakete werden gemeinsam versioniert.
+3. Änderungen als Conventional Commits liefern (auch den Squash-Merge-Titel entsprechend setzen): `fix:` erhöht die Patch-Version, `feat:` die Minor-Version, `feat!:` oder `BREAKING CHANGE:` kennzeichnet inkompatible Änderungen. Release Please erstellt daraus automatisch den Changelog und einen Release-PR auf `main`.
+4. Release-PR prüfen und mergen. Release Please erstellt einen GitHub-Release mit Tag `v<version>`. Der anschließende Publish-Job checkt genau diesen Tag aus, validiert und baut die Pakete und veröffentlicht **alle acht öffentlichen Pakete** mit derselben neuen Version, auch wenn sich nur ein Paket geändert hat. Private Apps und Kunden-Vorlage erhalten dieselbe Version, werden aber nicht auf npm veröffentlicht.
 5. Kundeninstanzen aktualisieren bewusst Paketversionen und Lockfile; Deployment bleibt unabhängig.
+
+Die gemeinsame Version wird in `.release-please-manifest.json` verwaltet. `release-please-config.json` aktualisiert die Root-Version, alle Workspace-Paketversionen und die SDK-Kompatibilitätsangaben der Plugins zusammen. SDK und Plugins beziehen ihre Laufzeitangaben aus ihren eigenen Paketmanifesten; der Build bettet sie ein. Die CLI-Vorlage verwendet die aktuellen Paketversionen. `pnpm check:versions` erkennt abweichende Versionen und Pakete, die noch nicht in der Release-Konfiguration stehen.
+
+In GitHub unter **Settings → Actions → General** das Erstellen von Pull Requests durch GitHub Actions erlauben. Der Workflow verwendet `GITHUB_TOKEN` für Release-PRs und Releases sowie `NPM_TOKEN` für npm. Mit `GITHUB_TOKEN` erstellte Release-PRs starten keine weiteren Workflows automatisch; vor dem Publishing führt der Release-Workflow daher selbst `pnpm check` und `pnpm test:packages` aus. Changeset-Dateien sind nicht mehr erforderlich.
 
 CI prüft Typen, Unit-/Integrationstests, alle Builds, gepackte Pakete in einer frischen Instanz, Browserfälle und einen Docker-Healthcheck. Echte Kundenzugänge werden getrennt verifiziert: Team, Schichten, Bilder, Alerts, Kuma-Monitore und eine Chat-Antwort für den gewählten Provider. Ohne diese Zugänge sind ausschließlich Mock-/Demo- und Vertragsprüfungen möglich.
 

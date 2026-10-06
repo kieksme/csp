@@ -1,3 +1,4 @@
+import { SDK_VERSION } from '../packages/sdk/src/index.js';
 import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -20,7 +21,7 @@ it('installs, registers and removes an external plugin, updating package and loc
         JSON.stringify({
           cspPlugin: {
             id: 'fixture',
-            sdkVersion: '^0.1.0',
+            sdkVersion: `^${SDK_VERSION}`,
             browser: './browser',
             server: './server',
           },

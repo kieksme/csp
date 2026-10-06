@@ -1,3 +1,4 @@
+import { SDK_VERSION } from '../packages/sdk/src/index.js';
 import { describe, it, expect, vi } from 'vitest';
 import {
   LiveCache,
@@ -12,16 +13,16 @@ describe('SDK contracts', () => {
   it('rejects duplicates, incompatible SDKs and missing dependencies', () => {
     expect(() =>
       validatePlugins([
-        { id: 'x', sdkVersion: '^0.1.0' },
-        { id: 'x', sdkVersion: '^0.1.0' },
+        { id: 'x', sdkVersion: `^${SDK_VERSION}` },
+        { id: 'x', sdkVersion: `^${SDK_VERSION}` },
       ]),
     ).toThrow('duplicate');
-    expect(() => validatePlugins([{ id: 'x', sdkVersion: '^2.0.0' }])).toThrow(
+    expect(() => validatePlugins([{ id: 'x', sdkVersion: '<0.0.0' }])).toThrow(
       'needs SDK',
     );
     expect(() =>
       validatePlugins([
-        { id: 'x', sdkVersion: '^0.1.0', requires: ['missing'] },
+        { id: 'x', sdkVersion: `^${SDK_VERSION}`, requires: ['missing'] },
       ]),
     ).toThrow('requires');
   });

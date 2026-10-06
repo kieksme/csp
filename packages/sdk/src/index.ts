@@ -1,9 +1,10 @@
 import semver from 'semver';
+import { version } from '../package.json';
 import { z } from 'zod';
 import type { ComponentType } from 'react';
 import type { FastifyInstance } from 'fastify';
 
-export const SDK_VERSION = '0.1.0';
+export const SDK_VERSION = version;
 export type Env = Record<string, string | undefined>;
 export interface Source {
   id: string;
