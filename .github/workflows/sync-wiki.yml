@@ -1,0 +1,92 @@
+name: Sync release documentation to wiki
+on:
+  # Release Please uses GITHUB_TOKEN, whose release events cannot start workflows.
+  # release.yml therefore calls this workflow directly as well.
+  workflow_call:
+    inputs:
+      tag:
+        description: Release tag whose Docs should be mirrored
+        required: true
+        type: string
+    secrets:
+      WIKI_TOKEN:
+        required: true
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to mirror (for example v0.2.1)
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: wiki-sync-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+    steps:
+      - name: Validate release tag
+        run: |
+          if [ -z "$RELEASE_TAG" ] || ! git check-ref-format "refs/tags/$RELEASE_TAG"; then
+            echo '::error::Provide a valid existing release tag.'
+            exit 1
+          fi
+      # Use the current tooling so manual retries benefit from workflow fixes.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: tooling
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ inputs.tag || github.event.release.tag_name }}
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Mirror release documentation and push wiki
+        env:
+          WIKI_TOKEN: ${{ secrets.WIKI_TOKEN }}
+          GIT_TERMINAL_PROMPT: '0'
+        run: |
+          set -euo pipefail
+          if [ -z "$WIKI_TOKEN" ]; then
+            echo '::error::Set WIKI_TOKEN with write access to this repository wiki; see Docs/wiki.md.'
+            exit 1
+          fi
+          if [ ! -d source/Docs ]; then
+            echo '::error::This release tag has no Docs directory. Choose a release containing the documentation.'
+            exit 1
+          fi
+          export GIT_ASKPASS="$RUNNER_TEMP/wiki-askpass.sh"
+          trap 'rm -f "$GIT_ASKPASS"' EXIT
+          cat > "$GIT_ASKPASS" <<'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' 'x-access-token' ;;
+            *Password*) printf '%s\n' "$WIKI_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$GIT_ASKPASS"
+          if ! git -c credential.helper= clone "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.wiki.git" wiki; then
+            echo '::error::Wiki clone failed. Enable Wiki, save its first page, and check WIKI_TOKEN permissions.'
+            exit 1
+          fi
+          node tooling/scripts/sync-wiki.mjs source/Docs wiki "$RELEASE_TAG" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          git -C wiki config user.name 'github-actions[bot]'
+          git -C wiki config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C wiki add --all
+          if git -C wiki diff --cached --quiet; then
+            echo "Wiki already matches $RELEASE_TAG."
+            exit 0
+          fi
+          git -C wiki commit -m "docs: sync $RELEASE_TAG"
+          git -C wiki -c credential.helper= push origin HEAD

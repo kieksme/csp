@@ -50,3 +50,18 @@ OpenAI und Azure verwenden Responses mit SSE und `store: false`. Ollama verwende
 Limits: `CSP_CHAT_RATE_LIMIT=10` Anfragen/Minute/IP; `CSP_CHAT_CONCURRENCY=2` aktive Anfragen je API-Prozess; `CSP_CHAT_MAX_TOKENS=1024` generierte Tokens; `CSP_CHAT_CONTEXT_CHARS=16000` Zeichen Quellkontext. Gesprächshistorie: maximal 20 Nachrichten, 4000 Zeichen je Nachricht, insgesamt 16000 Zeichen. Provider-/Chat-Zeitlimit: 60 Sekunden. Gespräch und API-Antworten werden nicht dauerhaft gespeichert. Externe KI-Provider erhalten die ausgewählten statischen und Live-Quellen dieser Instanz.
 
 Quellen: [OpenAI Responses](https://developers.openai.com/api/docs/guides/streaming-responses), [Azure Responses](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses), [Ollama Chat](https://docs.ollama.com/api/chat).
+
+## Build und Runtime getrennt konfigurieren
+
+Vite lädt `.env`-Dateien für den jeweiligen Modus und übernimmt darüber Prozessvariablen. Der API-Einstieg lädt `.env.local` und `.env` und verwendet die Runtime-Prozessvariablen. `.env.production` ist deshalb keine automatische API-Runtime-Konfiguration.
+
+| Runtime-Variable      | Standard / Bedeutung                                            |
+| --------------------- | --------------------------------------------------------------- |
+| `CSP_PORT`            | `3001`; API-Port                                                |
+| `CSP_HOST`            | `0.0.0.0`; Bind-Adresse                                         |
+| `CSP_ALLOWED_ORIGINS` | Leere Liste; kommagetrennte erlaubte Frontend-Origins ohne Pfad |
+| `CSP_TRUST_PROXY`     | Nur `true` aktiviert Vertrauen in Proxy-Header                  |
+
+Hotline und Inhaltsdatei auch am API-Host setzen. Provider-Variablen werden nur für installierte Plugins validiert. Der Demo-Modus entbindet SIGNL4/Kuma/Chat von produktiven Provider-Pflichtwerten; Kontakt und Inhaltsdatei bleiben erforderlich.
+
+Weiter: [Deployment](deployment.md), [Inhalte](content.md), [Sicherheit und Daten](security.md).

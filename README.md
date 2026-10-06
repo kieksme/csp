@@ -92,7 +92,7 @@ CSP_LOGO_URL: ${{ vars.CSP_LOGO_URL }}
 
 Alternativ öffentliche Build-Werte in einer `.env.production` im Kundenrepo pflegen. Prozessvariablen aus dem Workflow haben Vorrang. Lokale Bild- und JSON-Dateien müssen im Kundenrepo vorhanden sein; Bilder für das Frontend gehören in `public/`, und ihre URLs müssen den Basispfad berücksichtigen. Änderungen an Variablen oder Inhalten werden erst durch einen neuen Build und ein Deployment sichtbar.
 
-Provider-Schlüssel gehören ausschließlich in die Runtime-Konfiguration des API-Hosts. Auch `CSP_CONTACT_PHONE`, `CSP_CONTENT_PATH`, `CSP_ALLOWED_ORIGINS` und die gewählte Provider-Konfiguration dort setzen; GitHub-Build-Variablen werden nicht automatisch an den API-Service weitergereicht. Alle öffentlichen Build-Werte sind im Frontend lesbar; keine Schlüssel als `VITE_*`-Variable setzen. Details zu Providern stehen unter [Konfiguration](docs/configuration.md), die benötigten Action-Secrets unter [Contribute.md](Contribute.md).
+Provider-Schlüssel gehören ausschließlich in die Runtime-Konfiguration des API-Hosts. Auch `CSP_CONTACT_PHONE`, `CSP_CONTENT_PATH`, `CSP_ALLOWED_ORIGINS` und die gewählte Provider-Konfiguration dort setzen; GitHub-Build-Variablen werden nicht automatisch an den API-Service weitergereicht. Alle öffentlichen Build-Werte sind im Frontend lesbar; keine Schlüssel als `VITE_*`-Variable setzen. Details zu Providern stehen unter [Konfiguration](Docs/configuration.md), die benötigten Action-Secrets unter [Contribute.md](Contribute.md).
 
 ## Pakete
 
@@ -111,4 +111,6 @@ Alle acht Pakete verwenden das Präfix `@kieksme/csp-` und werden mit identische
 
 Vollständige Kontaktinformationen und Alert-Beschreibungen sind öffentlich. Provider-Schlüssel bleiben im API-Service. Der Chat liest statische Inhalte und die Live-Daten **seiner eigenen Instanz**, führt aber keine Aktionen aus. Gesprächsverläufe werden weder in einer Datenbank noch im Browser-Storage gespeichert.
 
-Weitere Dokumentation: [Plugin-SDK](docs/plugin-sdk.md), [Konfiguration](docs/configuration.md), [Betrieb und Releases](docs/operations.md). Umsetzung der Anforderungen aus [circle-zero #304](https://github.com/ThinkportRepo/circle-zero/issues/304). Das bestehende PoC bleibt unverändert.
+Projekt-Dokumentation: [Startseite und Übersicht](Docs/Home.md), [Architektur](Docs/architecture.md), [Installation](Docs/installation.md), [Deployment](Docs/deployment.md), [API](Docs/api.md), [Dokumentation und Wiki](Docs/wiki.md).
+
+Weitere Dokumentation: [Plugin-SDK](Docs/plugin-sdk.md), [Konfiguration](Docs/configuration.md), [Betrieb und Releases](Docs/operations.md). Umsetzung der Anforderungen aus [circle-zero #304](https://github.com/ThinkportRepo/circle-zero/issues/304). Das bestehende PoC bleibt unverändert.
