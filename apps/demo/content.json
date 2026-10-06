@@ -1,0 +1,47 @@
+{
+  "processes": [
+    {
+      "id": "incident",
+      "title": "1. Störung melden",
+      "text": "Beschreiben Sie **Auswirkung, Zeitpunkt und betroffenen Dienst**. Bei einem Ausfall rufen Sie bitte zuerst die Hotline an."
+    },
+    {
+      "id": "followup",
+      "title": "2. Gemeinsam dranbleiben",
+      "text": "Unser Team analysiert die Ursache und informiert Sie über den nächsten Schritt. Aktuelle Meldungen finden Sie hier im Portal."
+    }
+  ],
+  "tickets": [
+    {
+      "title": "Support-Anfrage",
+      "description": "Ein Problem melden oder Unterstützung anfragen.",
+      "href": "https://tickets.example.invalid/support",
+      "template": "Betroffener Dienst:\nSeit wann besteht das Problem?\nAuswirkung:\nKontakt für Rückfragen:"
+    },
+    {
+      "title": "Service-Anfrage",
+      "description": "Zugänge, Änderungen und neue Anforderungen.",
+      "href": "https://tickets.example.invalid/service"
+    }
+  ],
+  "faq": [
+    {
+      "id": "urgent",
+      "category": "Notfall",
+      "question": "Was mache ich bei einer dringenden Störung?",
+      "answer": "Rufen Sie die Operations-Hotline an. Halten Sie den betroffenen Dienst, den Zeitpunkt und die Auswirkungen bereit."
+    },
+    {
+      "id": "ticket",
+      "category": "Tickets",
+      "question": "Welche Informationen gehören in ein Ticket?",
+      "answer": "Nennen Sie den betroffenen Dienst, die Fehlermeldung, den Zeitpunkt und die Auswirkungen. Ein Screenshot kann helfen."
+    },
+    {
+      "id": "status",
+      "category": "Status",
+      "question": "Wie erfahre ich, ob eine Störung bereits bekannt ist?",
+      "answer": "Prüfen Sie den Systemstatus und die aktuellen Meldungen im Portal. Bei Unklarheiten hilft Ihnen das Operations-Team."
+    }
+  ]
+}

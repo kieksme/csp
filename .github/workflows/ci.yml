@@ -1,0 +1,42 @@
+name: Validate product
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm test:packages
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: test-results/
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t csp-api .
+      - run: |
+          docker run -d --name csp-api -p 3001:3001 -e CSP_DEMO=true -e CSP_CONTACT_PHONE=+49000 csp-api
+          for attempt in $(seq 1 30); do
+            if curl --fail http://localhost:3001/health; then exit 0; fi
+            sleep 2
+          done
+          docker logs csp-api
+          exit 1

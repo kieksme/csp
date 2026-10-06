@@ -1,0 +1,42 @@
+{
+  "name": "@kieksme/csp-cli",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "template"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node ../../scripts/sync-template.mjs && tsup src/index.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom"
+  },
+  "dependencies": {
+    "@kieksme/csp-sdk": "workspace:^",
+    "semver": "^7.7.3",
+    "yaml": "^2.8.1"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "bin": {
+    "csp": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kieksme/customer-service-portal.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/kieksme/customer-service-portal/issues"
+  }
+}
