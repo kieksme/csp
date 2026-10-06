@@ -1,5 +1,7 @@
 # Customer Service Portal
 
+[![Build-Status](https://github.com/kieksme/csp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kieksme/csp/actions/workflows/ci.yml?query=branch%3Amain)
+
 Eine gemeinsame Produktbasis, viele eigenständige Kundeninstanzen. Neutrales React/PWA-Frontend, Fastify-API und versionierte npm-Plugins; TypeScript, pnpm und automatische Tests.
 
 ## Lokal starten
