@@ -35,7 +35,7 @@ it('publishes independently with credentials for each registry', () => {
     (step: { name?: string }) => step.name === 'Publish to GitHub Packages',
   );
   expect(npm.if).toBe("matrix.target == 'npmjs'");
-  expect(npm.env.NODE_AUTH_TOKEN).toBe('${{ secrets.NPM_TOKEN }}');
+  expect(npm.env.NODE_AUTH_TOKEN).toBe('${{ secrets.NPM_AUTH_TOKEN }}');
   expect(github.if).toBe("matrix.target == 'GitHub Packages'");
   expect(github.env.NODE_AUTH_TOKEN).toBe('${{ secrets.GITHUB_TOKEN }}');
   const credentialCheck = publish.steps.find(

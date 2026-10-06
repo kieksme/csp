@@ -66,10 +66,10 @@ jobs:
       - name: Check npm publishing credentials
         if: matrix.target == 'npmjs'
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo '::error::Set NPM_TOKEN with write access to the npm organization @kieksme (including creation of new packages).'
+            echo '::error::Set NPM_AUTH_TOKEN with write access to the npm organization @kieksme (including creation of new packages).'
             exit 1
           fi
           npm whoami --registry=https://registry.npmjs.org
@@ -96,7 +96,7 @@ jobs:
         if: matrix.target == 'npmjs'
         run: pnpm -r --filter "./packages/**" publish --access public --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Publish to GitHub Packages
         if: matrix.target == 'GitHub Packages'
         run: pnpm -r --filter "./packages/**" publish --access public --no-git-checks
