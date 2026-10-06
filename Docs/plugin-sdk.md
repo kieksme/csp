@@ -15,7 +15,7 @@ Ein Plugin ist ein öffentlich installierbares ESM-npm-Paket mit getrennten Expo
   },
   "cspPlugin": {
     "id": "my-service",
-    "sdkVersion": "^0.1.0",
+    "sdkVersion": "^<sdk-version>",
     "requires": [],
     "browser": "./browser",
     "server": "./server"
@@ -23,10 +23,13 @@ Ein Plugin ist ein öffentlich installierbares ESM-npm-Paket mit getrennten Expo
 }
 ```
 
+`<sdk-version>` im Manifest durch die installierte Version von `@kieksme/csp-sdk` ersetzen. Browser und Server lesen denselben Wert aus dem Plugin-Manifest; das vermeidet auseinanderlaufende Versionsangaben.
+
 Die ID, SDK-Version und optionalen `requires` müssen in Manifest und beiden Exporten übereinstimmen. Abhängigkeiten im Manifest beziehen sich auf Plugin-IDs, nicht npm-Paketnamen. Core prüft ID-Eindeutigkeit, SDK-Kompatibilität und Abhängigkeiten beim Start; CLI prüft vor dem Schreiben der Registrierung.
 
 ```tsx
 // browser.tsx
+import { cspPlugin } from '../package.json';
 import type { BrowserPlugin, BrowserContext } from '@kieksme/csp-sdk';
 import { useLive, DataState } from '@kieksme/csp-sdk/browser';
 function MyService(ctx: BrowserContext) {
@@ -40,7 +43,7 @@ function MyService(ctx: BrowserContext) {
 }
 export default {
   id: 'my-service',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   sections: [
     {
       id: 'my-service',
@@ -55,11 +58,12 @@ export default {
 
 ```ts
 // server.ts
+import { cspPlugin } from '../package.json';
 import { z } from 'zod';
 import type { ServerPlugin } from '@kieksme/csp-sdk';
 export default {
   id: 'my-service',
-  sdkVersion: '^0.1.0',
+  sdkVersion: cspPlugin.sdkVersion,
   configSchema: z.object({ CSP_MY_SERVICE_ENDPOINT: z.string().url() }),
   setup(ctx) {
     const load = () =>
@@ -86,3 +90,9 @@ Server-Konfiguration wird für alle Plugins validiert, bevor Routen registriert 
 `LiveData<T>` enthält `data`, `updatedAt`, `stale` und optional `error`. Der Cache bündelt parallele Abfragen, hält erfolgreiche Daten 30 Sekunden und liefert bei Ausfällen den letzten Erfolg als veraltet. Die UI lädt standardmäßig alle 60 Sekunden; Schichtgrenzen werden alle 15 Sekunden lokal neu ausgewertet.
 
 CLI-Mutationen sind für eigenständige Kundenrepos vorgesehen. Ein `pnpm-workspace.yaml` mit reinen Einstellungen ist erlaubt; ein übergeordnetes Monorepo wird abgelehnt, damit nicht dessen Lockfile verändert wird. Fehlgeschlagene Installationen stellen Paketdatei, Lockfile, pnpm-Konfiguration und Registrierungen wieder her und versuchen, den ursprünglichen Dependency-Baum erneut zu installieren.
+
+## Veröffentlichen und einbinden
+
+Browser und Server als ESM mit Typdeklarationen bauen, `dist/` in den npm-Paketinhalt aufnehmen und das SDK als kompatible Abhängigkeit deklarieren. Browsercode darf keine Node-/Provider-Secrets importieren. Paket-Tarball in einer frischen Kundeninstanz installieren und über die CLI registrieren; beide Anwendungsteile neu bauen. Inkompatible SDK-Versionen und fehlende `requires` gezielt prüfen.
+
+Weiter: [Plugins und CLI](plugins.md), [Entwicklung und Tests](development.md), [API](api.md).

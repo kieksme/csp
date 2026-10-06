@@ -1,0 +1,16 @@
+**Customer Service Portal**
+
+- [Startseite](Home.md)
+- [Architektur](architecture.md)
+- [Installation](installation.md)
+- [Konfiguration](configuration.md)
+- [Deployment](deployment.md)
+- [Plugins und CLI](plugins.md)
+- [Inhalte](content.md)
+- [API-Referenz](api.md)
+- [Betrieb und Releases](operations.md)
+- [Plugin-SDK](plugin-sdk.md)
+- [Entwicklung und Tests](development.md)
+- [Sicherheit und Daten](security.md)
+- [Fehlerbehebung](troubleshooting.md)
+- [Dokumentation und Wiki](wiki.md)

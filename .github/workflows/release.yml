@@ -29,6 +29,14 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
+  wiki:
+    needs: release
+    if: needs.release.outputs.release_created == 'true' || (github.event_name == 'workflow_dispatch' && inputs.publish_tag != '')
+    uses: ./.github/workflows/sync-wiki.yml
+    with:
+      tag: ${{ inputs.publish_tag || needs.release.outputs.tag_name }}
+    permissions:
+      contents: write
   publish:
     name: Publish to ${{ matrix.target }}
     needs: release
