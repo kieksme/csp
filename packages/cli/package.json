@@ -15,7 +15,8 @@
     }
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "scripts": {
     "build": "node ../../scripts/sync-template.mjs && tsup src/index.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom"
