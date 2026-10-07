@@ -31,10 +31,13 @@ function ScheduleView(ctx: BrowserContext) {
     });
   return (
     <>
-      <div className="availability">
+      <div className="availability [&_strong]:block [&_strong]:text-[1.1875rem] [&_strong]:mb-2 [&_p]:text-muted [&_p]:m-0 [&_p]:text-[0.8125rem]">
         <strong>
           <span
-            className={'dot ' + (current.length && !live.stale ? 'up' : '')}
+            className={
+              'dot inline-block w-[8px] h-[8px] rounded-full bg-neutral shrink-0 [&.up]:[background:var(--success,_#388264)] [&.down]:[background:var(--danger,_#da642b)] [&.maintenance]:bg-warning ' +
+              (current.length && !live.stale ? 'up' : '')
+            }
           />{' '}
           {live.stale
             ? 'Erreichbarkeit derzeit nicht bestätigt'
@@ -50,17 +53,18 @@ function ScheduleView(ctx: BrowserContext) {
         <p>Zeitzone: {tz}</p>
       </div>
       <DataState {...live} />
-      <div className="schedule-list">
+      <div className="schedule-list mt-6 grid gap-[0]">
         {live.data?.shifts
           .filter((s) => Date.parse(s.end) > now)
           .map((s, i) => (
             <div
               className={
-                'shift ' + (activeShifts([s], now).length ? 'active' : '')
+                'shift grid grid-cols-[1fr_1.5fr_auto] gap-4.5 py-3.25 px-0 border-t border-line text-[0.75rem] [&.active]:text-accent [&.active]:font-bold dark:[&.active]:text-ink [&_time]:font-mono [&_time]:text-[0.6875rem] [&_time]:text-muted compact:grid-cols-[1fr_auto] compact:[&_time]:col-span-full ' +
+                (activeShifts([s], now).length ? 'active' : '')
               }
               key={s.userId + s.start + i}
             >
-              <span className="shift-person">
+              <span className="shift-person flex items-center gap-3 [&_.avatar]:w-[40px] [&_.avatar]:h-[40px]">
                 <Avatar config={ctx.config} id={s.userId} name={s.name} />
                 {s.name}
               </span>
@@ -82,10 +86,15 @@ function Alerts(ctx: BrowserContext) {
   const live = useLive<Alert[]>(ctx, '/alerts');
   return (
     <>
-      <div className="alert-list">
+      <div className="alert-list grid gap-3">
         {live.data?.map((a) => (
-          <article className="alert" key={a.id}>
-            <span className="badge">{a.status}</span>
+          <article
+            className="alert grid grid-cols-[110px_1fr_auto] gap-6 p-6 bg-card border border-line [border-left:3px_solid_var(--warning)] rounded-card [&_p]:m-0 [&_p]:text-[0.8125rem] [&_p]:leading-[1.8] [&_p]:text-muted [&_p]:whitespace-pre-wrap [&_p]:[overflow-wrap:anywhere] [&_h3]:text-[0.9375rem] [&_h3]:mb-1.25 [&_time]:font-mono [&_time]:text-[0.625rem] [&_time]:text-muted compact:grid-cols-[1fr] compact:gap-3"
+            key={a.id}
+          >
+            <span className="badge font-mono text-[0.625rem] bg-soft py-1.5 px-2.5 [border-radius:3px] [align-self:start] w-fit">
+              {a.status}
+            </span>
             <div>
               <h3>{a.title}</h3>
               <p>{a.description}</p>
@@ -101,7 +110,9 @@ function Alerts(ctx: BrowserContext) {
         ))}
       </div>
       {live.data?.length === 0 && (
-        <p className="empty-state">Keine aktuellen Alerts.</p>
+        <p className="empty-state p-6.5 [border:1px_dashed_var(--line)] text-muted text-[0.875rem]">
+          Keine aktuellen Alerts.
+        </p>
       )}
       <DataState {...live} />
     </>
@@ -111,10 +122,13 @@ function Team(ctx: BrowserContext) {
   const live = useLive<Person[]>(ctx, '/team');
   return (
     <>
-      <div className="team-grid">
+      <div className="team-grid grid grid-cols-[repeat(3,_1fr)] gap-4.5 compact:grid-cols-[1fr_1fr] narrow:grid-cols-[1fr]">
         {live.data?.map((p) => (
-          <article className="person" key={p.id}>
-            <div className="person-top">
+          <article
+            className="person bg-card border border-line rounded-card p-6 [&_h3]:text-[0.9375rem] [&_h3]:m-[0_0_calc(var(--spacing)_*_1)] [&_small]:text-[0.6875rem] [&_small]:text-muted"
+            key={p.id}
+          >
+            <div className="person-top flex gap-3.5 items-center mb-4.5">
               <Avatar
                 config={ctx.config}
                 id={p.id}
@@ -126,7 +140,7 @@ function Team(ctx: BrowserContext) {
                 <small>{p.role ?? 'Operations'}</small>
               </div>
             </div>
-            <div className="person-contact">
+            <div className="person-contact grid gap-2 text-[0.75rem] [overflow-wrap:anywhere] [&_a]:no-underline">
               {p.email && <a href={'mailto:' + p.email}>{p.email}</a>}
               {p.phones.map((phone) => (
                 <a key={phone} href={'tel:' + phone.replace(/[^+\d]/g, '')}>
@@ -135,7 +149,7 @@ function Team(ctx: BrowserContext) {
               ))}
             </div>
             <a
-              className="vcard"
+              className="vcard block mt-5 font-mono text-[0.625rem] no-underline uppercase tracking-[1px]"
               href={
                 ctx.config.apiUrl +
                 '/api/v1/team/' +

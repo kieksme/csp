@@ -53,7 +53,10 @@ export function DataState({
   error?: string;
 }) {
   return (
-    <p className={`data-state ${stale ? 'warning' : ''}`} role="status">
+    <p
+      className={`data-state font-mono text-[0.625rem] text-muted m-[calc(var(--spacing)_*_3)_0_0] [&.warning]:text-warning ${stale ? 'warning' : ''}`}
+      role="status"
+    >
       {loading
         ? 'Wird geladen …'
         : stale

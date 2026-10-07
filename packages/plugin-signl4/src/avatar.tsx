@@ -35,13 +35,16 @@ export function Avatar({
     .join('');
   return src && failed !== src ? (
     <img
-      className="avatar"
+      className="avatar w-[54px] h-[54px] rounded-full grid place-items-center bg-soft text-accent dark:text-ink text-[1.25rem] font-semibold object-cover"
       src={src}
       alt={'Profilbild ' + name}
       onError={() => setFailed(src)}
     />
   ) : (
-    <span className="avatar" aria-hidden="true">
+    <span
+      className="avatar w-[54px] h-[54px] rounded-full grid place-items-center bg-soft text-accent dark:text-ink text-[1.25rem] font-semibold object-cover"
+      aria-hidden="true"
+    >
       {initials}
     </span>
   );
