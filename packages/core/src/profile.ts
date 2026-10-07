@@ -6,6 +6,8 @@ import { z } from 'zod';
 import { safeUrl, type Env } from '@kieksme/csp-sdk';
 import { publicConfig } from './config.js';
 const color = z.string().regex(/^#[a-f0-9]{6}$/i);
+const length = z.string().regex(/^(?:0|(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em))$/);
+const positiveLength = length.refine((value) => parseFloat(value) > 0);
 export const themeTokensSchema = z
   .object({
     accent: color.optional(),
@@ -19,6 +21,17 @@ export const themeTokensSchema = z
     soft: color.optional(),
     success: color.optional(),
     danger: color.optional(),
+    warning: color.optional(),
+    warningSurface: color.optional(),
+    warningInk: color.optional(),
+    neutral: color.optional(),
+    heroLine: color.optional(),
+    radius: length.optional(),
+    spacing: positiveLength.optional(),
+    contentWidth: positiveLength.optional(),
+    heroWidth: positiveLength.optional(),
+    fontSize: positiveLength.optional(),
+    fontMono: z.string().min(1).optional(),
     fontFamily: z.string().min(1).optional(),
   })
   .strict();

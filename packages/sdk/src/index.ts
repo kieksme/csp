@@ -102,6 +102,17 @@ export interface ThemeTokens {
   soft?: string;
   success?: string;
   danger?: string;
+  warning?: string;
+  warningSurface?: string;
+  warningInk?: string;
+  neutral?: string;
+  heroLine?: string;
+  radius?: string;
+  spacing?: string;
+  contentWidth?: string;
+  heroWidth?: string;
+  fontSize?: string;
+  fontMono?: string;
   fontFamily?: string;
 }
 export interface PublicConfig {

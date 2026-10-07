@@ -95,6 +95,50 @@
             "fontFamily": {
               "type": "string",
               "minLength": 1
+            },
+            "warning": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "warningSurface": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "warningInk": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "neutral": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "heroLine": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "radius": {
+              "type": "string",
+              "pattern": "^(?:0|(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:px|rem|em))$"
+            },
+            "spacing": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "contentWidth": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "heroWidth": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "fontSize": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "fontMono": {
+              "type": "string",
+              "minLength": 1
             }
           }
         },
@@ -147,6 +191,50 @@
               "pattern": "^#[a-fA-F0-9]{6}$"
             },
             "fontFamily": {
+              "type": "string",
+              "minLength": 1
+            },
+            "warning": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "warningSurface": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "warningInk": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "neutral": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "heroLine": {
+              "type": "string",
+              "pattern": "^#[a-fA-F0-9]{6}$"
+            },
+            "radius": {
+              "type": "string",
+              "pattern": "^(?:0|(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:px|rem|em))$"
+            },
+            "spacing": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "contentWidth": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "heroWidth": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "fontSize": {
+              "type": "string",
+              "pattern": "^(?:0*[1-9]\\d*(?:\\.\\d+)?|\\d*\\.\\d*[1-9]\\d*)(?:px|rem|em)$"
+            },
+            "fontMono": {
               "type": "string",
               "minLength": 1
             }

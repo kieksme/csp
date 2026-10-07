@@ -3,14 +3,29 @@
   "id": "customer",
   "branding": {
     "name": "Service Desk",
-    "tagline": "Wir sind f\u00fcr Sie da.",
+    "tagline": "Wir sind für Sie da.",
     "description": "Ihr direkter Kontakt zum Operations-Team."
   },
   "theme": {
     "mode": "system",
     "tokens": {
       "accent": "#176b58",
-      "hero": "#102e29"
+      "hero": "#102e29",
+      "fontFamily": "Manrope, sans-serif",
+      "fontMono": "\"IBM Plex Mono\", monospace",
+      "fontSize": "16px",
+      "radius": "4px",
+      "spacing": "4px",
+      "contentWidth": "1144px",
+      "heroWidth": "1264px"
+    },
+    "darkTokens": {
+      "paper": "#111d19",
+      "card": "#192923",
+      "ink": "#e4ebe3",
+      "muted": "#a8b9ae",
+      "line": "#33483b",
+      "soft": "#24372b"
     }
   },
   "contact": {
