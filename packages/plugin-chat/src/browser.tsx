@@ -98,24 +98,36 @@ function Chat(ctx: BrowserContext) {
     }
   }
   return (
-    <div className="chat-layout">
-      <div className="chat-intro">
+    <div className="chat-layout grid grid-cols-[1fr_1.7fr] gap-13.75 compact:grid-cols-[1fr] compact:gap-3.75">
+      <div className="chat-intro [&_p]:text-[0.875rem] [&_p]:text-muted [&_p]:leading-[1.8] compact:max-w-[500px]">
         <h3>Eine Frage reicht.</h3>
         <p>
           Unser Assistent kennt die Hilfe-Inhalte, das Team und die aktuellen
           Meldungen. Für dringende Störungen bleibt die Hotline der direkte Weg.
         </p>
-        <p className="data-state">
+        <p className="data-state font-mono text-[0.625rem] text-muted m-[calc(var(--spacing)_*_3)_0_0] [&.warning]:text-warning">
           Öffentlicher Chat · Verlauf nur in dieser Sitzung
         </p>
       </div>
-      <div className="chat-panel">
-        <div className="chat-history" aria-live="polite" aria-busy={busy}>
+      <div className="chat-panel bg-card border border-line p-6 rounded-card">
+        <div
+          className="chat-history grid gap-3.75 max-h-[400px] overflow-auto mb-4"
+          aria-live="polite"
+          aria-busy={busy}
+        >
           {!messages.length && (
-            <p className="message assistant">Wie kann ich Ihnen helfen?</p>
+            <p className="message assistant text-[0.8125rem] leading-[1.8] whitespace-pre-wrap [overflow-wrap:anywhere] [&.user]:bg-soft [&.user]:pt-3 [&.user]:pb-3 [&.user]:pl-4 [&.user]:pr-4 [&.user]:rounded-card [&.assistant]:[border-left:2px_solid_var(--accent)] [&.assistant]:pt-[0] [&.assistant]:pb-[0] [&.assistant]:pl-4 [&.assistant]:pr-4">
+              Wie kann ich Ihnen helfen?
+            </p>
           )}
           {messages.map((m, i) => (
-            <div key={i} className={'message ' + m.role}>
+            <div
+              key={i}
+              className={
+                'message text-[0.8125rem] leading-[1.8] whitespace-pre-wrap [overflow-wrap:anywhere] [&.user]:bg-soft [&.user]:pt-3 [&.user]:pb-3 [&.user]:pl-4 [&.user]:pr-4 [&.user]:rounded-card [&.assistant]:[border-left:2px_solid_var(--accent)] [&.assistant]:pt-[0] [&.assistant]:pb-[0] [&.assistant]:pl-4 [&.assistant]:pr-4 ' +
+                m.role
+              }
+            >
               <span className="sr-only">
                 {m.role === 'user' ? 'Sie: ' : 'Assistent: '}
               </span>
@@ -124,7 +136,7 @@ function Chat(ctx: BrowserContext) {
           ))}
         </div>
         {sources.length > 0 && (
-          <div className="sources">
+          <div className="sources text-[0.6875rem] text-muted mt-3.75 mb-3.75 ml-[0] mr-[0] [&_a]:mr-3">
             Referenzquellen:{' '}
             {sources.map((s) =>
               s.href ? (
@@ -138,13 +150,16 @@ function Chat(ctx: BrowserContext) {
             )}
           </div>
         )}
-        <form className="chat-form" onSubmit={submit}>
+        <form
+          className="chat-form flex gap-2.5 items-end [&_textarea]:resize-y [&_textarea]:min-h-[50px] [&_textarea]:[flex:1] [&_textarea]:min-w-0 [&_button]:bg-accent [&_button]:text-accent-ink [&_button]:[border:0] [&_button]:w-[50px] [&_button]:h-[50px] [&_button]:rounded-card [&_button]:text-[1.25rem] [&_button:disabled]:opacity-[0.5]"
+          onSubmit={submit}
+        >
           <label className="sr-only" htmlFor="chat-input">
             Ihre Frage
           </label>
           <textarea
             id="chat-input"
-            className="search"
+            className="search bg-card border border-line rounded-card py-3.5 px-4.5 text-ink w-full"
             value={input}
             maxLength={4000}
             onChange={(e) => setInput(e.target.value)}
@@ -160,7 +175,10 @@ function Chat(ctx: BrowserContext) {
           </button>
         </form>
         {error && (
-          <p className="chat-error" role="alert">
+          <p
+            className="chat-error text-danger dark:text-warning text-[0.75rem]"
+            role="alert"
+          >
             {error}
           </p>
         )}

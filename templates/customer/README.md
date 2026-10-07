@@ -16,7 +16,7 @@ pnpm start
 
 Alle Pfade beziehen sich auf das Profilverzeichnis. Logo und Icon werden mit `branding.logoFile` und `branding.iconFile` referenziert. Nur referenzierte Webassets werden ausgeliefert. Optional verweist `avatarsFile` auf `{ "ids": { "provider-id": "public/avatar.webp" }, "names": { "Lena Demo": "public/avatar.webp" } }`; IDs haben Vorrang. Die Kundenpaketversion erscheint im Footer.
 
-Das gemeinsame Core-Paket kompiliert Tailwind CSS beim Paket-Build. Kundeninstanzen benötigen weder Tailwind-Abhängigkeiten noch eine eigene CSS-/Build-Konfiguration. Die bestehende Oberfläche und die semantischen Plugin-Klassen bleiben verfügbar.
+Das gemeinsame Core-Paket kompiliert Tailwind CSS beim Paket-Build. Kundeninstanzen benötigen weder Tailwind-Abhängigkeiten noch eine eigene CSS-/Build-Konfiguration. Core und die mitgelieferten Plugins verwenden Tailwind-Utilities direkt in ihren JSX-Komponenten, einschließlich responsiver Varianten. Semantische Klassen bleiben als DOM-Hooks erhalten; die Darstellung wird durch die mitgelieferten Utilities bestimmt. Farben und Größen referenzieren die konfigurierbaren CSS-Variablen.
 
 `theme.mode` unterstützt `light`, `dark` und `system` als Anfangsauswahl. `theme.tokens` definiert semantische Farben und die Schriftfamilie; `darkTokens` ergänzt dunkle Varianten. Weitere Tokens in `theme.tokens` (alle optional):
 

@@ -25,14 +25,21 @@ const colors = Object.fromEntries(
 export default {
   content: [fileURLToPath(new URL('../*/src/**/*.{ts,tsx}', import.meta.url))],
   // Keep the portal's existing element defaults; Tailwind provides utilities.
+  darkMode: ['selector', 'html[data-theme="dark"]'],
   corePlugins: { preflight: false },
   theme: {
+    screens: {
+      contained: { max: '1250px' },
+      compact: { max: '800px' },
+      narrow: { max: '450px' },
+      wide: { min: '900px' },
+    },
     extend: {
       colors,
       spacing: Object.fromEntries(
-        Array.from({ length: 101 }, (_, n) => [
-          String(n),
-          `calc(var(--spacing) * ${n})`,
+        Array.from({ length: 401 }, (_, n) => [
+          String(n / 4),
+          `calc(var(--spacing) * ${n / 4})`,
         ]),
       ),
       borderRadius: { card: 'var(--radius)' },
