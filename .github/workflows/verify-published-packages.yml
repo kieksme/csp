@@ -1,0 +1,44 @@
+name: Verify public CSP 0.4.0 installation
+on:
+  push:
+    branches: [test/verify-csp-0.4.0]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g pnpm@12.8.1
+      - name: Verify all public package versions
+        run: |
+          for package in sdk core cli plugin-contact plugin-content plugin-chat plugin-signl4 plugin-kuma; do
+            npm view "@kieksme/csp-$package@0.4.0" version --registry=https://registry.npmjs.org --prefer-online
+          done
+      - name: Initialize, install and build a fresh public-registry customer
+        env:
+          CSP_DEMO: 'true'
+          CSP_CONTACT_PHONE: '+49000'
+        run: |
+          pnpm dlx @kieksme/csp-cli@0.4.0 init "$RUNNER_TEMP/public-customer"
+          cd "$RUNNER_TEMP/public-customer"
+          test ! -e main.tsx
+          test ! -e server.ts
+          test ! -e vite.config.ts
+          test ! -e Dockerfile
+          pnpm install
+          pnpm install --frozen-lockfile
+          pnpm exec csp validate
+          pnpm build
+          CSP_PORT=3999 node dist-api/server.js > api.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail http://localhost:3999/health; then exit 0; fi
+            sleep 2
+          done
+          cat api.log
+          exit 1
