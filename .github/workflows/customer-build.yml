@@ -1,0 +1,81 @@
+name: Reusable customer portal build
+on:
+  workflow_call:
+    inputs:
+      config:
+        type: string
+        default: portal.config.json
+      pages:
+        type: boolean
+        default: false
+      public-overrides:
+        description: JSON object of supported public CSP overrides; omit unset values
+        type: string
+        default: '{}'
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Apply explicitly supplied public overrides
+        env:
+          OVERRIDES: ${{ inputs.public-overrides }}
+        run: |
+          node --input-type=module <<'JS'
+          import {appendFileSync} from 'node:fs';
+          const allowed = new Set(['CSP_NAME','CSP_TAGLINE','CSP_DESCRIPTION','CSP_COLOR','CSP_BACKGROUND','CSP_BASE_PATH','CSP_API_URL','CSP_DOMAIN','CSP_CONTACT_PHONE','CSP_CONTACT_LABEL','CSP_POLL_MS','CSP_DEMO','CSP_LOGO_URL']);
+          const values=JSON.parse(process.env.OVERRIDES);
+          if(!values || Array.isArray(values) || typeof values!=='object') throw new Error('Expected override object');
+          for(const [key,value] of Object.entries(values)) {
+            if(!allowed.has(key) || typeof value!=='string' || !value.trim() || /[\r\n]/.test(value)) throw new Error(`Invalid public override: ${key}`);
+            appendFileSync(process.env.GITHUB_ENV,`${key}=${value}\n`);
+          }
+          JS
+      - run: pnpm exec csp validate --config "$PORTAL_CONFIG" --production
+        env:
+          PORTAL_CONFIG: ${{ inputs.config }}
+      - run: pnpm exec csp build --config "$PORTAL_CONFIG" --production
+        env:
+          PORTAL_CONFIG: ${{ inputs.config }}
+      - name: Build API image artifact
+        env:
+          PORTAL_CONFIG: ${{ inputs.config }}
+        run: |
+          cp node_modules/@kieksme/csp-cli/runtime/Dockerfile .csp/Dockerfile
+          printf 'node_modules\n.git\n.env\n.env.*\ndist\n.csp\n' > .csp/Dockerfile.dockerignore
+          docker build -f .csp/Dockerfile --build-arg "PORTAL_CONFIG=$PORTAL_CONFIG" -t customer-api .
+          docker save customer-api -o api-image.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: api-image
+          path: api-image.tar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: customer-frontend
+          path: dist
+      - uses: actions/upload-pages-artifact@v3
+        if: inputs.pages
+        with:
+          path: dist
+  pages:
+    if: inputs.pages && github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

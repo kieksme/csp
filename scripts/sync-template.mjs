@@ -4,7 +4,9 @@ await rm(target, { recursive: true, force: true });
 await cp(new URL('../templates/customer/', import.meta.url), target, {
   recursive: true,
   filter: (source) =>
-    !/(?:^|\/)(?:node_modules|dist|dist-api|\.env(?:\.local)?)$/.test(source),
+    !/(?:^|\/)(?:node_modules|dist|dist-api|\.csp|\.env(?:\.local)?)$/.test(
+      source,
+    ),
 });
 const file = new URL('package.json', target);
 const pkg = JSON.parse(await readFile(file, 'utf8'));

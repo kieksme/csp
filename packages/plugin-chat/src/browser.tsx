@@ -34,12 +34,15 @@ function Chat(ctx: BrowserContext) {
     const controller = new AbortController();
     abort.current = controller;
     try {
-      const response = await fetch(ctx.config.apiUrl + '/api/v1/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: bounded }),
-        signal: controller.signal,
-      });
+      const response = await (ctx.request ?? fetch)(
+        ctx.config.apiUrl + '/api/v1/chat',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: bounded }),
+          signal: controller.signal,
+        },
+      );
       if (!response.ok || !response.body)
         throw new Error(
           response.status === 429

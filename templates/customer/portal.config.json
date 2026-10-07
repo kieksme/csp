@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "customer",
+  "branding": {
+    "name": "Service Desk",
+    "tagline": "Wir sind f\u00fcr Sie da.",
+    "description": "Ihr direkter Kontakt zum Operations-Team."
+  },
+  "theme": {
+    "mode": "system",
+    "tokens": {
+      "accent": "#176b58",
+      "hero": "#102e29"
+    }
+  },
+  "contact": {
+    "phone": "+49 000 000000",
+    "label": "Operations-Hotline"
+  },
+  "public": {
+    "apiUrl": "http://localhost:3001",
+    "basePath": "/",
+    "demo": false
+  },
+  "contentFile": "content.json",
+  "plugins": [
+    "@kieksme/csp-plugin-contact",
+    "@kieksme/csp-plugin-content",
+    "@kieksme/csp-plugin-chat"
+  ]
+}

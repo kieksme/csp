@@ -87,3 +87,65 @@ it('rolls back package, lock and registry when compatibility validation fails', 
     await rm(cwd, { recursive: true, force: true });
   }
 });
+it('updates a profile without generating customer entrypoints and rolls it back on invalid plugins', async () => {
+  const cwd = await mkdtemp(join(tmpdir(), 'csp-profile-cli-'));
+  const profile = JSON.stringify({
+    schemaVersion: 1,
+    id: 'test',
+    branding: { name: 'Test' },
+    contact: { phone: '+49123' },
+    contentFile: 'content.json',
+    plugins: [],
+  });
+  await writeFile(join(cwd, 'portal.config.json'), profile);
+  await writeFile(join(cwd, 'package.json'), '{"dependencies":{}}');
+  const runner = async (args: string[]) => {
+    if (args[0] !== 'add') return;
+    const bad = args[2] === 'bad-plugin';
+    const name = bad ? 'bad-plugin' : 'fixture-plugin';
+    await writeFile(
+      join(cwd, 'package.json'),
+      JSON.stringify({
+        dependencies: {
+          ...JSON.parse(await readFile(join(cwd, 'package.json'), 'utf8'))
+            .dependencies,
+          [name]: '1.0.0',
+        },
+      }),
+    );
+    await mkdir(join(cwd, 'node_modules', name), { recursive: true });
+    await writeFile(
+      join(cwd, 'node_modules', name, 'package.json'),
+      JSON.stringify({
+        exports: { './browser': './browser.js', './server': './server.js' },
+        cspPlugin: {
+          id: bad ? 'bad' : 'fixture',
+          sdkVersion: bad ? '^99.0.0' : `^${SDK_VERSION}`,
+          browser: './browser',
+          server: './server',
+        },
+      }),
+    );
+  };
+  try {
+    expect(await managePlugin('add', 'fixture-plugin', cwd, runner)).toEqual([
+      'fixture-plugin',
+    ]);
+    expect(
+      JSON.parse(await readFile(join(cwd, 'portal.config.json'), 'utf8'))
+        .branding.name,
+    ).toBe('Test');
+    await expect(readFile(join(cwd, 'portal.browser.ts'))).rejects.toThrow(
+      'ENOENT',
+    );
+    const before = await readFile(join(cwd, 'portal.config.json'), 'utf8');
+    await expect(
+      managePlugin('add', 'bad-plugin', cwd, runner),
+    ).rejects.toThrow('needs SDK');
+    expect(await readFile(join(cwd, 'portal.config.json'), 'utf8')).toBe(
+      before,
+    );
+  } finally {
+    await rm(cwd, { recursive: true, force: true });
+  }
+});

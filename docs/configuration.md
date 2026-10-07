@@ -50,3 +50,13 @@ OpenAI und Azure verwenden Responses mit SSE und `store: false`. Ollama verwende
 Limits: `CSP_CHAT_RATE_LIMIT=10` Anfragen/Minute/IP; `CSP_CHAT_CONCURRENCY=2` aktive Anfragen je API-Prozess; `CSP_CHAT_MAX_TOKENS=1024` generierte Tokens; `CSP_CHAT_CONTEXT_CHARS=16000` Zeichen Quellkontext. Gesprächshistorie: maximal 20 Nachrichten, 4000 Zeichen je Nachricht, insgesamt 16000 Zeichen. Provider-/Chat-Zeitlimit: 60 Sekunden. Gespräch und API-Antworten werden nicht dauerhaft gespeichert. Externe KI-Provider erhalten die ausgewählten statischen und Live-Quellen dieser Instanz.
 
 Quellen: [OpenAI Responses](https://developers.openai.com/api/docs/guides/streaming-responses), [Azure Responses](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses), [Ollama Chat](https://docs.ollama.com/api/chat).
+
+## Deklarative Kundeninstanzen
+
+Neue Kundeninstanzen verwenden `portal.config.json` (Schema-Version 1). Core stellt den strikten Loader unter `@kieksme/csp-core/profile` bereit; die CLI stellt `validate`, `inspect`, `dev`, `build`, `start` und `migrate` bereit. `--config` bzw. `CSP_CONFIG_PATH` wählen das Profil; `--mode` wählt die Build-Umgebung. `validate --production` und `build --production` lehnen Beispielhotline und `example.invalid`-Adressen außerhalb expliziter Demos ab.
+
+Priorität: zentrale Defaults → Profil → unterstützte öffentliche Env-Overrides. Builds laden `.env.branding` als Übergangsadapter, danach Vites `.env`, `.env.local`, `.env.[mode]`, `.env.[mode].local`, schließlich Prozessvariablen. API-Starts laden `.env.branding`, `.env`, `.env.local`, Prozessvariablen. Modusspezifische Dateien gehören nur zum Build. Alle Dateipfade sind relativ zum Profilverzeichnis; URL-Overrides bleiben URLs. Ein API-Neustart ändert kein bereits gebautes Frontend.
+
+`csp migrate` ergänzt ein Basisprofil aus der alten Plugin-Liste, ohne bestehende Dateien zu überschreiben oder zu löschen. Bestehende `.env.branding`-Werte und explizite Overrides werden weiter gelesen. Kundenspezifische TypeScript-Konfiguration, Styles und Komponenten müssen vor Entfernung der alten Einstiege auf die gemeinsame Schnittstelle abgebildet und verglichen werden. Die CLI migriert solche Anpassungen nicht automatisch. Alte `portal.plugins.json`-Instanzen unterstützen weiterhin Plugin-Verwaltung.
+
+Das Editor-Schema liegt im CLI-Paket unter `runtime/portal.schema.json`. Es dokumentiert die Profilstruktur; die Zod-Validierung im Loader ist maßgeblich. Die deklarative Avatar-Datei enthält getrennte `ids` und `names`, lokale Webdateien oder HTTP(S)-URLs. Provider-IDs haben Vorrang vor normalisierten Namen; fehlerhafte Bilder fallen auf Initialen zurück.

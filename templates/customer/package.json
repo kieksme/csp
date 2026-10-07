@@ -3,30 +3,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
-    "dev:api": "tsx watch --env-file=.env server.ts",
-    "build": "vite build && tsup server.ts --format esm --platform node --out-dir dist-api --external sharp",
-    "start:api": "node dist-api/server.js"
+    "validate": "csp validate",
+    "dev": "csp dev",
+    "build": "csp build",
+    "start": "csp start",
+    "start:api": "csp start"
   },
   "dependencies": {
     "@kieksme/csp-core": "workspace:^",
     "@kieksme/csp-plugin-contact": "workspace:^",
     "@kieksme/csp-plugin-content": "workspace:^",
     "@kieksme/csp-plugin-chat": "workspace:^",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "dotenv": "^17.2.3",
     "@kieksme/csp-sdk": "workspace:^"
   },
   "devDependencies": {
-    "vite": "^7.1.9",
-    "@vitejs/plugin-react": "^5.0.4",
-    "typescript": "^5.9.3",
-    "tsx": "^4.20.6",
-    "tsup": "^8.5.0",
-    "@types/node": "^22.18.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0"
+    "@kieksme/csp-cli": "workspace:^"
   },
   "engines": {
     "node": ">=22.12"
@@ -34,6 +25,7 @@
   "packageManager": "pnpm@12.8.1",
   "files": [
     "dist-api",
+    "portal.config.json",
     "content.json",
     "public"
   ],

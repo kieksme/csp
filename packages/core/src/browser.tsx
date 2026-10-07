@@ -1,3 +1,4 @@
+import { staticDemoRequest } from './demo.js';
 import { useMemo, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -29,20 +30,53 @@ export function Portal({
     .sort((a, b) => a.order - b.order);
   const [dark, setDark] = useState(() => {
     try {
-      return localStorage.getItem('csp-theme') === 'dark';
+      const stored = localStorage.getItem('csp-theme');
+      return stored
+        ? stored === 'dark'
+        : config.theme?.mode === 'dark' ||
+            (config.theme?.mode === 'system' &&
+              matchMedia('(prefers-color-scheme: dark)').matches);
     } catch {
-      return false;
+      return config.theme?.mode === 'dark';
     }
   });
   const [offline, setOffline] = useState(!navigator.onLine);
   useEffect(() => {
+    for (const key of [
+      'accent',
+      'accent-secondary',
+      'hero',
+      'paper',
+      'card',
+      'ink',
+      'muted',
+      'line',
+      'soft',
+      'success',
+      'danger',
+      'font-family',
+    ])
+      document.documentElement.style.removeProperty('--' + key);
+    const tokens = {
+      ...config.theme?.tokens,
+      ...(dark ? config.theme?.darkTokens : {}),
+    };
+    for (const [key, value] of Object.entries(tokens)) {
+      const name =
+        key === 'fontFamily'
+          ? 'font-family'
+          : key === 'accentSecondary'
+            ? 'accent-secondary'
+            : key;
+      document.documentElement.style.setProperty('--' + name, value);
+    }
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
     try {
       localStorage.setItem('csp-theme', dark ? 'dark' : 'light');
     } catch {
       /* Storage may be disabled. */
     }
-  }, [dark]);
+  }, [dark, config.theme]);
   useEffect(() => {
     const update = () => setOffline(!navigator.onLine);
     window.addEventListener('online', update);
@@ -52,25 +86,39 @@ export function Portal({
       window.removeEventListener('offline', update);
     };
   }, []);
+  const request = useMemo(
+    () => (config.staticDemo ? staticDemoRequest(config) : fetch),
+    [config],
+  );
   const api = useMemo(
     () =>
       async <T,>(path: string, init?: RequestInit): Promise<T> => {
-        const response = await fetch(config.apiUrl + '/api/v1' + path, init);
+        const response = await request(config.apiUrl + '/api/v1' + path, init);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return response.json();
       },
-    [config.apiUrl],
+    [config.apiUrl, request],
   );
-  const ctx = { config, api };
+  const ctx = { config, api, request };
   return (
     <div
       className="portal"
       style={
         {
-          '--accent': config.color,
-          '--accent-ink': readableForeground(config.color),
-          '--hero-ink': readableForeground(config.background),
-          '--hero': config.background,
+          '--accent':
+            (dark ? config.theme?.darkTokens?.accent : undefined) ??
+            config.color,
+          '--accent-ink': readableForeground(
+            (dark ? config.theme?.darkTokens?.accent : undefined) ??
+              config.color,
+          ),
+          '--hero-ink': readableForeground(
+            (dark ? config.theme?.darkTokens?.hero : undefined) ??
+              config.background,
+          ),
+          '--hero':
+            (dark ? config.theme?.darkTokens?.hero : undefined) ??
+            config.background,
         } as React.CSSProperties
       }
     >
@@ -166,6 +214,9 @@ export function Portal({
         <span>{config.name}</span>
         <span>Direkt verbunden mit Ihrem Operations-Team.</span>
         <a href="#main">Nach oben ↑</a>
+        {config.customerVersion && (
+          <small>Version {config.customerVersion}</small>
+        )}
       </footer>
     </div>
   );

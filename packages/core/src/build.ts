@@ -2,76 +2,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
-import { z } from 'zod';
-import {
-  contentSchema,
-  safeUrl,
-  type Env,
-  type PublicConfig,
-} from '@kieksme/csp-sdk';
+import type { PublicConfig } from '@kieksme/csp-sdk';
+export { publicConfig } from './config.js';
 import type { Plugin } from 'vite';
-const schema = z.object({
-  CSP_NAME: z.string().min(1).default('Service Desk'),
-  CSP_TAGLINE: z.string().default('Wir sind für Sie da.'),
-  CSP_DESCRIPTION: z
-    .string()
-    .default('Ihr direkter Kontakt zum Operations-Team.'),
-  CSP_COLOR: z
-    .string()
-    .regex(/^#[a-f0-9]{6}$/i)
-    .default('#176b58'),
-  CSP_BACKGROUND: z
-    .string()
-    .regex(/^#[a-f0-9]{6}$/i)
-    .default('#102e29'),
-  CSP_BASE_PATH: z
-    .string()
-    .regex(/^\/(?:[a-zA-Z0-9_-]+\/)*$/)
-    .default('/'),
-  CSP_API_URL: z.string().default('http://localhost:3001'),
-  CSP_CONTACT_PHONE: z
-    .string()
-    .regex(/^\+?[0-9 ()-]{3,40}$/)
-    .default('+49 000 000000'),
-  CSP_CONTACT_LABEL: z.string().default('Operations-Hotline'),
-  CSP_POLL_MS: z.coerce.number().int().min(1000).default(60000),
-});
-export function publicConfig(env: Env, cwd = process.cwd()): PublicConfig {
-  const c = schema.parse(env);
-  const content = env.CSP_CONTENT_PATH
-    ? contentSchema.parse(
-        JSON.parse(readFileSync(resolve(cwd, env.CSP_CONTENT_PATH), 'utf8')),
-      )
-    : contentSchema.parse({});
-  for (const item of [...content.processes, ...content.tickets])
-    if (item.href) safeUrl(item.href);
-  const avatars = env.CSP_AVATARS_PATH
-    ? z
-        .record(z.string())
-        .parse(
-          JSON.parse(readFileSync(resolve(cwd, env.CSP_AVATARS_PATH), 'utf8')),
-        )
-    : {};
-  for (const url of Object.values(avatars)) safeUrl(url);
-  return {
-    name: c.CSP_NAME,
-    tagline: c.CSP_TAGLINE,
-    description: c.CSP_DESCRIPTION,
-    color: c.CSP_COLOR,
-    background: c.CSP_BACKGROUND,
-    basePath: c.CSP_BASE_PATH,
-    apiUrl: safeUrl(c.CSP_API_URL).replace(/\/$/, ''),
-    phone: c.CSP_CONTACT_PHONE,
-    phoneLabel: c.CSP_CONTACT_LABEL,
-    logo: env.CSP_LOGO_URL ? safeUrl(env.CSP_LOGO_URL) : undefined,
-    icon: env.CSP_ICON_PATH,
-    domain: env.CSP_DOMAIN ? new URL(env.CSP_DOMAIN).origin : undefined,
-    demo: env.CSP_DEMO === 'true',
-    pollMs: c.CSP_POLL_MS,
-    content,
-    avatarOverrides: avatars,
-  };
-}
 export function portalBuild(config: PublicConfig, cwd = process.cwd()): Plugin {
   const { icon: _icon, ...browserConfig } = config;
   const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="${config.background}"/><path d="M128 270h80l40-112 48 210 32-98h56" fill="none" stroke="${config.color}" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/></svg>`;

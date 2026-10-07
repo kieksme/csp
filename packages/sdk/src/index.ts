@@ -90,7 +90,29 @@ export const contentSchema = z.object({
     .default([]),
 });
 export type Content = z.infer<typeof contentSchema>;
+export interface ThemeTokens {
+  accent?: string;
+  accentSecondary?: string;
+  hero?: string;
+  paper?: string;
+  card?: string;
+  ink?: string;
+  muted?: string;
+  line?: string;
+  soft?: string;
+  success?: string;
+  danger?: string;
+  fontFamily?: string;
+}
 export interface PublicConfig {
+  theme?: {
+    mode: 'light' | 'dark' | 'system';
+    tokens?: ThemeTokens;
+    darkTokens?: ThemeTokens;
+  };
+  avatarNames?: Record<string, string>;
+  customerVersion?: string;
+  staticDemo?: boolean;
   name: string;
   tagline: string;
   description: string;
@@ -109,6 +131,7 @@ export interface PublicConfig {
   avatarOverrides: Record<string, string>;
 }
 export interface BrowserContext {
+  request?: typeof fetch;
   config: PublicConfig;
   api: <T>(path: string, init?: RequestInit) => Promise<T>;
 }
