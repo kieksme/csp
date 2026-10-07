@@ -54,7 +54,7 @@ it('validates token units, sizes and color values', () => {
     expect(themeTokensSchema.safeParse(tokens).success).toBe(false);
 });
 
-it('compiles the shared plugin classes and emits configurable Tailwind utilities', async () => {
+it('compiles JSX utilities for core and plugins with configurable design tokens', async () => {
   const css = readFileSync(
     new URL('../packages/core/src/style.css', import.meta.url),
     'utf8',
@@ -63,8 +63,11 @@ it('compiles the shared plugin classes and emits configurable Tailwind utilities
     from: new URL('../packages/core/src/style.css', import.meta.url).pathname,
   });
   expect(result.css).not.toMatch(/@(?:apply|tailwind)\b/);
-  expect(result.css).toContain('.contact-card');
-  expect(result.css).toContain('.chat-panel');
+  expect(result.css).toContain('.bg-card');
+  expect(result.css).toContain('.rounded-card');
+  expect(result.css).toContain('grid-template-columns: 1.2fr 1fr');
+  expect(result.css).toContain('@media (max-width: 800px)');
+  expect(result.css).toContain('calc(var(--spacing) * 5.75)');
   expect(result.css).toContain('border-radius: var(--radius)');
   expect(result.css).toContain('background-color: var(--card)');
   expect(result.css).toContain('calc(var(--spacing) * 6)');

@@ -6,6 +6,8 @@ test('serves every module, filters FAQ, downloads vCard and streams chat', async
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
+  await expect(page.locator('.site-header')).toHaveCSS('display', 'flex');
+  await expect(page.locator('.contact-grid')).toHaveCSS('display', 'grid');
   await expect(
     page.getByRole('heading', { name: 'Wir sind für Sie da.' }),
   ).toBeVisible();
@@ -123,7 +125,9 @@ test('marks a failed live source and keeps hotline available', async ({
     'Letzter bekannter Zustand',
   );
   await expect(page.locator('#status')).toContainText('Provider ausgefallen');
-  await expect(page.locator('#status .dot')).not.toHaveClass(/up/);
+  await expect(page.locator('#status .dot')).not.toHaveClass(
+    /(?:^|\s)up(?:\s|$)/,
+  );
   await expect(page.getByRole('link', { name: 'Jetzt anrufen' })).toBeVisible();
 });
 
