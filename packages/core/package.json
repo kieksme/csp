@@ -38,16 +38,16 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@kieksme/csp-sdk": "workspace:^",
-    "fastify": "^5.6.1",
     "@fastify/cors": "^11.1.0",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/manrope": "^5.2.7",
+    "@kieksme/csp-sdk": "workspace:^",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.6.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "zod": "^3.25.76",
     "sharp": "^0.34.4",
-    "@fontsource/manrope": "^5.2.7",
-    "@fontsource/ibm-plex-mono": "^5.2.7",
-    "dotenv": "^17.2.3"
+    "zod": "^3.25.76"
   },
   "engines": {
     "node": ">=22.12"
@@ -62,5 +62,9 @@
   },
   "bugs": {
     "url": "https://github.com/kieksme/customer-service-portal/issues"
+  },
+  "devDependencies": {
+    "postcss": "^8.5.29",
+    "tailwindcss": "^3.4.19"
   }
 }

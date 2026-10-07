@@ -1,3 +1,4 @@
+import { resolveThemeTokens, themeTokenKeys, tokenVariable } from './theme.js';
 import { staticDemoRequest } from './demo.js';
 import { useMemo, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -42,34 +43,14 @@ export function Portal({
   });
   const [offline, setOffline] = useState(!navigator.onLine);
   useEffect(() => {
-    for (const key of [
-      'accent',
-      'accent-secondary',
-      'hero',
-      'paper',
-      'card',
-      'ink',
-      'muted',
-      'line',
-      'soft',
-      'success',
-      'danger',
-      'font-family',
-    ])
-      document.documentElement.style.removeProperty('--' + key);
-    const tokens = {
-      ...config.theme?.tokens,
-      ...(dark ? config.theme?.darkTokens : {}),
-    };
-    for (const [key, value] of Object.entries(tokens)) {
-      const name =
-        key === 'fontFamily'
-          ? 'font-family'
-          : key === 'accentSecondary'
-            ? 'accent-secondary'
-            : key;
-      document.documentElement.style.setProperty('--' + name, value);
-    }
+    for (const key of themeTokenKeys)
+      document.documentElement.style.removeProperty('--' + tokenVariable(key));
+    const tokens = resolveThemeTokens(config, dark);
+    for (const [key, value] of Object.entries(tokens))
+      document.documentElement.style.setProperty(
+        '--' + tokenVariable(key),
+        value,
+      );
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
     try {
       localStorage.setItem('csp-theme', dark ? 'dark' : 'light');
@@ -105,20 +86,12 @@ export function Portal({
       className="portal"
       style={
         {
-          '--accent':
-            (dark ? config.theme?.darkTokens?.accent : undefined) ??
-            config.color,
           '--accent-ink': readableForeground(
-            (dark ? config.theme?.darkTokens?.accent : undefined) ??
-              config.color,
+            resolveThemeTokens(config, dark).accent,
           ),
           '--hero-ink': readableForeground(
-            (dark ? config.theme?.darkTokens?.hero : undefined) ??
-              config.background,
+            resolveThemeTokens(config, dark).hero,
           ),
-          '--hero':
-            (dark ? config.theme?.darkTokens?.hero : undefined) ??
-            config.background,
         } as React.CSSProperties
       }
     >
