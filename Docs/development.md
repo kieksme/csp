@@ -18,6 +18,14 @@ Node.js 22.12+ und pnpm 12.8.1 verwenden. Nach `pnpm install --frozen-lockfile` 
 
 Vor Browsertests `pnpm exec playwright install chromium` ausführen. In CI installiert Playwright zusätzlich die Systemabhängigkeiten. `pnpm format` formatiert die Dateien; generiertes `CHANGELOG.md` ist von der allgemeinen Prüfung ausgenommen.
 
+## Dokumentation bei Feature-Änderungen
+
+Jede Ergänzung, Änderung oder Entfernung eines Features muss im selben PR die betroffene Dokumentation aktualisieren. Die Dokumentationsänderung ist Teil der Fertigstellung und muss vor dem Merge vorhanden sein; sie darf nicht auf einen späteren PR verschoben werden.
+
+Für neue oder geänderte Konfigurationsoptionen in [Konfiguration](configuration.md) Name, Zweck, Pflichtstatus, Standardwert, zulässige Werte und Grenzen sowie Build-/Runtime-Zuordnung dokumentieren. Beispiele, Env-Vorlagen und das Editor-Schema bei Änderungen ihres Vertrags ebenfalls aktualisieren. Bei Änderungen an Verhalten, Plugins, CLI, API oder Deployment die jeweiligen Seiten unter `Docs/` und betroffene README-Dateien anpassen; entfernte Funktionen auch aus Beispielen entfernen.
+
+`Docs/` ist die Quelle für das GitHub-Wiki. Verwaltete Wiki-Seiten nicht direkt bearbeiten; sie werden aus dem Release-Tag veröffentlicht. Im PR die geänderten Dokumentationsdateien nennen und die Dokumentationsprüfung bestätigen. `pnpm test:docs` sowie die Formatierungsprüfung müssen erfolgreich sein. Die Linkprüfung ersetzt nicht den inhaltlichen Abgleich mit dem implementierten Verhalten.
+
 ## CI
 
 `.github/workflows/ci.yml` läuft bei Pull Requests und Pushes auf `main`. Der Prüfjob führt `pnpm check`, den Paket-Smoke-Test und Browsertests aus und lädt Browser-Belege als Artefakt hoch. Ein separater Job baut das API-Image und prüft `/health` im Demo-Modus.
