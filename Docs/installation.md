@@ -30,7 +30,7 @@ cd mein-kundenportal
 cp .env.example .env
 ```
 
-Branding, API-URL, Kontakt, erlaubte Frontend-Origin und Chat-Provider in `.env` konfigurieren, dann:
+Branding, API-URL, Kontakt und Plugin-Auswahl in `portal.config.json` konfigurieren; erlaubte Frontend-Origin und Chat-Provider in `.env`, dann:
 
 ```sh
 pnpm install
@@ -38,7 +38,7 @@ pnpm build
 pnpm start:api
 ```
 
-`pnpm dev` startet in einem zweiten Terminal das Frontend. Die Vorlage aktiviert `contact`, `content` und `chat`; SIGNL4 und Kuma werden bei Bedarf hinzugefügt. Außerhalb der Demo benötigt Chat ein erreichbares Modell. Ollama ist voreingestellt; Modell installieren und Ollama starten oder einen anderen Provider konfigurieren. Für eine ausschließlich synthetische Vorschau ausdrücklich `CSP_DEMO=true` setzen und neu bauen/starten.
+`pnpm dev` startet Frontend und API gemeinsam. Die Vorlage aktiviert `contact`, `content` und `chat`; SIGNL4 und Kuma werden bei Bedarf hinzugefügt. Außerhalb der Demo benötigt Chat ein erreichbares Modell. Ollama ist voreingestellt; Modell installieren und Ollama starten oder einen anderen Provider konfigurieren. Für eine ausschließlich synthetische Vorschau ausdrücklich `CSP_DEMO=true` setzen und neu bauen/starten.
 
 Die CLI erwartet ein noch nicht vorhandenes Zielverzeichnis. Initialisierung installiert keine Abhängigkeiten. Das erzeugte Kundenrepo sollte außerhalb des Produkt-Workspaces liegen, damit Plugin-Mutationen dessen Lockfile nicht verändern. Nach der Installation das Kunden-Lockfile committen.
 

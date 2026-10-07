@@ -21,19 +21,19 @@ Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicC
 
 ## Repository-Struktur
 
-| Pfad                 | Verantwortung                                                                                |
-| -------------------- | -------------------------------------------------------------------------------------------- |
-| `packages/sdk`       | TypeScript-Verträge, Zod-Inhaltsschema, Plugin-Prüfung, Live-Cache, Browser-Hooks und vCards |
-| `packages/core`      | React-Shell und Styles, öffentliche Konfiguration, Vite/PWA-Build und Fastify-Host           |
-| `packages/cli`       | Kundenrepo initialisieren und Plugin-Abhängigkeiten/Registrierungen verwalten                |
-| `packages/plugin-*`  | Kontakt, SIGNL4, Kuma, Inhalte und Chat als unabhängige Pakete                               |
-| `apps/demo`          | Vollständige synthetische Demo mit allen fünf Plugins                                        |
-| `apps/northstar`     | Zweite Marke mit Kontakt, Inhalten und Chat                                                  |
-| `templates/customer` | Eigenständige Kunden-Vorlage einschließlich Dockerfile und Pages-Workflow                    |
-| `scripts`            | Versions-/Paketprüfung, Vorlagensynchronisation, Paket-Smoke-Test und Wiki-Abgleich          |
-| `tests`              | Unit-/Integrationstests; `tests/browser` enthält Playwright-Fälle                            |
-| `Docs`               | Quellen für die Projekt- und Wiki-Dokumentation                                              |
-| `.github/workflows`  | CI, Release Please/npm-Veröffentlichung und Wiki-Spiegelung                                  |
+| Pfad                 | Verantwortung                                                                                 |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| `packages/sdk`       | TypeScript-Verträge, Zod-Inhaltsschema, Plugin-Prüfung, Live-Cache, Browser-Hooks und vCards  |
+| `packages/core`      | React-Shell und Styles, öffentliche Konfiguration, Vite/PWA-Build und Fastify-Host            |
+| `packages/cli`       | Profil validieren, Kundenrepo initialisieren, entwickeln, bauen/starten und Plugins verwalten |
+| `packages/plugin-*`  | Kontakt, SIGNL4, Kuma, Inhalte und Chat als unabhängige Pakete                                |
+| `apps/demo`          | Vollständige synthetische Demo mit allen fünf Plugins                                         |
+| `apps/northstar`     | Zweite Marke mit Kontakt, Inhalten und Chat                                                   |
+| `templates/customer` | Deklaratives Kundenprofil, Inhalte und kurzer Aufruf des gemeinsamen Workflows                |
+| `scripts`            | Versions-/Paketprüfung, Vorlagensynchronisation, Paket-Smoke-Test und Wiki-Abgleich           |
+| `tests`              | Unit-/Integrationstests; `tests/browser` enthält Playwright-Fälle                             |
+| `Docs`               | Quellen für die Projekt- und Wiki-Dokumentation                                               |
+| `.github/workflows`  | CI, Release Please/npm-Veröffentlichung und Wiki-Spiegelung                                   |
 
 `scripts/sync-template.mjs` übernimmt die Kunden-Vorlage beim CLI-Build und ersetzt Workspace-Abhängigkeiten durch die aktuellen Paketversionen. Die generierte Kopie unter `packages/cli/template` wird nicht manuell bearbeitet.
 
@@ -41,7 +41,7 @@ Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicC
 
 Die acht öffentlichen Pakete heißen `@kieksme/csp-sdk`, `@kieksme/csp-core`, `@kieksme/csp-cli` und `@kieksme/csp-plugin-{contact,signl4,kuma,content,chat}`. Alle erhalten dieselbe Release-Version. Private Apps und Kunden-Vorlage werden ebenfalls versioniert, aber nicht auf npm veröffentlicht.
 
-Die Core-API trennt Exporte für `./browser`, `./server` und `./build`. Plugins haben getrennte Browser- und Server-Exporte. SDK-Kompatibilität und Plugin-Abhängigkeiten werden zur Laufzeit überprüft. Kundenupdates erfolgen über Paketversionen und Lockfile mit anschließendem Build und Deployment.
+Die Core-API trennt Exporte für `./browser`, `./server`, `./config`, `./profile` und `./build`. Plugins haben getrennte Browser- und Server-Exporte. SDK-Kompatibilität und Plugin-Abhängigkeiten werden zur Laufzeit überprüft. Kundenupdates erfolgen über Paketversionen und Lockfile mit anschließendem Build und Deployment.
 
 ## Cache und Offline-Verhalten
 
