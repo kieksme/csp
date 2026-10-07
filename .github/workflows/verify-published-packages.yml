@@ -23,13 +23,23 @@ jobs:
           CSP_DEMO: 'true'
           CSP_CONTACT_PHONE: '+49000'
         run: |
-          pnpm dlx @kieksme/csp-cli@0.4.0 init "$RUNNER_TEMP/public-customer"
+          initialized=false
+          for attempt in $(seq 1 12); do
+            if pnpm dlx @kieksme/csp-cli@0.4.0 init "$RUNNER_TEMP/public-customer"; then initialized=true; break; fi
+            sleep 10
+          done
+          test "$initialized" = true
           cd "$RUNNER_TEMP/public-customer"
           test ! -e main.tsx
           test ! -e server.ts
           test ! -e vite.config.ts
           test ! -e Dockerfile
-          pnpm install
+          installed=false
+          for attempt in $(seq 1 12); do
+            if pnpm install; then installed=true; break; fi
+            sleep 10
+          done
+          test "$installed" = true
           pnpm install --frozen-lockfile
           pnpm exec csp validate
           pnpm build
