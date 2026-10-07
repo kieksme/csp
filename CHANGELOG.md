@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.4.0](https://github.com/kieksme/csp/compare/v0.3.0...v0.4.0) (2026-10-07)
+
+
+### Features
+
+* configure customer instances through shared CSP runtime ([f67b7ef](https://github.com/kieksme/csp/commit/f67b7efe8522a984e8973a2d2c8ca623c257607d))
+* configure customer instances through shared CSP runtime ([02d4c28](https://github.com/kieksme/csp/commit/02d4c283d583d712e06be8c378ae405b277d33d9))
+* **docs:** document project and mirror releases to wiki ([6bda7fb](https://github.com/kieksme/csp/commit/6bda7fba0cc3ae164e5d4b8e72ea98a03e46ad4b))
+* **docs:** Projektdokumentation und Wiki-Spiegelung nach Releases ([86c708b](https://github.com/kieksme/csp/commit/86c708b08ff5d80e45c5c7c6d3e654bd79da3b1e))
+
+
+### Bug Fixes
+
+* build the template API image through the shared CLI ([a701725](https://github.com/kieksme/csp/commit/a701725ba90f61083289ea215388208e3c18482c))
+* **docs:** use automatic GitHub token for wiki sync ([9aa7528](https://github.com/kieksme/csp/commit/9aa75284d89b36f1440c4888c1afed5f35796e11))
+* keep API package imports intact in workspace production builds ([a5b16d3](https://github.com/kieksme/csp/commit/a5b16d3aed0e54cbb9024d1181485be648fd1d71))
+* **release:** link published packages and show build status ([21f1ccf](https://github.com/kieksme/csp/commit/21f1ccfe3bf661cdcb0d03fb70c703b776714a5a))
+* **release:** link published packages and show build status ([6a76d82](https://github.com/kieksme/csp/commit/6a76d82f748dd07a28b2373418591940fa388ab8))
+
 ## [0.3.0](https://github.com/kieksme/csp/compare/v0.2.1...v0.3.0) (2026-10-06)
 
 
