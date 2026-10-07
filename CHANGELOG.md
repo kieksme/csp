@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/kieksme/csp/compare/v0.4.0...v0.5.0) (2026-10-07)
+
+
+### Features
+
+* migrate portal styles to Tailwind with instance design tokens ([59feef3](https://github.com/kieksme/csp/commit/59feef3dad0fcf7d383643e1dec533f21e4f6194))
+* use Tailwind utility classes directly in portal and plugin JSX ([9cda257](https://github.com/kieksme/csp/commit/9cda25756bf6d2a4a8c2e0a6e2b345ab3f2976ec))
+
 ## [0.4.0](https://github.com/kieksme/csp/compare/v0.3.0...v0.4.0) (2026-10-07)
 
 
