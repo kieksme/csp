@@ -1,5 +1,0 @@
-## Gemeinsamer Kundenbuild
-
-`.github/workflows/customer-build.yml` verarbeitet den Kundencheckout: Installation mit Lockfile, produktive Profilvalidierung, Frontend/API-Build und API-Image-Artefakt. Das Dockerfile wird aus dem installierten CLI-Paket bereitgestellt. Der Aufruf im Kundenrepo erhält eine geprüfte Workflow-Commit-SHA, `config`, optional `pages` und `public-overrides` als JSON mit ausdrücklich gesetzten Werten. Provider-Secrets werden nicht an den Build übergeben. Pages benötigt entsprechende Caller-Rechte und das `github-pages`-Environment.
-
-Das API-Image enthält Kundenprofil, Inhalte und referenzierte Assets aus dem Kundencheckout und startet `dist-api/server.js`. Providerwerte kommen beim Start aus der Hosting-Secret-Verwaltung. Der Workflow deployt keine API; Hosting, Provider-Anbindung und Rollback sind im gewählten Staging separat zu prüfen. Frontend und API müssen zusammen mit Kundencommit, Lockfile, Paketversionen und derselben öffentlichen Konfiguration ausgerollt bzw. zurückgesetzt werden. CSP-Pakete und der Workflow müssen vor der Kundenmigration veröffentlicht sein; lokale Tarball-Tests ersetzen keine Registry-Veröffentlichung.

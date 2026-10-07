@@ -35,14 +35,19 @@ Live-Datenfehler sind über `stale`/`error` sichtbar und können von der externe
 3. Änderungen als Conventional Commits liefern (auch den Squash-Merge-Titel entsprechend setzen): `fix:` erhöht die Patch-Version, `feat:` die Minor-Version, `feat!:` oder `BREAKING CHANGE:` kennzeichnet inkompatible Änderungen. Release Please erstellt daraus automatisch den Changelog und einen Release-PR auf `main`.
 4. Release-PR prüfen und mergen. Release Please erstellt einen GitHub-Release mit Tag `v<version>`. Der anschließende Publish-Job checkt genau diesen Tag aus, validiert und baut die Pakete und veröffentlicht **alle acht Produktpakete** mit derselben neuen Version bei npmjs und GitHub Packages in unabhängigen Jobs, auch wenn sich nur ein Paket geändert hat. Private Apps und Kunden-Vorlage erhalten dieselbe Version, werden aber nicht auf npm veröffentlicht.
 5. Nach erfolgreicher Veröffentlichung bei npmjs ergänzt der npmjs-Publish-Job die GitHub-Release-Notes um Links zu den veröffentlichten npm-Paketversionen. Bei einer Wiederholung über `workflow_dispatch` mit `publish_tag` wird der Paketabschnitt aktualisiert.
-6. Kundeninstanzen aktualisieren bewusst Paketversionen und Lockfile; Deployment bleibt unabhängig.
+6. Parallel zum Publishing spiegelt der Wiki-Job die Dokumentation aus `Docs/` des erzeugten Tags in das zugehörige Wiki-Repository. Der automatische `GITHUB_TOKEN` erhält dafür `contents: write`; das Wiki muss initialisiert sein. Ein fehlgeschlagener Wiki-Job kann über den separaten Wiki-Workflow mit `tag` wiederholt werden. [Einrichtung und Ablauf](wiki.md).
+7. Kundeninstanzen aktualisieren bewusst Paketversionen und Lockfile; Deployment bleibt unabhängig.
 
 Die gemeinsame Version wird in `.release-please-manifest.json` verwaltet. `release-please-config.json` aktualisiert die Root-Version, alle Workspace-Paketversionen und die SDK-Kompatibilitätsangaben der Plugins zusammen. SDK und Plugins beziehen ihre Laufzeitangaben aus ihren eigenen Paketmanifesten; der Build bettet sie ein. Die CLI-Vorlage verwendet die aktuellen Paketversionen. `pnpm check:versions` erkennt abweichende Versionen und Pakete, die noch nicht in der Release-Konfiguration stehen.
 
-In GitHub unter **Settings → Actions → General** das Erstellen von Pull Requests durch GitHub Actions erlauben. Der Workflow verwendet `GITHUB_TOKEN` für Release-PRs und Releases sowie `NPM_AUTH_TOKEN` für npmjs. GitHub Packages verwendet `GITHUB_TOKEN` mit `packages: write`. Registry-Auswahl, Berechtigungen, Sichtbarkeit und Wiederholungen sind in [Contribute.md](../Contribute.md) beschrieben. Mit `GITHUB_TOKEN` erstellte Release-PRs starten keine weiteren Workflows automatisch; vor dem Publishing führt der Release-Workflow daher selbst `pnpm check` und `pnpm test:packages` aus. Changeset-Dateien sind nicht mehr erforderlich.
+In GitHub unter **Settings → Actions → General** das Erstellen von Pull Requests durch GitHub Actions erlauben. Der Workflow verwendet `GITHUB_TOKEN` für Release-PRs und Releases sowie `NPM_AUTH_TOKEN` für npmjs. GitHub Packages verwendet `GITHUB_TOKEN` mit `packages: write`. Registry-Auswahl, Berechtigungen, Sichtbarkeit und Wiederholungen sind in [Contribute.md](https://github.com/kieksme/csp/blob/main/Contribute.md) beschrieben. Mit `GITHUB_TOKEN` erstellte Release-PRs starten keine weiteren Workflows automatisch; vor dem Publishing führt der Release-Workflow daher selbst `pnpm check` und `pnpm test:packages` aus. Changeset-Dateien sind nicht mehr erforderlich.
 
 CI prüft Typen, Unit-/Integrationstests, alle Builds, gepackte Pakete in einer frischen Instanz, Browserfälle und einen Docker-Healthcheck. Echte Kundenzugänge werden getrennt verifiziert: Team, Schichten, Bilder, Alerts, Kuma-Monitore und eine Chat-Antwort für den gewählten Provider. Ohne diese Zugänge sind ausschließlich Mock-/Demo- und Vertragsprüfungen möglich.
 
 ## Thinkport-Konfiguration
 
 `examples/thinkport.env.example` ist ein Branding-Startpunkt. Es enthält keine realen Teamkontakte, Tickets, Alerts oder API-Schlüssel. Die bestehende Site in `circle-zero/docs` wird von diesem Projekt nicht verändert oder umgeschaltet.
+
+## Weitere Betriebsdokumentation
+
+[Deployment](deployment.md) beschreibt GitHub Pages und den API-Host, [API](api.md) die Antworten und SSE-Ereignisse, [Fehlerbehebung](troubleshooting.md) häufige Störungen.

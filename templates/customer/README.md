@@ -22,4 +22,4 @@ Eine synthetische API-Demo aktiviert `public.demo: true`. Zusätzlich aktiviert 
 
 Plugins verwalten: `pnpm exec csp plugin add @kieksme/csp-plugin-signl4`, `remove <name>`, `list`. Versionen werden im Paketmanifest und Lockfile verwaltet. Ein Plugin muss installiert, in `dependencies` deklariert und SDK-kompatibel sein.
 
-Die CI-Vorlage ruft den gemeinsamen Workflow auf. **Vor Aktivierung `@main` durch eine geprüfte Commit-SHA ersetzen, die den neuen Workflow enthält.** `pages: true` aktiviert GitHub Pages; sonst werden nur Artefakte erzeugt. Öffentliche Overrides werden als JSON übergeben, ohne leere GitHub-Variablen. Das API-Image ist ein Build-Artefakt; der API-Host und dessen Deployment müssen separat eingerichtet werden.
+Die CI-Vorlage ruft den gemeinsamen Workflow auf. Der Workflow ist auf eine konkrete CSP-Commit-SHA fixiert. `pages: true` aktiviert GitHub Pages; sonst werden nur Artefakte erzeugt. Öffentliche Overrides werden als JSON übergeben, ohne leere GitHub-Variablen. Das API-Image ist ein Build-Artefakt; der API-Host und dessen Deployment müssen separat eingerichtet werden.

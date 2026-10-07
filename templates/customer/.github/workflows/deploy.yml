@@ -9,8 +9,8 @@ permissions:
   id-token: write
 jobs:
   portal:
-    # Select a reviewed CSP revision containing customer-build.yml before enabling CI.
-    uses: kieksme/csp/.github/workflows/customer-build.yml@main
+    # Pinned shared build implementation. Update deliberately with CSP releases.
+    uses: kieksme/csp/.github/workflows/customer-build.yml@02d4c283d583d712e06be8c378ae405b277d33d9
     with:
       config: portal.config.json
       pages: false

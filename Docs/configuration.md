@@ -51,6 +51,21 @@ Limits: `CSP_CHAT_RATE_LIMIT=10` Anfragen/Minute/IP; `CSP_CHAT_CONCURRENCY=2` ak
 
 Quellen: [OpenAI Responses](https://developers.openai.com/api/docs/guides/streaming-responses), [Azure Responses](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses), [Ollama Chat](https://docs.ollama.com/api/chat).
 
+## Build und Runtime getrennt konfigurieren
+
+Vite lädt `.env`-Dateien für den jeweiligen Modus und übernimmt darüber Prozessvariablen. Der API-Einstieg lädt `.env.local` und `.env` und verwendet die Runtime-Prozessvariablen. `.env.production` ist deshalb keine automatische API-Runtime-Konfiguration.
+
+| Runtime-Variable      | Standard / Bedeutung                                            |
+| --------------------- | --------------------------------------------------------------- |
+| `CSP_PORT`            | `3001`; API-Port                                                |
+| `CSP_HOST`            | `0.0.0.0`; Bind-Adresse                                         |
+| `CSP_ALLOWED_ORIGINS` | Leere Liste; kommagetrennte erlaubte Frontend-Origins ohne Pfad |
+| `CSP_TRUST_PROXY`     | Nur `true` aktiviert Vertrauen in Proxy-Header                  |
+
+Hotline und Inhaltsdatei auch am API-Host setzen. Provider-Variablen werden nur für installierte Plugins validiert. Der Demo-Modus entbindet SIGNL4/Kuma/Chat von produktiven Provider-Pflichtwerten; Kontakt und Inhaltsdatei bleiben erforderlich.
+
+Weiter: [Deployment](deployment.md), [Inhalte](content.md), [Sicherheit und Daten](security.md).
+
 ## Deklarative Kundeninstanzen
 
 Neue Kundeninstanzen verwenden `portal.config.json` (Schema-Version 1). Core stellt den strikten Loader unter `@kieksme/csp-core/profile` bereit; die CLI stellt `validate`, `inspect`, `dev`, `build`, `start` und `migrate` bereit. `--config` bzw. `CSP_CONFIG_PATH` wählen das Profil; `--mode` wählt die Build-Umgebung. `validate --production` und `build --production` lehnen Beispielhotline und `example.invalid`-Adressen außerhalb expliziter Demos ab.
