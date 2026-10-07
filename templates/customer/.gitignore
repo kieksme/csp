@@ -3,3 +3,6 @@ dist/
 dist-api/
 .env
 .env.local
+
+.csp/
+.env.branding

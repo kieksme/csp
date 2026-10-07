@@ -20,7 +20,15 @@
       "types": "./dist/build.d.ts",
       "import": "./dist/build.js"
     },
-    "./style.css": "./dist/browser.css"
+    "./style.css": "./dist/browser.css",
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js"
+    },
+    "./profile": {
+      "types": "./dist/profile.d.ts",
+      "import": "./dist/profile.js"
+    }
   },
   "publishConfig": {
     "access": "public",
@@ -38,7 +46,8 @@
     "zod": "^3.25.76",
     "sharp": "^0.34.4",
     "@fontsource/manrope": "^5.2.7",
-    "@fontsource/ibm-plex-mono": "^5.2.7"
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "dotenv": "^17.2.3"
   },
   "engines": {
     "node": ">=22.12"

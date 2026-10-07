@@ -7,7 +7,7 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "build": "pnpm -r --filter \"./packages/**\" build && pnpm --filter csp-demo build && pnpm --filter csp-northstar build && pnpm --filter csp-customer-template build",
+    "build": "pnpm -r --filter \"./packages/**\" build && pnpm --filter csp-demo build && pnpm --filter csp-northstar build && pnpm --filter csp-customer-template exec node ../../packages/cli/dist/index.js build",
     "dev": "pnpm --filter csp-demo dev",
     "dev:api": "pnpm --filter csp-demo dev:api",
     "typecheck": "tsc --noEmit",

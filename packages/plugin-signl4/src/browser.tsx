@@ -1,3 +1,4 @@
+import { Avatar } from './avatar.js';
 import { cspPlugin } from '../package.json';
 import { useEffect, useState } from 'react';
 import { useLive, DataState } from '@kieksme/csp-sdk/browser';
@@ -59,7 +60,10 @@ function ScheduleView(ctx: BrowserContext) {
               }
               key={s.userId + s.start + i}
             >
-              <span>{s.name}</span>
+              <span className="shift-person">
+                <Avatar config={ctx.config} id={s.userId} name={s.name} />
+                {s.name}
+              </span>
               <time>
                 {time(s.start)} – {time(s.end)}
               </time>
@@ -111,27 +115,12 @@ function Team(ctx: BrowserContext) {
         {live.data?.map((p) => (
           <article className="person" key={p.id}>
             <div className="person-top">
-              {ctx.config.avatarOverrides[p.id] || p.avatar ? (
-                <img
-                  className="avatar"
-                  src={
-                    ctx.config.avatarOverrides[p.id] ??
-                    ctx.config.apiUrl + '/api/v1' + p.avatar
-                  }
-                  alt={'Profilbild ' + p.name}
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              ) : (
-                <span className="avatar" aria-hidden="true">
-                  {p.name
-                    .split(' ')
-                    .map((s) => s[0])
-                    .slice(0, 2)
-                    .join('')}
-                </span>
-              )}
+              <Avatar
+                config={ctx.config}
+                id={p.id}
+                name={p.name}
+                provider={p.avatar}
+              />
               <div>
                 <h3>{p.name}</h3>
                 <small>{p.role ?? 'Operations'}</small>

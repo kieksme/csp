@@ -2,20 +2,18 @@
 
 ## Eine Instanz pro Kunde
 
-Jedes Kundenrepo enthält seine Plugin-Registrierung, Inhalte, Branding und Lockfile. SDK, Core und Plugins kommen aus derselben npm-Paketfamilie. Die CLI erzeugt `portal.browser.ts` und `portal.server.ts`; kundenspezifische Core-Forks sind nicht erforderlich. Updates laufen über normale Dependency-PRs mit neuem Build.
+Jedes Kundenrepo enthält seine Plugin-Registrierung, Inhalte, Branding und Lockfile. SDK, Core und Plugins kommen aus derselben npm-Paketfamilie. Die CLI erzeugt getrennte Plugin-Imports im ignorierten `.csp/`-Verzeichnis; kundenspezifische Core-Forks sind nicht erforderlich. Updates laufen über normale Dependency-PRs mit neuem Build.
 
-Das Frontend ist ein statisches `dist/` und läuft auf GitHub Pages, einem Webserver oder Hosting beim Kunden. Für Pages im Repo-Unterpfad `CSP_BASE_PATH=/<repo>/` setzen. Custom Domain über DNS/Hosting konfigurieren; `CSP_DOMAIN` setzt lediglich die Metadaten. Bei Pages mit Custom Domain zusätzlich `public/CNAME` anlegen.
+Das Frontend ist ein statisches `dist/` und läuft auf GitHub Pages, einem Webserver oder Hosting beim Kunden. Für Pages im Repo-Unterpfad `CSP_BASE_PATH=/<repo>/` setzen. Custom Domain über DNS/Hosting konfigurieren; `CSP_DOMAIN` setzt lediglich die Metadaten. Bei Pages mit Custom Domain DNS und die Pages-Domain in GitHub konfigurieren.
 
 Der API-Service läuft separat als Node-Prozess oder Container. `.env` gehört weder ins Repo noch in das Image. Runtime-Variablen per Hosting-Secrets oder `docker run --env-file …` übergeben.
 
-```sh
-# Produktrepo: API-Image der Kunden-Vorlage bauen
-# Enthält zunächst contact/content/chat; weitere Plugins in eigener Instanz hinzufügen.
-docker build -t customer-service-api .
-docker run --rm -p 3001:3001 --env-file customer-runtime.env customer-service-api
-```
+Der gemeinsame [Kundenworkflow](deployment.md) liefert ein API-Image-Artefakt aus dem Dockerfile im CLI-Paket. Kunden pflegen kein eigenes Dockerfile. Das API-Deployment erfolgt separat beim gewählten Host; das Frontend kann optional auf Pages veröffentlicht werden.
 
-Die eigenständige Kunden-Vorlage enthält einen eigenen Dockerfile. Nach `pnpm install` das Lockfile committen und das Image im Kundenrepo bauen. Der Workflow liefert ein API-Image als Artefakt; dessen Deployment erfolgt beim gewählten API-Host. Das Frontend wird per GitHub Pages deployt.
+```sh
+docker load -i api-image.tar
+docker run --rm -p 3001:3001 --env-file customer-runtime.env customer-api
+```
 
 `CSP_ALLOWED_ORIGINS` enthält eine kommagetrennte Liste tatsächlicher Frontend-Origins. `CSP_PORT=3001`, `CSP_HOST=0.0.0.0` sind Runtime-Defaults. `CSP_TRUST_PROXY=true` nur hinter einem vertrauenswürdigen Proxy setzen, der eingehende Forwarded-Header ersetzt; standardmäßig sind sie nicht vertrauenswürdig. CORS ist kein Login: das Portal und seine Daten sind wie vereinbart öffentlich.
 

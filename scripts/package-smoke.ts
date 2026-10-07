@@ -89,7 +89,12 @@ try {
     'CSP_DEMO=true\nCSP_NAME=Packed Customer\nCSP_CONTACT_PHONE=+49000\nCSP_API_URL=http://localhost:3999\nCSP_ALLOWED_ORIGINS=http://localhost:4173\nCSP_CHAT_OPENAI_API_KEY=sentinel-not-for-browser\nCSP_SIGNL4_API_KEY=sentinel-not-for-browser\n',
   );
   await run('pnpm', ['install'], customer);
-  await run('pnpm', ['exec', 'tsc', '--noEmit'], customer);
+  await run('pnpm', ['exec', 'csp', 'validate'], customer);
+  for (const entry of ['main.tsx', 'server.ts', 'vite.config.ts', 'Dockerfile'])
+    assert(
+      !(await readdir(customer)).includes(entry),
+      'Customer entrypoint still copied',
+    );
   await run('pnpm', ['build'], customer);
   const assets = await readdir(join(customer, 'dist/assets'));
   for (const asset of assets.filter((a) => /\.(js|css)$/.test(a)))
@@ -99,6 +104,49 @@ try {
       ),
       'Secret leaked into browser bundle',
     );
+  const profilePath = join(customer, 'portal.config.json');
+  const profile = JSON.parse(await readFile(profilePath, 'utf8'));
+  profile.public.basePath = '/pilot/';
+  profile.branding.logoFile = 'public/logo.svg';
+  profile.branding.iconFile = 'public/logo.svg';
+  profile.avatarsFile = 'avatars.json';
+  await mkdir(join(customer, 'public'), { recursive: true });
+  await writeFile(
+    join(customer, 'public/logo.svg'),
+    '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#176b58"/></svg>',
+  );
+  await writeFile(join(customer, 'public/unused.eps'), 'unused print source');
+  await writeFile(
+    join(customer, 'avatars.json'),
+    JSON.stringify({
+      ids: { 'demo-lena': 'public/logo.svg' },
+      names: { 'Lena Demo': 'public/logo.svg' },
+    }),
+  );
+  await writeFile(profilePath, JSON.stringify(profile, null, 2));
+  await run('pnpm', ['build'], customer);
+  const manifest = JSON.parse(
+    await readFile(join(customer, 'dist/manifest.webmanifest'), 'utf8'),
+  );
+  assert.equal(manifest.scope, '/pilot/');
+  assert(
+    (await readFile(join(customer, 'dist/sw.js'), 'utf8')).includes('/pilot/'),
+  );
+  assert(
+    (await readFile(join(customer, 'dist/index.html'), 'utf8')).includes(
+      '/pilot/assets/',
+    ),
+  );
+  assert(
+    (await readdir(join(customer, 'dist/assets'))).some((x) =>
+      x.endsWith('-logo.svg'),
+    ),
+  );
+  assert(
+    !(await readdir(join(customer, 'dist/assets'))).some((x) =>
+      x.endsWith('.eps'),
+    ),
+  );
   const cli = join(customer, 'node_modules/@kieksme/csp-cli/dist/index.js');
   // A third-party plugin has no workspace imports; installation is a real pnpm transaction.
   const fixture = join(temp, 'fixture');
@@ -149,10 +197,50 @@ try {
     customer,
   );
   await run('pnpm', ['build'], customer);
-  async function verifyRoute(exists: boolean) {
-    const code = `import{createServer}from'@kieksme/csp-core/server';import{publicConfig}from'@kieksme/csp-core/build';import plugins from './portal.server.ts';const env={CSP_DEMO:'true',CSP_CONTACT_PHONE:'+49000',CSP_CONTENT_PATH:'content.json'};const app=await createServer({plugins,env,config:publicConfig(env)});const r=await app.inject({url:'/api/v1/external'});if(r.statusCode!==${exists ? 200 : 404})throw new Error('External route mismatch');await app.close();`;
-    await writeFile(join(customer, 'smoke.mts'), code);
-    await run('pnpm', ['exec', 'tsx', 'smoke.mts'], customer);
+  async function verifyRoute(exists: boolean, directory = customer) {
+    const child = spawn('node', [join(directory, 'dist-api/server.js')], {
+      cwd: directory,
+      env: {
+        ...process.env,
+        CSP_PORT: '3999',
+        CSP_DEMO: 'true',
+        CSP_CONTACT_PHONE: '+49000',
+      },
+      stdio: 'pipe',
+    });
+    const exited = new Promise<void>((ok) => child.once('exit', () => ok()));
+    let errors = '';
+    child.stderr.on('data', (x) => (errors += x));
+    try {
+      let ready = false;
+      for (let i = 0; i < 100; i++) {
+        if (child.exitCode !== null) throw new Error('API failed: ' + errors);
+        try {
+          const response = await fetch('http://127.0.0.1:3999/health');
+          if (response.ok) {
+            ready = true;
+            break;
+          }
+        } catch {}
+        await new Promise((ok) => setTimeout(ok, 100));
+      }
+      assert(ready, 'API startup timeout: ' + errors);
+      const route = await fetch('http://127.0.0.1:3999/api/v1/external');
+      assert.equal(route.status, exists ? 200 : 404);
+      const chat = await fetch('http://127.0.0.1:3999/api/v1/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: 'Help' }] }),
+      });
+      assert.equal(chat.status, 200);
+      assert(
+        (await chat.text()).includes('event: done'),
+        'Demo chat stream did not finish',
+      );
+    } finally {
+      child.kill('SIGTERM');
+      await exited;
+    }
   }
   await verifyRoute(true);
   assert(
@@ -165,10 +253,24 @@ try {
     [cli, 'plugin', 'remove', 'csp-smoke-external-plugin'],
     customer,
   );
-  await verifyRoute(false);
   await run('pnpm', ['build'], customer);
+  await verifyRoute(false);
+  const production = join(temp, 'production');
+  await run(
+    'pnpm',
+    [
+      '--filter',
+      'csp-customer-template',
+      'deploy',
+      '--prod',
+      '--legacy',
+      production,
+    ],
+    root,
+  );
+  await verifyRoute(false, production);
   console.log(
-    'Packed packages: fresh customer install, typecheck, build, secret scan, external plugin add/remove and API routes passed.',
+    'Packed packages: fresh customer install, validation, root/subpath builds, referenced assets, secret scan, external plugin add/remove, production-only deployment and API routes passed.',
   );
 } finally {
   await rm(temp, { recursive: true, force: true });

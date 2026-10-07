@@ -65,3 +65,13 @@ Vite lädt `.env`-Dateien für den jeweiligen Modus und übernimmt darüber Proz
 Hotline und Inhaltsdatei auch am API-Host setzen. Provider-Variablen werden nur für installierte Plugins validiert. Der Demo-Modus entbindet SIGNL4/Kuma/Chat von produktiven Provider-Pflichtwerten; Kontakt und Inhaltsdatei bleiben erforderlich.
 
 Weiter: [Deployment](deployment.md), [Inhalte](content.md), [Sicherheit und Daten](security.md).
+
+## Deklarative Kundeninstanzen
+
+Neue Kundeninstanzen verwenden `portal.config.json` (Schema-Version 1). Core stellt den strikten Loader unter `@kieksme/csp-core/profile` bereit; die CLI stellt `validate`, `inspect`, `dev`, `build`, `start` und `migrate` bereit. `--config` bzw. `CSP_CONFIG_PATH` wählen das Profil; `--mode` wählt die Build-Umgebung. `validate --production` und `build --production` lehnen Beispielhotline und `example.invalid`-Adressen außerhalb expliziter Demos ab.
+
+Priorität: zentrale Defaults → Profil → unterstützte öffentliche Env-Overrides. Builds laden `.env.branding` als Übergangsadapter, danach Vites `.env`, `.env.local`, `.env.[mode]`, `.env.[mode].local`, schließlich Prozessvariablen. API-Starts laden `.env.branding`, `.env`, `.env.local`, Prozessvariablen. Modusspezifische Dateien gehören nur zum Build. Alle Dateipfade sind relativ zum Profilverzeichnis; URL-Overrides bleiben URLs. Ein API-Neustart ändert kein bereits gebautes Frontend.
+
+`csp migrate` ergänzt ein Basisprofil aus der alten Plugin-Liste, ohne bestehende Dateien zu überschreiben oder zu löschen. Bestehende `.env.branding`-Werte und explizite Overrides werden weiter gelesen. Kundenspezifische TypeScript-Konfiguration, Styles und Komponenten müssen vor Entfernung der alten Einstiege auf die gemeinsame Schnittstelle abgebildet und verglichen werden. Die CLI migriert solche Anpassungen nicht automatisch. Alte `portal.plugins.json`-Instanzen unterstützen weiterhin Plugin-Verwaltung.
+
+Das Editor-Schema liegt im CLI-Paket unter `runtime/portal.schema.json`. Es dokumentiert die Profilstruktur; die Zod-Validierung im Loader ist maßgeblich. Die deklarative Avatar-Datei enthält getrennte `ids` und `names`, lokale Webdateien oder HTTP(S)-URLs. Provider-IDs haben Vorrang vor normalisierten Namen; fehlerhafte Bilder fallen auf Initialen zurück.

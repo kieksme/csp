@@ -1,52 +1,16 @@
-name: Build and deploy customer portal
+name: Customer portal
 on:
   pull_request:
   push:
     branches: [main]
 permissions:
   contents: read
-concurrency:
-  group: customer-portal-${{ github.ref }}
-  cancel-in-progress: true
+  pages: write
+  id-token: write
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec tsc --noEmit
-      - run: pnpm build
-        env:
-          CSP_NAME: ${{ vars.CSP_NAME }}
-          CSP_API_URL: ${{ vars.CSP_API_URL }}
-          CSP_BASE_PATH: ${{ vars.CSP_BASE_PATH || '/' }}
-          CSP_DOMAIN: ${{ vars.CSP_DOMAIN }}
-          CSP_CONTACT_PHONE: ${{ vars.CSP_CONTACT_PHONE }}
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-      - run: docker build -t customer-api .
-      - run: docker save customer-api -o customer-api.tar
-      - uses: actions/upload-artifact@v4
-        with:
-          name: api-image
-          path: customer-api.tar
-  deploy:
-    if: github.event_name == 'push'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
+  portal:
+    # Pinned shared build implementation. Update deliberately with CSP releases.
+    uses: kieksme/csp/.github/workflows/customer-build.yml@02d4c283d583d712e06be8c378ae405b277d33d9
+    with:
+      config: portal.config.json
+      pages: false

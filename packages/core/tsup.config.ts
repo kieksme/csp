@@ -1,6 +1,12 @@
 import { defineConfig } from 'tsup';
 export default defineConfig({
-  entry: ['src/browser.tsx', 'src/server.ts', 'src/build.ts'],
+  entry: [
+    'src/browser.tsx',
+    'src/server.ts',
+    'src/build.ts',
+    'src/config.ts',
+    'src/profile.ts',
+  ],
   format: ['esm'],
   dts: true,
   clean: true,
@@ -9,6 +15,7 @@ export default defineConfig({
     'react',
     'react-dom',
     'sharp',
+    'dotenv',
     '@fontsource/manrope',
     '@fontsource/ibm-plex-mono',
   ],

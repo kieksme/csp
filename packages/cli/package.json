@@ -6,7 +6,8 @@
   "files": [
     "dist",
     "README.md",
-    "template"
+    "template",
+    "runtime"
   ],
   "exports": {
     ".": {
@@ -19,12 +20,18 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "node ../../scripts/sync-template.mjs && tsup src/index.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom"
+    "build": "node ../../scripts/sync-template.mjs && tsup src/index.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom --external @kieksme/csp-core/* --external vite --external @vitejs/plugin-react --external esbuild --external dotenv --external zod"
   },
   "dependencies": {
     "@kieksme/csp-sdk": "workspace:^",
     "semver": "^7.7.3",
-    "yaml": "^2.8.1"
+    "yaml": "^2.8.1",
+    "@kieksme/csp-core": "workspace:^",
+    "vite": "^7.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "esbuild": "^0.25.10",
+    "dotenv": "^17.2.3",
+    "zod": "^3.25.76"
   },
   "engines": {
     "node": ">=22.12"

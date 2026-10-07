@@ -55,7 +55,7 @@ Der lesende Token wird als Umgebungsvariable übergeben und gehört nicht in die
 
 Der mitgelieferte [deploy.yml](templates/customer/.github/workflows/deploy.yml) benötigt **keine manuell angelegten Secrets**. GitHub Pages verwendet die von GitHub bereitgestellte Workflow-Authentifizierung mit `pages: write` und `id-token: write`. Unter **Settings → Pages** als Quelle `GitHub Actions` wählen und im Environment `github-pages` gegebenenfalls die Deployment-Regeln für `main` konfigurieren.
 
-Die Personalisierung erfolgt über die in der [README](README.md#kundeninstanz-über-github-personalisieren) beschriebenen Repository-**Variablen**. Der Workflow lädt das API-Image als Artefakt `api-image` hoch; er deployt es nicht und benötigt daher keine API-Hosting- oder Container-Registry-Zugangsdaten.
+Die Personalisierung erfolgt über `portal.config.json` und ausdrücklich gesetzte öffentliche Overrides im gemeinsamen Workflow; Details stehen in der [README](README.md#deklaratives-kundenprofil-und-deployment). Der Workflow lädt das API-Image als Artefakt `api-image` hoch; er deployt es nicht und benötigt daher keine API-Hosting- oder Container-Registry-Zugangsdaten.
 
 ## Provider-Secrets für den API-Betrieb
 

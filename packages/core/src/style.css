@@ -4,9 +4,9 @@
 @import '@fontsource/manrope/latin-800.css';
 @import '@fontsource/ibm-plex-mono/latin-400.css';
 :root {
-  font-family: Manrope, sans-serif;
-  color: #172b26;
-  background: #f6f7f2;
+  font-family: var(--font-family, Manrope, sans-serif);
+  color: var(--ink);
+  background: var(--paper);
   font-synthesis: none;
   --paper: #f6f7f2;
   --card: #fff;
@@ -166,7 +166,7 @@ summary:focus-visible {
 .signal-mark {
   width: 6px;
   height: 6px;
-  background: #c4e98f;
+  background: var(--accent-secondary, #c4e98f);
   border-radius: 50%;
 }
 h1 {
@@ -204,7 +204,7 @@ h3 {
 }
 .hero-note span {
   margin-right: 10px;
-  color: #c4e98f;
+  color: var(--accent-secondary, #c4e98f);
 }
 .hero-lines {
   position: relative;
@@ -243,7 +243,7 @@ h3 {
   height: 50px;
   top: 185px;
   left: 190px;
-  background: #c4e98f;
+  background: var(--accent-secondary, #c4e98f);
   border: 0;
 }
 .hero-lines > div {
@@ -374,10 +374,10 @@ h3 {
   flex-shrink: 0;
 }
 .dot.up {
-  background: #388264;
+  background: var(--success, #388264);
 }
 .dot.down {
-  background: #da642b;
+  background: var(--danger, #da642b);
 }
 .dot.maintenance {
   background: #bb872b;
@@ -911,4 +911,14 @@ footer a {
 :root[data-theme='dark'] .data-state.warning,
 :root[data-theme='dark'] .chat-error {
   color: #efb181;
+}
+
+.shift-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.shift-person .avatar {
+  width: 40px;
+  height: 40px;
 }
