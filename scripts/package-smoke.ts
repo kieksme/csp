@@ -197,10 +197,15 @@ try {
     customer,
   );
   await run('pnpm', ['build'], customer);
-  async function verifyRoute(exists: boolean, directory=customer) {
+  async function verifyRoute(exists: boolean, directory = customer) {
     const child = spawn('node', [join(directory, 'dist-api/server.js')], {
       cwd: directory,
-      env: { ...process.env, CSP_PORT: '3999', CSP_DEMO:'true', CSP_CONTACT_PHONE:'+49000' },
+      env: {
+        ...process.env,
+        CSP_PORT: '3999',
+        CSP_DEMO: 'true',
+        CSP_CONTACT_PHONE: '+49000',
+      },
       stdio: 'pipe',
     });
     const exited = new Promise<void>((ok) => child.once('exit', () => ok()));
@@ -250,9 +255,20 @@ try {
   );
   await run('pnpm', ['build'], customer);
   await verifyRoute(false);
-  const production=join(temp,'production');
-  await run('pnpm',['--filter','csp-customer-template','deploy','--prod','--legacy',production],root);
-  await verifyRoute(false,production);
+  const production = join(temp, 'production');
+  await run(
+    'pnpm',
+    [
+      '--filter',
+      'csp-customer-template',
+      'deploy',
+      '--prod',
+      '--legacy',
+      production,
+    ],
+    root,
+  );
+  await verifyRoute(false, production);
   console.log(
     'Packed packages: fresh customer install, validation, root/subpath builds, referenced assets, secret scan, external plugin add/remove, production-only deployment and API routes passed.',
   );
