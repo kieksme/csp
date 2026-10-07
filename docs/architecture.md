@@ -32,7 +32,7 @@ Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicC
 | `templates/customer` | Deklaratives Kundenprofil, Inhalte und kurzer Aufruf des gemeinsamen Workflows                |
 | `scripts`            | Versions-/Paketprüfung, Vorlagensynchronisation, Paket-Smoke-Test und Wiki-Abgleich           |
 | `tests`              | Unit-/Integrationstests; `tests/browser` enthält Playwright-Fälle                             |
-| `Docs`               | Quellen für die Projekt- und Wiki-Dokumentation                                               |
+| `docs`               | Quellen für die Projekt- und Wiki-Dokumentation                                               |
 | `.github/workflows`  | CI, Release Please/npm-Veröffentlichung und Wiki-Spiegelung                                   |
 
 `scripts/sync-template.mjs` übernimmt die Kunden-Vorlage beim CLI-Build und ersetzt Workspace-Abhängigkeiten durch die aktuellen Paketversionen. Die generierte Kopie unter `packages/cli/template` wird nicht manuell bearbeitet.

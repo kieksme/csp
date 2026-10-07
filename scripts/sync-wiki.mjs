@@ -13,7 +13,7 @@ const manifestName = '.csp-wiki-manifest.json';
 const pageName = /^[a-zA-Z0-9_-]+\.md$/;
 const requiredPages = ['Home.md', '_Header.md', '_Footer.md', '_Sidebar.md'];
 
-// Docs uses file links for repository browsing; GitHub Wiki uses page URLs.
+// docs uses file links for repository browsing; GitHub Wiki uses page URLs.
 // Keep fenced examples and inline code unchanged.
 export function renderWikiMarkdown(markdown, pages) {
   let fence;
@@ -72,7 +72,7 @@ export async function syncWiki(source, target, { tag, repository }) {
   const entries = await readdir(source, { withFileTypes: true });
   if (entries.some((entry) => !entry.isFile() || !pageName.test(entry.name)))
     throw new Error(
-      'Docs must contain only flat Markdown pages with safe names',
+      'docs must contain only flat Markdown pages with safe names',
     );
   const pages = new Set(entries.map((entry) => entry.name));
   for (const name of requiredPages)
@@ -132,7 +132,7 @@ if (
   const [source, target, tag, repository] = process.argv.slice(2);
   if (!source || !target || !tag || !repository) {
     console.error(
-      'Usage: node scripts/sync-wiki.mjs <Docs> <wiki-directory> <release-tag> <repository-url>',
+      'Usage: node scripts/sync-wiki.mjs <docs> <wiki-directory> <release-tag> <repository-url>',
     );
     process.exitCode = 1;
   } else {

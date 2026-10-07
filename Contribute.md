@@ -1,14 +1,14 @@
 # Mitwirken und GitHub Actions einrichten
 
-Für die lokale Entwicklung und Prüfung gelten die Schritte in der [README](README.md). Vor einem PR `pnpm check` und `pnpm test:packages` ausführen; für Browserprüfungen zusätzlich Chromium installieren und `pnpm test:browser` ausführen. Änderungen als Conventional Commits liefern; Release Please erstellt daraus automatisch den Release-PR und Changelog. Weitere Details: [Betrieb und Releases](Docs/operations.md).
+Für die lokale Entwicklung und Prüfung gelten die Schritte in der [README](README.md). Vor einem PR `pnpm check` und `pnpm test:packages` ausführen; für Browserprüfungen zusätzlich Chromium installieren und `pnpm test:browser` ausführen. Änderungen als Conventional Commits liefern; Release Please erstellt daraus automatisch den Release-PR und Changelog. Weitere Details: [Betrieb und Releases](docs/operations.md).
 
 ## Dokumentation bei Feature-Änderungen
 
 Jede Ergänzung, Änderung oder Entfernung eines Features muss im selben PR die betroffene Dokumentation aktualisieren. Die Dokumentationsänderung ist Teil der Fertigstellung und muss vor dem Merge vorhanden sein; sie darf nicht auf einen späteren PR verschoben werden.
 
-Für neue oder geänderte Konfigurationsoptionen in `Docs/configuration.md` Name, Zweck, Pflichtstatus, Standardwert, zulässige Werte und Grenzen sowie Build-/Runtime-Zuordnung dokumentieren. Beispiele, Env-Vorlagen und das Editor-Schema bei Änderungen ihres Vertrags ebenfalls aktualisieren. Bei Änderungen an Verhalten, Plugins, CLI, API oder Deployment die jeweiligen Seiten unter `Docs/` und betroffene README-Dateien anpassen; entfernte Funktionen auch aus Beispielen entfernen.
+Für neue oder geänderte Konfigurationsoptionen in `docs/configuration.md` Name, Zweck, Pflichtstatus, Standardwert, zulässige Werte und Grenzen sowie Build-/Runtime-Zuordnung dokumentieren. Beispiele, Env-Vorlagen und das Editor-Schema bei Änderungen ihres Vertrags ebenfalls aktualisieren. Bei Änderungen an Verhalten, Plugins, CLI, API oder Deployment die jeweiligen Seiten unter `docs/` und betroffene README-Dateien anpassen; entfernte Funktionen auch aus Beispielen entfernen.
 
-`Docs/` ist die Quelle für das GitHub-Wiki. Verwaltete Wiki-Seiten nicht direkt bearbeiten; sie werden aus dem Release-Tag veröffentlicht. Im PR die geänderten Dokumentationsdateien nennen und die Dokumentationsprüfung bestätigen. `pnpm test:docs` sowie die Formatierungsprüfung müssen erfolgreich sein. Die Linkprüfung ersetzt nicht den inhaltlichen Abgleich mit dem implementierten Verhalten.
+`docs/` ist die Quelle für das GitHub-Wiki. Verwaltete Wiki-Seiten nicht direkt bearbeiten; sie werden aus dem Release-Tag veröffentlicht. Im PR die geänderten Dokumentationsdateien nennen und die Dokumentationsprüfung bestätigen. `pnpm test:docs` sowie die Formatierungsprüfung müssen erfolgreich sein. Die Linkprüfung ersetzt nicht den inhaltlichen Abgleich mit dem implementierten Verhalten.
 
 ## Secrets im Produktrepo
 
@@ -30,7 +30,7 @@ Unter **Settings → Actions → General → Workflow permissions** muss **Allow
 | [ci.yml](.github/workflows/ci.yml) — Validate product           | Pull Request und Push auf `main` | Keine. Tests und Docker-Healthcheck verwenden Mock-/Demo-Daten.                                                                                                                    |
 | [release.yml](.github/workflows/release.yml) — Release packages | Push auf `main`                  | `NPM_AUTH_TOKEN` für npmjs; der Wiki-Job verwendet den automatischen `GITHUB_TOKEN`. Nach Merge des Release-PRs werden Pakete veröffentlicht und Release-Dokumentation gespiegelt. |
 
-Der Wiki-Abgleich läuft über [sync-wiki.yml](.github/workflows/sync-wiki.yml), direkt nach Release-Erstellung und bei manuell veröffentlichten Releases. Er kann separat mit `tag` erneut gestartet werden. Änderungen an Dokumentation unter `Docs/` pflegen; `pnpm test:docs` prüft den Abgleich. [Einrichtung und Ablauf](Docs/wiki.md).
+Der Wiki-Abgleich läuft über [sync-wiki.yml](.github/workflows/sync-wiki.yml), direkt nach Release-Erstellung und bei manuell veröffentlichten Releases. Er kann separat mit `tag` erneut gestartet werden. Änderungen an Dokumentation unter `docs/` pflegen; `pnpm test:docs` prüft den Abgleich. [Einrichtung und Ablauf](docs/wiki.md).
 
 ## Paketnamen und fehlgeschlagene Veröffentlichungen
 
@@ -75,6 +75,6 @@ Diese Schlüssel werden von den vorhandenen GitHub Actions nicht benötigt. Sie 
 | `CSP_CHAT_OPENAI_API_KEY` | Chat mit `CSP_CHAT_PROVIDER=openai` außerhalb der Demo. | `CSP_CHAT_MODEL`.                                                                              |
 | `CSP_CHAT_AZURE_API_KEY`  | Chat mit `CSP_CHAT_PROVIDER=azure` außerhalb der Demo.  | `CSP_CHAT_MODEL` als Deployment-Name und `CSP_CHAT_AZURE_ENDPOINT` als Ressourcen-Origin.      |
 
-Ollama und die öffentlichen Uptime-Kuma-Statusendpunkte benötigen in der vorhandenen Implementierung keine API-Schlüssel. Für Ollama Modell und erreichbare URL konfigurieren; für Kuma `CSP_KUMA_URL` und `CSP_KUMA_SLUG` setzen. Vollständige Provider- und Runtime-Optionen stehen unter [Konfiguration](Docs/configuration.md) und [Betrieb](Docs/operations.md).
+Ollama und die öffentlichen Uptime-Kuma-Statusendpunkte benötigen in der vorhandenen Implementierung keine API-Schlüssel. Für Ollama Modell und erreichbare URL konfigurieren; für Kuma `CSP_KUMA_URL` und `CSP_KUMA_SLUG` setzen. Vollständige Provider- und Runtime-Optionen stehen unter [Konfiguration](docs/configuration.md) und [Betrieb](docs/operations.md).
 
 Falls später ein API-Deployment-Schritt ergänzt wird, müssen benötigte Zugangsdaten ausdrücklich über `secrets.*` an diesen Schritt beziehungsweise an den API-Host weitergegeben werden. Das bloße Anlegen eines GitHub-Secrets stellt es dem API-Service nicht bereit. Schlüssel weder committen noch in Frontend-Builds, öffentliche Variablen, `VITE_*`-Werte oder das Docker-Image aufnehmen.
