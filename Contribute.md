@@ -2,6 +2,14 @@
 
 Für die lokale Entwicklung und Prüfung gelten die Schritte in der [README](README.md). Vor einem PR `pnpm check` und `pnpm test:packages` ausführen; für Browserprüfungen zusätzlich Chromium installieren und `pnpm test:browser` ausführen. Änderungen als Conventional Commits liefern; Release Please erstellt daraus automatisch den Release-PR und Changelog. Weitere Details: [Betrieb und Releases](Docs/operations.md).
 
+## Dokumentation bei Feature-Änderungen
+
+Jede Ergänzung, Änderung oder Entfernung eines Features muss im selben PR die betroffene Dokumentation aktualisieren. Die Dokumentationsänderung ist Teil der Fertigstellung und muss vor dem Merge vorhanden sein; sie darf nicht auf einen späteren PR verschoben werden.
+
+Für neue oder geänderte Konfigurationsoptionen in `Docs/configuration.md` Name, Zweck, Pflichtstatus, Standardwert, zulässige Werte und Grenzen sowie Build-/Runtime-Zuordnung dokumentieren. Beispiele, Env-Vorlagen und das Editor-Schema bei Änderungen ihres Vertrags ebenfalls aktualisieren. Bei Änderungen an Verhalten, Plugins, CLI, API oder Deployment die jeweiligen Seiten unter `Docs/` und betroffene README-Dateien anpassen; entfernte Funktionen auch aus Beispielen entfernen.
+
+`Docs/` ist die Quelle für das GitHub-Wiki. Verwaltete Wiki-Seiten nicht direkt bearbeiten; sie werden aus dem Release-Tag veröffentlicht. Im PR die geänderten Dokumentationsdateien nennen und die Dokumentationsprüfung bestätigen. `pnpm test:docs` sowie die Formatierungsprüfung müssen erfolgreich sein. Die Linkprüfung ersetzt nicht den inhaltlichen Abgleich mit dem implementierten Verhalten.
+
 ## Secrets im Produktrepo
 
 Secrets unter **Settings → Secrets and variables → Actions → Secrets → New repository secret** anlegen. `NPM_AUTH_TOKEN` muss ein Actions-Secret sein; eine Repository-Variable unter **Variables** oder ein Environment ohne diesen Secret-Wert wird von `${{ secrets.NPM_AUTH_TOKEN }}` nicht gelesen. Die vorhandenen Workflows benötigen:

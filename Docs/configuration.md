@@ -1,8 +1,144 @@
 # Konfiguration
 
-Kopiere die `.env.example` der Kunden-Vorlage nach `.env`. Provider-Schlüssel sind ausschließlich Runtime-Variablen des API-Services. Der Vite-Build exportiert eine explizite öffentliche Allowlist. Kein `VITE_*`-Secret setzen.
+Neue Kundeninstanzen werden über `portal.config.json` konfiguriert. Kopiere zusätzlich die `.env.example` der Kunden-Vorlage nach `.env` für Provider und API-Betrieb. Provider-Schlüssel sind ausschließlich Runtime-Variablen des API-Services. Der Vite-Build exportiert eine explizite öffentliche Allowlist. Kein `VITE_*`-Secret setzen.
 
-## Branding und statische Inhalte
+## Kundenprofil: `portal.config.json`
+
+Das Profil verwendet Schema-Version 1. Die folgenden Felder bilden die vollständige Profilstruktur ab; unbekannte Felder werden abgelehnt. Pflichtfelder sind `schemaVersion`, `id`, `branding.name`, `contact.phone`, `contentFile` und `plugins`. Optionale Werte verwenden die Core-Defaults.
+
+| Feld                   | Bedeutung / Standard                                                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `schemaVersion`        | Muss `1` sein.                                                                                                                                               |
+| `id`                   | Instanzkennung; Kleinbuchstaben, Zahlen und Bindestriche, erstes Zeichen Buchstabe oder Zahl.                                                                |
+| `branding.name`        | Portal-/Kundenname.                                                                                                                                          |
+| `branding.tagline`     | Hauptüberschrift; Standard `Wir sind für Sie da.`                                                                                                            |
+| `branding.description` | Beschreibung; Standard `Ihr direkter Kontakt zum Operations-Team.`                                                                                           |
+| `branding.logoFile`    | Lokale Logodatei relativ zum Profilverzeichnis; wird als Webasset ausgeliefert.                                                                              |
+| `branding.iconFile`    | Lokale Bilddatei für generierte PWA-Icons; sonst neutrales Symbol.                                                                                           |
+| `theme.mode`           | Anfangsauswahl `light`, `dark` oder `system`; Standard `system`.                                                                                             |
+| `theme.tokens`         | Designwerte; vollständige Liste unten.                                                                                                                       |
+| `theme.darkTokens`     | Designwerte für den Dunkelmodus; überschreiben nur angegebene Werte aus `tokens`.                                                                            |
+| `contact.phone`        | Hotline; 3–40 Zeichen aus Zahlen, Leerzeichen, Klammern und Bindestrichen, optional führendes `+`.                                                           |
+| `contact.label`        | Hotline-Beschriftung; Standard `Operations-Hotline`.                                                                                                         |
+| `public.apiUrl`        | Öffentliche API-Adresse, optional mit Proxy-Präfix, ohne `/api/v1`; Standard `http://localhost:3001`.                                                        |
+| `public.basePath`      | `/` oder etwa `/kundenportal/`; führender und abschließender Slash, Pfadsegmente aus Buchstaben, Zahlen, `_` und `-`.                                        |
+| `public.domain`        | Öffentliche Origin für den Canonical-Link; richtet keine Domain oder DNS-Einträge ein.                                                                       |
+| `public.pollMs`        | Ganzzahliges Browser-Polling in Millisekunden, mindestens `1000`; Standard `60000`.                                                                          |
+| `public.demo`          | `true` aktiviert gekennzeichnete synthetische Provider-Daten; Standard `false`.                                                                              |
+| `public.staticDemo`    | `true` aktiviert browserseitige synthetische Daten ohne API-Anbindung; erfordert `public.demo: true` beziehungsweise den wirksamen Override `CSP_DEMO=true`. |
+| `contentFile`          | JSON-Datei für Prozesse, Ticketlinks/-vorlagen und FAQ.                                                                                                      |
+| `avatarsFile`          | Optionale JSON-Datei mit eigenen Mitarbeiterbildern; Format unten.                                                                                           |
+| `plugins`              | Liste installierter Plugin-Paketnamen ohne Duplikate; leere Liste möglich.                                                                                   |
+
+Beispiel für eine Kundeninstanz mit Kontakt und Inhalten, ohne Provider-Anbindung:
+
+```json
+{
+  "schemaVersion": 1,
+  "id": "musterkunde",
+  "branding": {
+    "name": "Musterkunde Service Desk",
+    "tagline": "Ihr Kontakt zum Operations-Team",
+    "description": "Support und Informationen für Musterkunde"
+  },
+  "theme": {
+    "mode": "system",
+    "tokens": {
+      "accent": "#176b58",
+      "hero": "#102e29",
+      "radius": "8px"
+    },
+    "darkTokens": {
+      "paper": "#111d19",
+      "card": "#192923"
+    }
+  },
+  "contact": {
+    "phone": "+49 30 12345678",
+    "label": "Support-Hotline"
+  },
+  "public": {
+    "apiUrl": "https://api.musterkunde.example",
+    "domain": "https://portal.musterkunde.example",
+    "basePath": "/",
+    "pollMs": 60000,
+    "demo": false
+  },
+  "contentFile": "content.json",
+  "plugins": ["@kieksme/csp-plugin-contact", "@kieksme/csp-plugin-content"]
+}
+```
+
+Beispieladressen durch die eigenen Adressen ersetzen. `content.json` muss vorhanden sein; ein leerer Ausgangspunkt ist `{ "processes": [], "tickets": [], "faq": [] }`. Die vollständigen Inhaltsfelder stehen unter [Inhalte](content.md).
+
+### Designwerte
+
+Alle folgenden Tokens sind in `theme.tokens` und `theme.darkTokens` optional. Farben benötigen sechsstellige Hexwerte wie `#176b58`. Größen akzeptieren `px`, `rem` oder `em`; `radius` erlaubt außerdem `0`, alle anderen Größen müssen positiv sein. Schriftfamilien müssen nichtleere Zeichenketten sein.
+
+| Token             | Bedeutung                                  | Standard (hell / dunkel, falls abweichend) |
+| ----------------- | ------------------------------------------ | ------------------------------------------ |
+| `accent`          | Primäre Akzentfarbe                        | `#176b58`                                  |
+| `accentSecondary` | Sekundäre Akzentfarbe                      | `#c4e98f`                                  |
+| `hero`            | Hero-Hintergrund                           | `#102e29`                                  |
+| `paper`           | Seitenhintergrund                          | `#f6f7f2` / `#111d19`                      |
+| `card`            | Kartenhintergrund                          | `#ffffff` / `#192923`                      |
+| `ink`             | Haupttext                                  | `#172b26` / `#e4ebe3`                      |
+| `muted`           | Nebeninformationen                         | `#5c6c64` / `#a8b9ae`                      |
+| `line`            | Rahmen                                     | `#dbe1d9` / `#33483b`                      |
+| `soft`            | Dezente Flächen                            | `#edf1e9` / `#24372b`                      |
+| `success`         | Erfolgsstatus                              | `#388264`                                  |
+| `danger`          | Fehlerstatus                               | `#da642b`                                  |
+| `warning`         | Warnstatus                                 | `#985015` / `#efb181`                      |
+| `neutral`         | Neutraler Status                           | `#879087`                                  |
+| `warningSurface`  | Hintergrund des Offline-Hinweises          | `#f8e4b6`                                  |
+| `warningInk`      | Text des Offline-Hinweises                 | `#594114`                                  |
+| `heroLine`        | Dekorative Hero-Linien                     | `#73917d`                                  |
+| `fontFamily`      | Fließtext                                  | `Manrope, sans-serif`                      |
+| `fontMono`        | Technische Beschriftungen                  | `'IBM Plex Mono', monospace`               |
+| `fontSize`        | Basis-Schriftgröße                         | `16px`                                     |
+| `radius`          | Rundung für Karten, Eingabefelder und Chat | `4px`                                      |
+| `spacing`         | Gemeinsame Abstandseinheit                 | `4px`                                      |
+| `contentWidth`    | Maximale Inhaltsbreite                     | `1144px`                                   |
+| `heroWidth`       | Maximale Hero-Breite                       | `1264px`                                   |
+
+Ohne Overrides verwendet die Oberfläche die Core-Defaults für Hell- und Dunkelmodus. `darkTokens` überschreibt im Dunkelmodus die entsprechenden `tokens`; fehlende Werte werden aus `tokens` beziehungsweise den Core-Defaults übernommen. Textfarben auf Akzent- und Hero-Flächen werden automatisch kontrastreich gewählt. Responsive Breakpoints bleiben im Core festgelegt. Eigene Fonts muss der Betreiber verfügbar machen.
+
+### Mitarbeiterbilder
+
+`avatarsFile` verweist beispielsweise auf `avatars.json`:
+
+```json
+{
+  "ids": { "SIGNL4-user-id": "public/avatar.webp" },
+  "names": { "Lena Demo": "https://images.musterkunde.example/lena.webp" }
+}
+```
+
+Beide Zuordnungen sind optional. IDs haben Vorrang vor normalisierten Namen. Lokale Bildpfade beziehen sich auf das Profilverzeichnis und werden beim Build als Webassets übernommen; absolute URL-Pfade und HTTP(S)-URLs bleiben URLs. Fehlerhafte Bilder fallen auf Initialen zurück. Der ältere Env-Override `CSP_AVATARS_PATH` verwendet dagegen eine flache Zuordnung `{ "SIGNL4-user-id": "/avatar.png" }` ohne `ids`/`names`.
+
+### Plugins auswählen
+
+| Paket                         | Funktion                                                                   |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| `@kieksme/csp-plugin-contact` | Hotline und Notfallkontakt.                                                |
+| `@kieksme/csp-plugin-signl4`  | Teamprofile, Avatare, Schichten, vCards und aktuelle Alerts.               |
+| `@kieksme/csp-plugin-kuma`    | Öffentlicher Systemstatus aus Uptime Kuma.                                 |
+| `@kieksme/csp-plugin-content` | Prozesse, Ticketlinks/-vorlagen und FAQ.                                   |
+| `@kieksme/csp-plugin-chat`    | Chat mit OpenAI, Azure OpenAI oder Ollama und Quellen der eigenen Instanz. |
+
+Die Kunden-Vorlage installiert Kontakt, Inhalte und Chat. Ein Plugin muss installiert, in den Paketabhängigkeiten deklariert und SDK-kompatibel sein. Auch externe kompatible Plugins sind möglich; deren zusätzliche Konfiguration richtet sich nach ihrer eigenen Dokumentation.
+
+```sh
+pnpm exec csp plugin add @kieksme/csp-plugin-signl4
+pnpm exec csp plugin list
+pnpm exec csp plugin remove @kieksme/csp-plugin-signl4
+```
+
+Die CLI synchronisiert Plugin-Liste, Paketabhängigkeiten und Lockfile. Nach Plugin-Änderungen Frontend und API neu bauen und deployen. Provider-Pflichtwerte werden nur für installierte Plugins geprüft.
+
+## Öffentliche Env-Overrides
+
+Die folgenden Variablen überschreiben die entsprechenden Profilwerte. `CSP_COLOR` entspricht `theme.tokens.accent`, `CSP_BACKGROUND` entspricht `theme.tokens.hero`; die übrigen Theme-Tokens sowie Plugin-Auswahl und `public.staticDemo` werden im Profil gesetzt.
 
 | Variable                                     | Zweck / Standard                                                                          |
 | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
@@ -16,12 +152,12 @@ Kopiere die `.env.example` der Kunden-Vorlage nach `.env`. Provider-Schlüssel s
 | `CSP_API_URL`                                | Öffentliche API-Origin, optional mit Proxy-Präfix; ohne `/api/v1`                         |
 | `CSP_CONTACT_PHONE`, `CSP_CONTACT_LABEL`     | Hotline und Beschriftung                                                                  |
 | `CSP_CONTENT_PATH`                           | JSON-Datei für Prozesse, Tickets und FAQ; Vorlage `content.json`                          |
-| `CSP_POLL_MS`                                | Browser-Polling; Standard 60000 ms                                                        |
+| `CSP_POLL_MS`                                | Browser-Polling; mindestens 1000 ms, Standard 60000 ms                                    |
 | `CSP_DEMO`                                   | Nur `true` aktiviert synthetische Daten, sichtbar gekennzeichnet                          |
 
 Prozesstexte und FAQ-Antworten unterstützen Markdown ohne HTML-Ausführung. Ticketvorlagen bleiben einfacher Text. JSON-Inhalte werden beim Build validiert und in das Frontend eingebunden; dieselbe Datei wird im API-Service als Chat-Wissensbasis gelesen. Inhaltsänderungen erfordern einen neuen Frontend-Build und API-Neustart.
 
-Lokale Logos und Avatar-Overrides gehören in `public/` der Kundeninstanz; URLs müssen den konfigurierten Basispfad enthalten. Externe Bilder benötigen im Offline-Modus weiterhin eine Verbindung. PWA-Icons werden bei jedem Build aus derselben Branding-Konfiguration erzeugt.
+Bei URL-Overrides lokale Logos und Avatar-Bilder unter `public/` der Kundeninstanz bereitstellen; URLs müssen den konfigurierten Basispfad enthalten. Externe Bilder benötigen im Offline-Modus weiterhin eine Verbindung. PWA-Icons werden bei jedem Build aus derselben Branding-Konfiguration erzeugt.
 
 ## SIGNL4 und Uptime Kuma
 
@@ -41,13 +177,20 @@ Quellen: [SIGNL4 OpenAPI](https://connect.signl4.com/api/docs/v3/swagger.json), 
 
 | Provider     | Runtime-Variablen                                                                                                             |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| OpenAI       | `CSP_CHAT_OPENAI_API_KEY`; optional `CSP_CHAT_OPENAI_URL`                                                                     |
+| OpenAI       | `CSP_CHAT_OPENAI_API_KEY`; optional `CSP_CHAT_OPENAI_URL` (Standard `https://api.openai.com/v1`)                              |
 | Azure OpenAI | `CSP_CHAT_AZURE_API_KEY`, `CSP_CHAT_AZURE_ENDPOINT` als Ressourcen-Origin, beispielsweise `https://resource.openai.azure.com` |
 | Ollama       | `CSP_CHAT_OLLAMA_URL`, Standard `http://localhost:11434`                                                                      |
 
 OpenAI und Azure verwenden Responses mit SSE und `store: false`. Ollama verwendet natives `/api/chat` mit NDJSON. Der Portal-Service übersetzt beide in `sources`, `delta`, `done` und `error` SSE-Ereignisse. Provider-Endpunkte müssen vom API-Container erreichbar sein; `localhost` im Container bezeichnet den Container selbst.
 
-Limits: `CSP_CHAT_RATE_LIMIT=10` Anfragen/Minute/IP; `CSP_CHAT_CONCURRENCY=2` aktive Anfragen je API-Prozess; `CSP_CHAT_MAX_TOKENS=1024` generierte Tokens; `CSP_CHAT_CONTEXT_CHARS=16000` Zeichen Quellkontext. Gesprächshistorie: maximal 20 Nachrichten, 4000 Zeichen je Nachricht, insgesamt 16000 Zeichen. Provider-/Chat-Zeitlimit: 60 Sekunden. Gespräch und API-Antworten werden nicht dauerhaft gespeichert. Externe KI-Provider erhalten die ausgewählten statischen und Live-Quellen dieser Instanz.
+| Variable                 | Standard | Zulässiger Bereich / Bedeutung        |
+| ------------------------ | -------- | ------------------------------------- |
+| `CSP_CHAT_RATE_LIMIT`    | `10`     | 1–1000 Anfragen/Minute/IP.            |
+| `CSP_CHAT_CONCURRENCY`   | `2`      | 1–100 aktive Anfragen je API-Prozess. |
+| `CSP_CHAT_MAX_TOKENS`    | `1024`   | 128–16384 generierte Tokens.          |
+| `CSP_CHAT_CONTEXT_CHARS` | `16000`  | 1000–100000 Zeichen Quellkontext.     |
+
+Alle vier Limits sind ganzzahlig. Gesprächshistorie: maximal 20 Nachrichten, 4000 Zeichen je Nachricht, insgesamt 16000 Zeichen. Provider-/Chat-Zeitlimit: 60 Sekunden. Gespräch und API-Antworten werden nicht dauerhaft gespeichert. Externe KI-Provider erhalten die ausgewählten statischen und Live-Quellen dieser Instanz.
 
 Quellen: [OpenAI Responses](https://developers.openai.com/api/docs/guides/streaming-responses), [Azure Responses](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses), [Ollama Chat](https://docs.ollama.com/api/chat).
 
@@ -57,12 +200,14 @@ Vite lädt `.env`-Dateien für den jeweiligen Modus und übernimmt darüber Proz
 
 | Runtime-Variable      | Standard / Bedeutung                                            |
 | --------------------- | --------------------------------------------------------------- |
-| `CSP_PORT`            | `3001`; API-Port                                                |
+| `CSP_PORT`            | `3001`; ganzzahliger API-Port von 1 bis 65535                   |
 | `CSP_HOST`            | `0.0.0.0`; Bind-Adresse                                         |
 | `CSP_ALLOWED_ORIGINS` | Leere Liste; kommagetrennte erlaubte Frontend-Origins ohne Pfad |
 | `CSP_TRUST_PROXY`     | Nur `true` aktiviert Vertrauen in Proxy-Header                  |
 
-Hotline und Inhaltsdatei auch am API-Host setzen. Provider-Variablen werden nur für installierte Plugins validiert. Der Demo-Modus entbindet SIGNL4/Kuma/Chat von produktiven Provider-Pflichtwerten; Kontakt und Inhaltsdatei bleiben erforderlich.
+Auch am API-Host dasselbe Kundenprofil und dieselbe Inhaltsdatei bereitstellen; bei Env-Konfiguration Hotline und Inhaltsdatei dort ebenfalls setzen. Provider-Variablen werden nur für installierte Plugins validiert. Der Demo-Modus entbindet SIGNL4/Kuma/Chat von produktiven Provider-Pflichtwerten; Kontakt und Inhaltsdatei bleiben erforderlich.
+
+Frontend-Hosting, eigene Domain, API-Hosting und die Workflow-Optionen `config`, `pages` und `public-overrides` stehen unter [Deployment](deployment.md). Das Setzen von `public.domain` ersetzt keine DNS-/Hosting-Konfiguration; der Kundenworkflow baut das API-Image, deployt die API aber nicht.
 
 Weiter: [Deployment](deployment.md), [Inhalte](content.md), [Sicherheit und Daten](security.md).
 
