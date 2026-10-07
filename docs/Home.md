@@ -26,6 +26,6 @@ Das Portal ist öffentlich und hat keine Anmeldung. Teamkontakte und Alert-Besch
 
 `apps/demo` verwendet synthetische Daten. `apps/northstar` zeigt eine zweite Marke mit weniger Plugins. Die Kunden-Vorlage startet außerhalb des Demo-Modus und muss für ihre installierten Provider konfiguriert werden.
 
-Die Dokumentation wird im Produktrepo unter `Docs/` gepflegt. Das Wiki zeigt die Dokumentation des zuletzt gespiegelten Release-Tags; Änderungen auf `main` erscheinen dort erst bei der nächsten Veröffentlichung. Details zum Abgleich stehen unter [Dokumentation und Wiki](wiki.md).
+Die Dokumentation wird im Produktrepo unter `docs/` gepflegt. Das Wiki zeigt die Dokumentation des zuletzt gespiegelten Release-Tags; Änderungen auf `main` erscheinen dort erst bei der nächsten Veröffentlichung. Details zum Abgleich stehen unter [Dokumentation und Wiki](wiki.md).
 
 Quellcode: [kieksme/csp](https://github.com/kieksme/csp). Lizenz: [MIT](https://github.com/kieksme/csp/blob/main/LICENSE).

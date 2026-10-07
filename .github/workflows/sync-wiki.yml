@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       tag:
-        description: Release tag whose Docs should be mirrored
+        description: Release tag whose docs should be mirrored
         required: true
         type: string
   release:
@@ -57,11 +57,16 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "$GH_TOKEN" ]; then
-            echo '::error::GitHub did not provide GITHUB_TOKEN. Check the workflow permissions; see Docs/wiki.md.'
+            echo '::error::GitHub did not provide GITHUB_TOKEN. Check the workflow permissions; see docs/wiki.md.'
             exit 1
           fi
-          if [ ! -d source/Docs ]; then
-            echo '::error::This release tag has no Docs directory. Choose a release containing the documentation.'
+          DOCS_SOURCE=source/docs
+          # Older release tags predate the lowercase directory name.
+          if [ ! -d "$DOCS_SOURCE" ] && [ -d source/Docs ]; then
+            DOCS_SOURCE=source/Docs
+          fi
+          if [ ! -d "$DOCS_SOURCE" ]; then
+            echo '::error::This release tag has no documentation directory. Choose a release containing docs/ (or Docs/ for older tags).'
             exit 1
           fi
           export GIT_ASKPASS="$RUNNER_TEMP/wiki-askpass.sh"
@@ -79,7 +84,7 @@ jobs:
             echo '::error::Wiki clone failed. Enable Wiki, save its first page, and allow contents: write for GITHUB_TOKEN.'
             exit 1
           fi
-          node tooling/scripts/sync-wiki.mjs source/Docs wiki "$RELEASE_TAG" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          node tooling/scripts/sync-wiki.mjs "$DOCS_SOURCE" wiki "$RELEASE_TAG" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
           git -C wiki config user.name 'github-actions[bot]'
           git -C wiki config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git -C wiki add --all

@@ -67,7 +67,7 @@ pnpm exec csp start --config portal.config.json
 
 Der kurze Kundenworkflow ruft den gemeinsamen [Build-Workflow](.github/workflows/customer-build.yml) auf. Der Workflow ist auf eine konkrete CSP-Commit-SHA fixiert. Er baut Frontend und API-Image als Artefakte; Pages ist ausdrücklich optional. Öffentliche Overrides werden als JSON übergeben; fehlende GitHub-Variablen werden nicht als leere Overrides eingetragen. Provider-Secrets bleiben ausschließlich im API-Hosting. Das API-Deployment ist separat einzurichten.
 
-Details: [Template](templates/customer/README.md), [Konfiguration](Docs/configuration.md), [Deployment](Docs/deployment.md).
+Details: [Template](templates/customer/README.md), [Konfiguration](docs/configuration.md), [Deployment](docs/deployment.md).
 
 ## Pakete
 
@@ -86,6 +86,6 @@ Alle acht Pakete verwenden das Präfix `@kieksme/csp-` und werden mit identische
 
 Vollständige Kontaktinformationen und Alert-Beschreibungen sind öffentlich. Provider-Schlüssel bleiben im API-Service. Der Chat liest statische Inhalte und die Live-Daten **seiner eigenen Instanz**, führt aber keine Aktionen aus. Gesprächsverläufe werden weder in einer Datenbank noch im Browser-Storage gespeichert.
 
-Projekt-Dokumentation: [Startseite und Übersicht](Docs/Home.md), [Architektur](Docs/architecture.md), [Installation](Docs/installation.md), [Deployment](Docs/deployment.md), [API](Docs/api.md), [Dokumentation und Wiki](Docs/wiki.md).
+Projekt-Dokumentation: [Startseite und Übersicht](docs/Home.md), [Architektur](docs/architecture.md), [Installation](docs/installation.md), [Deployment](docs/deployment.md), [API](docs/api.md), [Dokumentation und Wiki](docs/wiki.md).
 
-Weitere Dokumentation: [Plugin-SDK](Docs/plugin-sdk.md), [Konfiguration](Docs/configuration.md), [Betrieb und Releases](Docs/operations.md). Umsetzung der Anforderungen aus [circle-zero #304](https://github.com/ThinkportRepo/circle-zero/issues/304). Das bestehende PoC bleibt unverändert.
+Weitere Dokumentation: [Plugin-SDK](docs/plugin-sdk.md), [Konfiguration](docs/configuration.md), [Betrieb und Releases](docs/operations.md). Umsetzung der Anforderungen aus [circle-zero #304](https://github.com/ThinkportRepo/circle-zero/issues/304). Das bestehende PoC bleibt unverändert.

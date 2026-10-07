@@ -18,7 +18,7 @@ const release = { tag: 'v1.2.3', repository: 'https://github.com/kieksme/csp' };
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), 'csp-wiki-test-'));
   t.after(() => rm(root, { recursive: true, force: true }));
-  const source = join(root, 'Docs');
+  const source = join(root, 'docs');
   const target = join(root, 'wiki');
   await mkdir(source);
   await mkdir(target);
@@ -167,7 +167,7 @@ test('requires layout pages and rejects overlapping source and target', async (t
 test('project documentation can be mirrored and all pages appear in Home and sidebar', async (t) => {
   const target = await mkdtemp(join(tmpdir(), 'csp-docs-preview-'));
   t.after(() => rm(target, { recursive: true, force: true }));
-  const source = fileURLToPath(new URL('../Docs/', import.meta.url));
+  const source = fileURLToPath(new URL('../docs/', import.meta.url));
   await syncWiki(source, target, release);
   const home = await readFile(join(source, 'Home.md'), 'utf8');
   const sidebar = await readFile(join(source, '_Sidebar.md'), 'utf8');

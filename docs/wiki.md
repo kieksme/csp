@@ -2,9 +2,9 @@
 
 ## Quelle und Layout
 
-`Docs/` im Produktrepo ist die Quelle der Projekt-Dokumentation. Das zugehörige GitHub-Wiki ist [kieksme/csp/wiki](https://github.com/kieksme/csp/wiki); sein Git-Repository heißt `https://github.com/kieksme/csp.wiki.git`.
+`docs/` im Produktrepo ist die Quelle der Projekt-Dokumentation. Das zugehörige GitHub-Wiki ist [kieksme/csp/wiki](https://github.com/kieksme/csp/wiki); sein Git-Repository heißt `https://github.com/kieksme/csp.wiki.git`.
 
-Alle Seiten liegen als Markdown-Dateien direkt unter `Docs/`. Dateinamen verwenden ASCII-Buchstaben, Ziffern, Bindestriche oder Unterstriche. Relative Seitenlinks schreiben wir als `[Konfiguration](configuration.md)`; sie funktionieren beim Browsen des Produktrepos und werden beim Abgleich zu Wiki-Seitenlinks ohne `.md` umgeschrieben. Anker bleiben erhalten. Links in Codebeispielen sowie externe URLs bleiben unverändert. Für Quellcode-Dateien absolute GitHub-Links verwenden.
+Alle Seiten liegen als Markdown-Dateien direkt unter `docs/`. Dateinamen verwenden ASCII-Buchstaben, Ziffern, Bindestriche oder Unterstriche. Relative Seitenlinks schreiben wir als `[Konfiguration](configuration.md)`; sie funktionieren beim Browsen des Produktrepos und werden beim Abgleich zu Wiki-Seitenlinks ohne `.md` umgeschrieben. Anker bleiben erhalten. Links in Codebeispielen sowie externe URLs bleiben unverändert. Für Quellcode-Dateien absolute GitHub-Links verwenden.
 
 | Datei         | Verwendung                                                                         |
 | ------------- | ---------------------------------------------------------------------------------- |
@@ -13,7 +13,7 @@ Alle Seiten liegen als Markdown-Dateien direkt unter `Docs/`. Dateinamen verwend
 | `_Footer.md`  | GitHub-Wiki-Footer                                                                 |
 | `_Sidebar.md` | GitHub-Wiki-Seitenleiste                                                           |
 
-GitHub rendert `_Sidebar.md` und `_Footer.md` automatisch. `_Header.md` ist keine native GitHub-Layoutfunktion; deshalb übernimmt das Skript die Einfügung. Die Header-Datei selbst wird ebenfalls gespiegelt. Die Quellen in `Docs/` erhalten keinen eingefügten Header.
+GitHub rendert `_Sidebar.md` und `_Footer.md` automatisch. `_Header.md` ist keine native GitHub-Layoutfunktion; deshalb übernimmt das Skript die Einfügung. Die Header-Datei selbst wird ebenfalls gespiegelt. Die Quellen in `docs/` erhalten keinen eingefügten Header.
 
 ## Einmalige Einrichtung
 
@@ -30,9 +30,9 @@ Der Token wird nur dem Abgleichschritt als Umgebungsvariable übergeben und nich
 
 Der Wiki-Job läuft unabhängig vom npm-Publish-Job: Sobald der GitHub-Release erstellt wurde, wird dessen Dokumentation gespiegelt, auch wenn die npm-Veröffentlichung separat scheitert. Zusätzlich reagiert der Wiki-Workflow auf `release: published`, etwa bei manuell veröffentlichten Releases einschließlich Pre-Releases. Entwürfe werden nicht gespiegelt.
 
-Der Workflow lädt das Abgleichskript aus dem Standardbranch und die Dokumentation ausschließlich aus `refs/tags/<release-tag>`. Spätere Änderungen auf `main` gelangen dadurch nicht in die Dokumentation eines älteren Releases. Ein Tag ohne `Docs/` wird mit einer klaren Fehlermeldung abgelehnt.
+Der Workflow lädt das Abgleichskript aus dem Standardbranch und die Dokumentation ausschließlich aus `refs/tags/<release-tag>`. Spätere Änderungen auf `main` gelangen dadurch nicht in die Dokumentation eines älteren Releases. Der Workflow verwendet `docs/`; bei älteren Release-Tags wird das frühere `Docs/` weiterhin gelesen. Fehlen beide Verzeichnisse, wird der Tag mit einer klaren Fehlermeldung abgelehnt.
 
-`scripts/sync-wiki.mjs` prüft die Pflichtseiten und internen Markdown-Seitenlinks, fügt den Header ein und kopiert die Seiten in das geklonte Wiki. `.csp-wiki-manifest.json` im Wiki hält Repository, Release-Tag und die verwalteten Dateinamen fest. Beim nächsten Abgleich werden Seiten gelöscht, die im vorherigen Manifest stehen und im neuen `Docs/` fehlen. Andere Wiki-Dateien bleiben erhalten; Dateien mit demselben Namen wie eine Dokumentationsseite werden übernommen und künftig verwaltet.
+`scripts/sync-wiki.mjs` prüft die Pflichtseiten und internen Markdown-Seitenlinks, fügt den Header ein und kopiert die Seiten in das geklonte Wiki. `.csp-wiki-manifest.json` im Wiki hält Repository, Release-Tag und die verwalteten Dateinamen fest. Beim nächsten Abgleich werden Seiten gelöscht, die im vorherigen Manifest stehen und im neuen `docs/` fehlen. Andere Wiki-Dateien bleiben erhalten; Dateien mit demselben Namen wie eine Dokumentationsseite werden übernommen und künftig verwaltet.
 
 Ein unveränderter Wiederholungslauf erzeugt keinen neuen Commit. Ein anderer Tag aktualisiert die Herkunft im Manifest. Alle Wiki-Läufe werden durch eine gemeinsame Concurrency-Gruppe serialisiert. Der Workflow pusht regulär, ohne Force-Push. Bei Konflikten oder fehlenden Rechten scheitert der Lauf sichtbar; nach Behebung erneut starten.
 
@@ -45,7 +45,7 @@ Auch **Release packages → Run workflow** mit `publish_tag` wiederholt den Wiki
 Lokale Vorschau ohne Netzwerk oder Git-Push:
 
 ```sh
-node scripts/sync-wiki.mjs Docs /tmp/csp-wiki-preview v<version> https://github.com/kieksme/csp
+node scripts/sync-wiki.mjs docs /tmp/csp-wiki-preview v<version> https://github.com/kieksme/csp
 pnpm test:docs
 ```
 

@@ -22,9 +22,9 @@ Vor Browsertests `pnpm exec playwright install chromium` ausführen. In CI insta
 
 Jede Ergänzung, Änderung oder Entfernung eines Features muss im selben PR die betroffene Dokumentation aktualisieren. Die Dokumentationsänderung ist Teil der Fertigstellung und muss vor dem Merge vorhanden sein; sie darf nicht auf einen späteren PR verschoben werden.
 
-Für neue oder geänderte Konfigurationsoptionen in [Konfiguration](configuration.md) Name, Zweck, Pflichtstatus, Standardwert, zulässige Werte und Grenzen sowie Build-/Runtime-Zuordnung dokumentieren. Beispiele, Env-Vorlagen und das Editor-Schema bei Änderungen ihres Vertrags ebenfalls aktualisieren. Bei Änderungen an Verhalten, Plugins, CLI, API oder Deployment die jeweiligen Seiten unter `Docs/` und betroffene README-Dateien anpassen; entfernte Funktionen auch aus Beispielen entfernen.
+Für neue oder geänderte Konfigurationsoptionen in [Konfiguration](configuration.md) Name, Zweck, Pflichtstatus, Standardwert, zulässige Werte und Grenzen sowie Build-/Runtime-Zuordnung dokumentieren. Beispiele, Env-Vorlagen und das Editor-Schema bei Änderungen ihres Vertrags ebenfalls aktualisieren. Bei Änderungen an Verhalten, Plugins, CLI, API oder Deployment die jeweiligen Seiten unter `docs/` und betroffene README-Dateien anpassen; entfernte Funktionen auch aus Beispielen entfernen.
 
-`Docs/` ist die Quelle für das GitHub-Wiki. Verwaltete Wiki-Seiten nicht direkt bearbeiten; sie werden aus dem Release-Tag veröffentlicht. Im PR die geänderten Dokumentationsdateien nennen und die Dokumentationsprüfung bestätigen. `pnpm test:docs` sowie die Formatierungsprüfung müssen erfolgreich sein. Die Linkprüfung ersetzt nicht den inhaltlichen Abgleich mit dem implementierten Verhalten.
+`docs/` ist die Quelle für das GitHub-Wiki. Verwaltete Wiki-Seiten nicht direkt bearbeiten; sie werden aus dem Release-Tag veröffentlicht. Im PR die geänderten Dokumentationsdateien nennen und die Dokumentationsprüfung bestätigen. `pnpm test:docs` sowie die Formatierungsprüfung müssen erfolgreich sein. Die Linkprüfung ersetzt nicht den inhaltlichen Abgleich mit dem implementierten Verhalten.
 
 ## CI
 
