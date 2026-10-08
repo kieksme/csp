@@ -163,7 +163,7 @@ test('shows the duty portrait and one working question field in the header', asy
   page,
 }) => {
   await page.goto('/');
-  await expect(page.locator('.hero h1')).toHaveText('Service Desk');
+  await expect(page.locator('.portal-identity')).toHaveCount(0);
   await expect(page.locator('.duty-greeting')).toContainText('Lena Beispiel');
   await expect(page.locator('.hero')).toContainText(
     'Jetzt im Dienst · Für Sie zuständig',
@@ -173,14 +173,11 @@ test('shows the duty portrait and one working question field in the header', asy
     '/team/lena-example.png',
   );
   await expect(page.locator('.duty-portrait img')).toBeVisible();
-  const typography = await page.locator('.hero').evaluate((hero) => ({
-    title: parseFloat(getComputedStyle(hero.querySelector('h1')!).fontSize),
-    greeting: parseFloat(
-      getComputedStyle(hero.querySelector('.duty-greeting')!).fontSize,
-    ),
-  }));
-  expect(typography.greeting).toBeGreaterThan(typography.title);
-  await expect(page.locator('.portal-identity')).toContainText('Serviceportal');
+  await expect(page.locator('.hero h1')).toContainText('Lena Beispiel');
+  await expect(page.locator('.duty-frame')).toHaveCSS(
+    'border-radius',
+    '9999px',
+  );
   await expect(page.locator('.hero #chat-input')).toBeVisible();
   await expect(page.locator('#chat-input')).toHaveCount(1);
   await expect(page.locator('.hero')).toContainText('Digitaler Assistent');
@@ -235,7 +232,7 @@ test('shows the next shift, unknown schedule and stale data without claiming dut
   await expect(page.locator('.duty-greeting')).toHaveText(
     'Erreichbarkeit derzeit nicht bestätigt.',
   );
-  await expect(page.locator('.hero h1')).toHaveText('Service Desk');
+  await expect(page.locator('.portal-identity')).toHaveCount(0);
   await expect(page.locator('.hero')).not.toContainText(
     'Derzeit hat niemand Schicht.',
   );
@@ -271,7 +268,7 @@ test('changes duty at the shift boundary without reloading', async ({
     }),
   );
   await page.goto('/');
-  await expect(page.locator('.hero h1')).toHaveText('Service Desk');
+  await expect(page.locator('.portal-identity')).toHaveCount(0);
   await expect(page.locator('.duty-greeting')).toContainText('Lena Beispiel');
   await page.clock.fastForward(6000);
   await expect(page.locator('.duty-greeting')).toContainText('Noah Muster');

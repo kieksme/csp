@@ -24,14 +24,6 @@ export function DutyHero(ctx: BrowserContext) {
   const profile = team.data?.find((p) => p.id === person?.userId);
   return (
     <>
-      <div className="portal-identity col-span-full px-15 pt-7 pb-5 contained:px-11.25 compact:px-7.5 narrow:px-6.25">
-        <p className="font-mono text-[0.6875rem] uppercase tracking-[2px] mt-0 mb-2 opacity-[0.85]">
-          Serviceportal
-        </p>
-        <h1 className="text-[1.25rem] leading-[1.4] font-semibold m-0">
-          {ctx.config.name}
-        </h1>
-      </div>
       <div className="hero-copy pt-7 pb-9 px-15 z-[1] wide:[animation:arrive_0.6s_ease_both] contained:p-11.25 compact:pt-5 compact:pb-9 compact:pl-7.5 compact:pr-7.5 narrow:pt-5 narrow:pb-7.5 narrow:pl-6.25 narrow:pr-6.25 duty-copy">
         <p className="eyebrow font-mono text-[0.6875rem] uppercase tracking-[2px] m-[0_0_calc(var(--spacing)_*_4.25)]">
           <span className="signal-mark w-[6px] h-[6px] bg-accent-secondary rounded-full" />{' '}
@@ -42,7 +34,7 @@ export function DutyHero(ctx: BrowserContext) {
               : 'Ihr Service-Team'}
         </p>
         <div aria-live="polite" aria-atomic="true">
-          <h2 className="duty-greeting text-[clamp(32px,4vw,56px)] tracking-[-2px] leading-[1.08] max-w-[680px] font-semibold my-5.5">
+          <h1 className="duty-greeting text-[clamp(32px,4vw,56px)] tracking-[-2px] leading-[1.08] max-w-[680px] font-semibold my-5.5">
             {person ? (
               <>
                 Hallo, mein Name ist{' '}
@@ -55,7 +47,7 @@ export function DutyHero(ctx: BrowserContext) {
             ) : (
               'Derzeit hat niemand Schicht.'
             )}
-          </h2>
+          </h1>
           {person ? (
             <>
               <p className="duty-question text-[clamp(22px,2.5vw,32px)] mt-6 mb-3 font-semibold">
@@ -95,15 +87,23 @@ export function DutyHero(ctx: BrowserContext) {
       </div>
       {person && (
         <div
-          className="duty-portrait flex flex-col items-center justify-end pt-8 px-8 min-w-0 [&_.avatar]:w-full [&_.avatar]:h-[360px] [&_.avatar]:max-w-[400px] [&_.avatar]:object-contain [&_.avatar]:object-bottom [&_.avatar]:bg-transparent [&_.avatar]:border-0 [&_.avatar]:rounded-none [&_.avatar]:text-[100px] [&_.avatar]:flex [&_.avatar]:items-center [&_.avatar]:justify-center [&_.avatar]:text-hero-ink compact:pt-0 compact:[&_.avatar]:h-[240px] compact:[&_.avatar]:max-w-[280px]"
+          className="duty-portrait flex flex-col items-center justify-end pt-8 px-8 min-w-0 compact:pt-0"
           key={person.userId}
         >
-          <Avatar
-            config={ctx.config}
-            id={person.userId}
-            name={person.name}
-            provider={profile?.avatar}
-          />
+          <div className="relative isolate aspect-[1/1.15] w-full max-w-[320px] compact:max-w-[240px]">
+            <div
+              aria-hidden="true"
+              className="duty-frame absolute bottom-0 inset-x-0 aspect-square rounded-full border-solid border-[4px] [border-color:color-mix(in_srgb,_var(--hero-ink)_25%,_transparent)] [background:color-mix(in_srgb,_var(--accent)_18%,_var(--hero))]"
+            />
+            <div className="absolute top-0 bottom-[4px] left-[4px] right-[4px] overflow-hidden [border-radius:0_0_50%_50%/0_0_43.5%_43.5%] [&_.avatar]:w-full [&_.avatar]:h-full [&_.avatar]:max-w-none [&_.avatar]:object-cover [&_.avatar]:object-bottom [&_.avatar]:bg-transparent [&_.avatar]:rounded-none [&_.avatar]:text-[64px] [&_.avatar]:flex [&_.avatar]:items-center [&_.avatar]:justify-center [&_.avatar]:text-hero-ink">
+              <Avatar
+                config={ctx.config}
+                id={person.userId}
+                name={person.name}
+                provider={profile?.avatar}
+              />
+            </div>
+          </div>
           <p className="duty-badge text-[0.8125rem] py-3 m-0 text-center">
             <span className="dot up inline-block w-[6px] h-[6px] rounded-full bg-accent-secondary" />{' '}
             {person.name} · Jetzt im Dienst
