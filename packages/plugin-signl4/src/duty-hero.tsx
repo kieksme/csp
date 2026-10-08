@@ -23,22 +23,42 @@ export function DutyHero(ctx: BrowserContext) {
   const timezone = safeTimezone(live.data?.timezone ?? 'Europe/Berlin');
   const profile = team.data?.find((p) => p.id === person?.userId);
   return (
-    <>
-      <div className="hero-copy py-13 px-15 z-[1] wide:[animation:arrive_0.6s_ease_both] contained:p-11.25 compact:pt-9 compact:pb-9 compact:pl-7.5 compact:pr-7.5 narrow:pt-7.5 narrow:pb-7.5 narrow:pl-6.25 narrow:pr-6.25 duty-copy">
-        <p className="eyebrow font-mono text-[0.6875rem] uppercase tracking-[2px] m-[0_0_calc(var(--spacing)_*_4.25)]">
+    <div className="duty-header col-span-full grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)] items-center gap-8 px-15 pt-10 pb-8 contained:px-11.25 compact:grid-cols-[1fr] compact:gap-3 compact:px-7.5 compact:pt-8 narrow:px-6.25">
+      <div className="hero-copy duty-copy min-w-0">
+        <p className="eyebrow font-mono text-[0.6875rem] uppercase tracking-[2px] mb-4">
           <span className="signal-mark w-[6px] h-[6px] bg-accent-secondary rounded-full" />{' '}
-          {person
-            ? 'Jetzt im Dienst · Für Sie zuständig'
-            : confirmed
-              ? 'Außerhalb unserer Schichtzeiten'
-              : 'Ihr Service-Team'}
+          Ihr Kundenservice
         </p>
-        <div aria-live="polite" aria-atomic="true">
-          <h1 className="text-[clamp(32px,4vw,56px)] tracking-[-2px] leading-[1.08] max-w-[680px] font-semibold my-5.5">
+        <h1 className="text-[clamp(30px,3.6vw,48px)] tracking-[-1.5px] leading-[1.1] font-semibold mt-0 mb-5 [overflow-wrap:anywhere]">
+          {ctx.config.name}
+        </h1>
+        <p className="text-[1rem] leading-[1.7] m-0 [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))]">
+          {ctx.config.tagline}
+        </p>
+      </div>
+      <div
+        className="duty-service grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-center gap-5 min-w-0 narrow:gap-3"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div
+          className={`duty-message min-w-0 ${person ? '' : 'col-span-full'}`}
+        >
+          <p className="duty-badge text-[0.6875rem] leading-[1.6] uppercase tracking-[1px] font-semibold mt-0 mb-3">
+            {person ? (
+              <>
+                <span className="dot up inline-block w-[6px] h-[6px] rounded-full bg-accent-secondary" />{' '}
+                Jetzt im Dienst · Für Sie zuständig
+              </>
+            ) : (
+              'Ihr Service-Team'
+            )}
+          </p>
+          <p className="duty-greeting text-[1rem] leading-[1.6] mt-0 mb-3">
             {person ? (
               <>
                 Hallo, mein Name ist{' '}
-                <span className="duty-name block">{person.name}.</span>
+                <strong className="duty-name">{person.name}.</strong>
               </>
             ) : live.loading ? (
               'Wir prüfen, wer für Sie da ist …'
@@ -47,17 +67,14 @@ export function DutyHero(ctx: BrowserContext) {
             ) : (
               'Derzeit hat niemand Schicht.'
             )}
-          </h1>
+          </p>
           {person ? (
             <>
-              <p className="duty-question text-[clamp(22px,2.5vw,32px)] mt-6 mb-3 font-semibold">
+              <p className="duty-question text-[1.125rem] leading-[1.45] mt-0 mb-3 font-semibold">
                 Wie kann ich Ihnen helfen?
               </p>
-              <p className="hero-description text-[1rem] leading-[1.8] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] max-w-[475px] narrow:text-[0.875rem]">
-                Ich habe gerade Schicht und bin für Sie zuständig.
-              </p>
               {current.length > 1 && (
-                <p className="hero-description text-[1rem] leading-[1.8] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] max-w-[475px] narrow:text-[0.875rem]">
+                <p className="text-[0.8125rem] leading-[1.6]">
                   Ebenfalls im Dienst:{' '}
                   {current
                     .slice(1)
@@ -67,41 +84,40 @@ export function DutyHero(ctx: BrowserContext) {
                 </p>
               )}
             </>
-          ) : confirmed ? (
-            <p className="hero-description text-[1rem] leading-[1.8] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] max-w-[475px] narrow:text-[0.875rem]">
-              {next
-                ? nextShiftLabel(next.start, now, timezone)
-                : 'Der nächste Schichtbeginn ist noch nicht bekannt. Bitte nutzen Sie unsere Kontaktmöglichkeiten.'}
-            </p>
           ) : (
-            <p className="hero-description text-[1rem] leading-[1.8] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] max-w-[475px] narrow:text-[0.875rem]">
-              Bitte nutzen Sie unsere Kontaktmöglichkeiten. Wir können die
-              aktuelle Schicht derzeit nicht bestätigen.
+            <p className="text-[0.9375rem] leading-[1.7]">
+              {confirmed
+                ? next
+                  ? nextShiftLabel(next.start, now, timezone)
+                  : 'Der nächste Schichtbeginn ist noch nicht bekannt. Bitte nutzen Sie unsere Kontaktmöglichkeiten.'
+                : 'Bitte nutzen Sie unsere Kontaktmöglichkeiten. Wir können die aktuelle Schicht derzeit nicht bestätigen.'}
             </p>
           )}
-        </div>
-        <p className="duty-timezone text-[0.75rem] text-hero-ink opacity-[0.85]">
-          Schichtzeiten: {timezone}
-        </p>
-        {(live.stale || live.loading) && <DataState {...live} />}
-      </div>
-      {person && (
-        <div
-          className="duty-portrait flex flex-col items-center justify-end pt-8 px-8 min-w-0 [&_.avatar]:w-full [&_.avatar]:h-[360px] [&_.avatar]:max-w-[400px] [&_.avatar]:object-contain [&_.avatar]:object-bottom [&_.avatar]:bg-transparent [&_.avatar]:border-0 [&_.avatar]:rounded-none [&_.avatar]:text-[100px] [&_.avatar]:flex [&_.avatar]:items-center [&_.avatar]:justify-center [&_.avatar]:text-hero-ink compact:pt-0 compact:[&_.avatar]:h-[240px] compact:[&_.avatar]:max-w-[280px]"
-          key={person.userId}
-        >
-          <Avatar
-            config={ctx.config}
-            id={person.userId}
-            name={person.name}
-            provider={profile?.avatar}
-          />
-          <p className="duty-badge text-[0.8125rem] py-3 m-0 text-center">
-            <span className="dot up inline-block w-[6px] h-[6px] rounded-full bg-success" />{' '}
-            {person.name} · Jetzt im Dienst
+          <p className="duty-timezone text-[0.6875rem] leading-[1.6] opacity-[0.85] mt-4 mb-0">
+            Schichtzeiten: {timezone}
           </p>
+          {(live.stale || live.loading) && <DataState {...live} />}
         </div>
-      )}
-    </>
+        {person && (
+          <div
+            className="duty-portrait relative isolate aspect-[1/1.15] w-full max-w-[300px] justify-self-end"
+            key={person.userId}
+          >
+            <div
+              aria-hidden="true"
+              className="absolute bottom-0 inset-x-0 aspect-square rounded-full border-solid border-[4px] [border-color:color-mix(in_srgb,_var(--hero-ink)_25%,_transparent)] [background:color-mix(in_srgb,_var(--accent)_18%,_var(--hero))]"
+            />
+            <div className="absolute top-0 bottom-[4px] left-[4px] right-[4px] overflow-hidden [border-radius:0_0_50%_50%/0_0_43.5%_43.5%] [&_.avatar]:w-full [&_.avatar]:h-full [&_.avatar]:max-w-none [&_.avatar]:object-cover [&_.avatar]:object-bottom [&_.avatar]:bg-transparent [&_.avatar]:rounded-none [&_.avatar]:text-[64px] [&_.avatar]:flex [&_.avatar]:items-center [&_.avatar]:justify-center [&_.avatar]:text-hero-ink">
+              <Avatar
+                config={ctx.config}
+                id={person.userId}
+                name={person.name}
+                provider={profile?.avatar}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

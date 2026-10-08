@@ -101,6 +101,8 @@ Weiter: [Plugins und CLI](plugins.md), [Entwicklung und Tests](development.md), 
 
 `BrowserPlugin.hero` kann eine Komponente für den persönlichen Einstieg liefern. Ohne Hero-Plugin zeigt Core weiterhin den konfigurierten Slogan. `Section.placement: 'hero'` platziert eine Sektion unter der Begrüßung im Header; sie erhält `BrowserContext.surface: 'hero'`. Die Sektion erscheint dort genau einmal und bleibt über ihre ID in der Navigation erreichbar.
 
+Der Kundenportalname bleibt unabhängig vom Schichtstatus die Hauptüberschrift; der konfigurierte Slogan steht darunter. Die kompakte persönliche Ansprache und der bestätigte Dienststatus stehen neben dem freigestellten Porträt. Das Porträt hat einen runden unteren Ausschnitt mit sichtbarem Kopf über dem Kreisrahmen, in den Farben des Kunden. Auf kleinen Bildschirmen steht die Kundenidentität über dem Ansprechpartner. Transparente Bilder liefern den freigestellten Effekt; fehlende Bilder zeigen Initialen.
+
 SIGNL4 stellt die aktuelle Schichtperson aus `/schedule` dar, mit Bild aus den Avatar-Zuordnungen oder `/team`. Überlappende Schichten nennen weitere zuständige Personen. Schichtwechsel werden jede Sekunde geprüft; Daten werden im konfigurierten Intervall neu geladen. Bei veralteten oder fehlenden Schichtdaten wird keine Zuständigkeit bestätigt.
 
 Ohne aktive Schicht nennt der Header den frühesten gültigen zukünftigen Beginn. Heute, morgen und übermorgen werden nach dem Kalendertag der Schicht-Zeitzone berechnet, auch beim Wechsel der Sommerzeit. Für spätere Schichten erscheint ein Datum. Ohne geplanten Beginn wird keine Rückkehrzeit erfunden.
