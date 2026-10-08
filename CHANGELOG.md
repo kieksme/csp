@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/kieksme/csp/compare/v0.6.0...v0.6.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* **portal:** preserve customer identity beside compact duty greeting ([#19](https://github.com/kieksme/csp/issues/19)) ([e4de198](https://github.com/kieksme/csp/commit/e4de19849b3d0b48dafd9f804b9291c310d57d99))
+
 ## [0.6.0](https://github.com/kieksme/csp/compare/v0.5.0...v0.6.0) (2026-10-08)
 
 
