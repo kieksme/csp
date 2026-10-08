@@ -179,7 +179,8 @@ test('shows the duty portrait and one working question field in the header', asy
       getComputedStyle(hero.querySelector('.duty-greeting')!).fontSize,
     ),
   }));
-  expect(typography.title).toBeGreaterThan(typography.greeting);
+  expect(typography.greeting).toBeGreaterThan(typography.title);
+  await expect(page.locator('.portal-identity')).toContainText('Serviceportal');
   await expect(page.locator('.hero #chat-input')).toBeVisible();
   await expect(page.locator('#chat-input')).toHaveCount(1);
   await expect(page.locator('.hero')).toContainText('Digitaler Assistent');
