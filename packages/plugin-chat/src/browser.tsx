@@ -98,24 +98,33 @@ function Chat(ctx: BrowserContext) {
     }
   }
   return (
-    <div className="chat-layout grid grid-cols-[1fr_1.7fr] gap-13.75 compact:grid-cols-[1fr] compact:gap-3.75">
-      <div className="chat-intro [&_p]:text-[0.875rem] [&_p]:text-muted [&_p]:leading-[1.8] compact:max-w-[500px]">
-        <h3>Eine Frage reicht.</h3>
-        <p>
-          Unser Assistent kennt die Hilfe-Inhalte, das Team und die aktuellen
-          Meldungen. Für dringende Störungen bleibt die Hotline der direkte Weg.
-        </p>
-        <p className="data-state font-mono text-[0.625rem] text-muted m-[calc(var(--spacing)_*_3)_0_0] [&.warning]:text-warning">
-          Öffentlicher Chat · Verlauf nur in dieser Sitzung
-        </p>
-      </div>
-      <div className="chat-panel bg-card border border-line p-6 rounded-card">
+    <div
+      className={
+        ctx.surface === 'hero'
+          ? 'chat-layout block'
+          : 'chat-layout grid grid-cols-[1fr_1.7fr] gap-13.75 compact:grid-cols-[1fr] compact:gap-3.75'
+      }
+    >
+      {ctx.surface !== 'hero' && (
+        <div className="chat-intro [&_p]:text-[0.875rem] [&_p]:text-muted [&_p]:leading-[1.8] compact:max-w-[500px]">
+          <h3>Eine Frage reicht.</h3>
+          <p>
+            Unser Assistent kennt die Hilfe-Inhalte, das Team und die aktuellen
+            Meldungen. Für dringende Störungen bleibt die Hotline der direkte
+            Weg.
+          </p>
+          <p className="data-state font-mono text-[0.625rem] text-muted m-[calc(var(--spacing)_*_3)_0_0] [&.warning]:text-warning">
+            Öffentlicher Chat · Verlauf nur in dieser Sitzung
+          </p>
+        </div>
+      )}
+      <div className="chat-panel text-ink compact:p-4 bg-card border border-line p-6 rounded-card">
         <div
-          className="chat-history grid gap-3.75 max-h-[400px] overflow-auto mb-4"
+          className="chat-history empty:hidden grid gap-3.75 max-h-[400px] overflow-auto mb-4"
           aria-live="polite"
           aria-busy={busy}
         >
-          {!messages.length && (
+          {!messages.length && ctx.surface !== 'hero' && (
             <p className="message assistant text-[0.8125rem] leading-[1.8] whitespace-pre-wrap [overflow-wrap:anywhere] [&.user]:bg-soft [&.user]:pt-3 [&.user]:pb-3 [&.user]:pl-4 [&.user]:pr-4 [&.user]:rounded-card [&.assistant]:[border-left:2px_solid_var(--accent)] [&.assistant]:pt-[0] [&.assistant]:pb-[0] [&.assistant]:pl-4 [&.assistant]:pr-4">
               Wie kann ich Ihnen helfen?
             </p>
@@ -174,6 +183,12 @@ function Chat(ctx: BrowserContext) {
             ↑
           </button>
         </form>
+        {ctx.surface === 'hero' && (
+          <p className="data-state font-mono text-[0.625rem] text-muted mt-3 mb-0">
+            Digitaler Assistent · Ihre Frage wird automatisch beantwortet. Für
+            persönlichen Kontakt nutzen Sie die Hotline.
+          </p>
+        )}
         {error && (
           <p
             className="chat-error text-danger dark:text-warning text-[0.75rem]"
@@ -192,6 +207,7 @@ export default {
   sections: [
     {
       id: 'chat',
+      placement: 'hero',
       label: 'Assistent',
       title: 'Antworten ohne Warteschleife.',
       order: 60,

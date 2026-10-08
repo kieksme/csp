@@ -142,11 +142,13 @@ export interface PublicConfig {
   avatarOverrides: Record<string, string>;
 }
 export interface BrowserContext {
+  surface?: 'hero';
   request?: typeof fetch;
   config: PublicConfig;
   api: <T>(path: string, init?: RequestInit) => Promise<T>;
 }
 export interface Section {
+  placement?: 'hero';
   id: string;
   title: string;
   label: string;
@@ -159,6 +161,7 @@ export interface PluginMeta {
   requires?: string[];
 }
 export interface BrowserPlugin extends PluginMeta {
+  hero?: ComponentType<BrowserContext>;
   sections: Section[];
 }
 export interface ServerContext {

@@ -9,7 +9,7 @@ test('serves every module, filters FAQ, downloads vCard and streams chat', async
   await expect(page.locator('.site-header')).toHaveCSS('display', 'flex');
   await expect(page.locator('.contact-grid')).toHaveCSS('display', 'grid');
   await expect(
-    page.getByRole('heading', { name: 'Wir sind für Sie da.' }),
+    page.getByRole('heading', { name: 'Hallo, mein Name ist Lena Beispiel.' }),
   ).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Jetzt anrufen' }),
@@ -157,4 +157,115 @@ test('supports keyboard navigation and accessible light/dark themes', async ({
       })),
     ).toEqual([]);
   }
+});
+
+test('shows the duty portrait and one working question field in the header', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('.hero h1')).toContainText('Lena Beispiel');
+  await expect(page.locator('.hero')).toContainText(
+    'Jetzt im Dienst · Für Sie zuständig',
+  );
+  await expect(page.locator('.duty-portrait img')).toHaveAttribute(
+    'src',
+    '/team/lena-example.png',
+  );
+  await expect(page.locator('.duty-portrait img')).toBeVisible();
+  await expect(page.locator('.hero #chat-input')).toBeVisible();
+  await expect(page.locator('#chat-input')).toHaveCount(1);
+  await expect(page.locator('.hero')).toContainText('Digitaler Assistent');
+});
+
+test('shows the next shift, unknown schedule and stale data without claiming duty', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-10-08T12:00:00Z') });
+  let shifts = [
+    {
+      userId: 'demo-noah',
+      name: 'Noah Muster',
+      start: '2026-10-09T06:00:00Z',
+      end: '2026-10-09T14:00:00Z',
+    },
+  ];
+  let stale = false;
+  await page.route('**/api/v1/schedule', (route) =>
+    route.fulfill({
+      json: {
+        data: { timezone: 'Europe/Berlin', shifts },
+        stale,
+        updatedAt: '2026-10-08T12:00:00Z',
+      },
+    }),
+  );
+  await page.goto('/');
+  await expect(page.locator('.hero h1')).toHaveText(
+    'Derzeit hat niemand Schicht.',
+  );
+  await expect(page.locator('.hero')).toContainText(
+    'Ab morgen um 8 Uhr sind wir wieder für Sie da.',
+  );
+  await expect(page.locator('.duty-portrait')).toHaveCount(0);
+  shifts = [
+    {
+      ...shifts[0],
+      start: '2026-10-10T06:00:00Z',
+      end: '2026-10-10T14:00:00Z',
+    },
+  ];
+  await page.reload();
+  await expect(page.locator('.hero')).toContainText('Ab übermorgen um 8 Uhr');
+  shifts = [];
+  await page.reload();
+  await expect(page.locator('.hero')).toContainText(
+    'Der nächste Schichtbeginn ist noch nicht bekannt.',
+  );
+  stale = true;
+  await page.reload();
+  await expect(page.locator('.hero h1')).toHaveText(
+    'Erreichbarkeit derzeit nicht bestätigt.',
+  );
+  await expect(page.locator('.hero')).not.toContainText(
+    'Derzeit hat niemand Schicht.',
+  );
+});
+
+test('changes duty at the shift boundary without reloading', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-10-08T12:00:00Z') });
+  await page.route('**/api/v1/schedule', (route) =>
+    route.fulfill({
+      json: {
+        data: {
+          timezone: 'Europe/Berlin',
+          shifts: [
+            {
+              userId: 'demo-lena',
+              name: 'Lena Beispiel',
+              start: '2026-10-08T11:00:00Z',
+              end: '2026-10-08T12:00:05Z',
+            },
+            {
+              userId: 'demo-noah',
+              name: 'Noah Muster',
+              start: '2026-10-08T12:00:05Z',
+              end: '2026-10-08T13:00:00Z',
+            },
+          ],
+        },
+        stale: false,
+        updatedAt: '2026-10-08T12:00:00Z',
+      },
+    }),
+  );
+  await page.goto('/');
+  await expect(page.locator('.hero h1')).toContainText('Lena Beispiel');
+  await page.clock.fastForward(6000);
+  await expect(page.locator('.hero h1')).toContainText('Noah Muster');
+  await expect(page.locator('.duty-portrait img')).toHaveAttribute(
+    'src',
+    '/team/noah-example.png',
+  );
 });

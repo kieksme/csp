@@ -20,6 +20,9 @@ export function staticDemoRequest(config: PublicConfig): typeof fetch {
         role: 'Service',
       },
       { id: 'demo-noah', name: 'Noah Demo', phones: [], role: 'Operations' },
+      { id: 'demo-mila', name: 'Mila Demo', phones: [], role: 'Service' },
+      { id: 'demo-sara', name: 'Sara Demo', phones: [], role: 'Support' },
+      { id: 'demo-jonas', name: 'Jonas Demo', phones: [], role: 'Support' },
     ];
     let data: unknown;
     if (route === '/team') data = team;

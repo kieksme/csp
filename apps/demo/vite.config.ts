@@ -4,6 +4,7 @@ import { publicConfig, portalBuild } from '@kieksme/csp-core/build';
 export default defineConfig(({ mode }) => {
   const env = {
     CSP_CONTENT_PATH: 'content.json',
+    CSP_AVATARS_PATH: 'avatars.json',
     ...loadEnv(mode, process.cwd(), ''),
     ...process.env,
   };

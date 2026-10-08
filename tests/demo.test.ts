@@ -6,6 +6,9 @@ it('provides browser-only synthetic data and a complete chat stream', async () =
   expect(
     (await (await request('https://unused/api/v1/team')).json()).data[0].name,
   ).toBe('Lena Demo');
+  expect(
+    (await (await request('https://unused/api/v1/team')).json()).data,
+  ).toHaveLength(5);
   expect(await (await request('https://unused/api/v1/chat')).text()).toContain(
     'event: done',
   );
