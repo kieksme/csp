@@ -21,10 +21,10 @@ it('serves isolated demo live data, vCards, CORS and scoped team routes', async 
   });
   try {
     const team = await app.inject({ url: '/api/v1/team' });
-    expect(team.json().data).toHaveLength(3);
+    expect(team.json().data).toHaveLength(5);
     expect(
       (await app.inject({ url: '/api/v1/schedule' })).json().data.shifts,
-    ).toHaveLength(3);
+    ).toHaveLength(5);
     expect(
       (await app.inject({ url: '/api/v1/status' })).json().data.monitors,
     ).toHaveLength(3);

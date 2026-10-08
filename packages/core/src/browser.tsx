@@ -29,6 +29,9 @@ export function Portal({
   const sections = plugins
     .flatMap((p) => p.sections)
     .sort((a, b) => a.order - b.order);
+  const Hero = plugins.find((p) => p.hero)?.hero;
+  const heroSections = sections.filter((s) => s.placement === 'hero');
+  const bodySections = sections.filter((s) => s.placement !== 'hero');
   const [dark, setDark] = useState(() => {
     try {
       const stored = localStorage.getItem('csp-theme');
@@ -154,39 +157,57 @@ export function Portal({
         </div>
       )}
       <main id="main">
-        <div className="hero max-w-hero m-[calc(var(--spacing)_*_5)_auto_0] bg-hero text-hero-ink min-h-[415px] grid grid-cols-[1.7fr_1fr] relative overflow-hidden rounded-card [&_.eyebrow]:[color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] [&_.eyebrow]:flex [&_.eyebrow]:items-center [&_.eyebrow]:gap-2.25 contained:ml-6 contained:mr-6 compact:grid-cols-[1fr] compact:min-h-[0] narrow:m-[calc(var(--spacing)_*_4)_calc(var(--spacing)_*_4)_0]">
-          <div className="hero-copy py-13 px-15 z-[1] wide:[animation:arrive_0.6s_ease_both] contained:p-11.25 compact:pt-9 compact:pb-9 compact:pl-7.5 compact:pr-7.5 narrow:pt-7.5 narrow:pb-7.5 narrow:pl-6.25 narrow:pr-6.25">
-            <p className="eyebrow font-mono text-[0.6875rem] uppercase tracking-[2px] m-[0_0_calc(var(--spacing)_*_4.25)]">
-              <span className="signal-mark w-[6px] h-[6px] [background:var(--accent-secondary,_#c4e98f)] rounded-full" />{' '}
-              CUSTOMER SERVICE PORTAL
-            </p>
-            <h1 className="text-[clamp(40px,5vw,70px)] leading-[1.08] tracking-[-3px] max-w-[680px] font-semibold my-5.5 compact:tracking-[-2px] compact:text-[2.875rem] narrow:text-[2.5rem]">
-              {config.tagline}
-            </h1>
-            <p className="hero-description text-[1rem] leading-[1.8] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] max-w-[475px] narrow:text-[0.875rem]">
-              {config.description}
-            </p>
-            <div className="hero-note mt-10 font-mono text-[0.75rem] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] [&_span]:mr-2.5 [&_span]:[color:var(--accent-secondary,_#c4e98f)] compact:mt-7.5 compact:text-[0.625rem] narrow:max-w-[230px] narrow:leading-[1.8]">
-              <span aria-hidden="true">↳</span> Ein Kontakt. Klare Antworten.
-              Kurze Wege.
-            </div>
+        <div className="hero max-w-hero m-[calc(var(--spacing)_*_5)_auto_0] bg-hero text-hero-ink min-h-[415px] block relative overflow-hidden rounded-card [&_.eyebrow]:[color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] [&_.eyebrow]:flex [&_.eyebrow]:items-center [&_.eyebrow]:gap-2.25 contained:ml-6 contained:mr-6 compact:min-h-[0] narrow:m-[calc(var(--spacing)_*_4)_calc(var(--spacing)_*_4)_0]">
+          <div className="hero-main grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] items-stretch compact:grid-cols-[1fr]">
+            {Hero ? (
+              <Hero {...ctx} />
+            ) : (
+              <>
+                <div className="hero-copy py-13 px-15 z-[1] wide:[animation:arrive_0.6s_ease_both] contained:p-11.25 compact:pt-9 compact:pb-9 compact:pl-7.5 compact:pr-7.5 narrow:pt-7.5 narrow:pb-7.5 narrow:pl-6.25 narrow:pr-6.25">
+                  <p className="eyebrow font-mono text-[0.6875rem] uppercase tracking-[2px] m-[0_0_calc(var(--spacing)_*_4.25)]">
+                    <span className="signal-mark w-[6px] h-[6px] [background:var(--accent-secondary,_#c4e98f)] rounded-full" />{' '}
+                    CUSTOMER SERVICE PORTAL
+                  </p>
+                  <h1 className="text-[clamp(40px,5vw,70px)] leading-[1.08] tracking-[-3px] max-w-[680px] font-semibold my-5.5 compact:tracking-[-2px] compact:text-[2.875rem] narrow:text-[2.5rem]">
+                    {config.tagline}
+                  </h1>
+                  <p className="hero-description text-[1rem] leading-[1.8] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] max-w-[475px] narrow:text-[0.875rem]">
+                    {config.description}
+                  </p>
+                  <div className="hero-note mt-10 font-mono text-[0.75rem] [color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] [&_span]:mr-2.5 [&_span]:[color:var(--accent-secondary,_#c4e98f)] compact:mt-7.5 compact:text-[0.625rem] narrow:max-w-[230px] narrow:leading-[1.8]">
+                    <span aria-hidden="true">↳</span> Ein Kontakt. Klare
+                    Antworten. Kurze Wege.
+                  </div>
+                </div>
+                <div
+                  className="hero-lines relative overflow-hidden opacity-[0.7] [&_>_span]:absolute [&_>_span]:w-[370px] [&_>_span]:h-[370px] [&_>_span]:[border:1px_solid_var(--hero-line)] [&_>_span]:rounded-full [&_>_span]:top-[25px] [&_>_span]:left-[30px] [&_>_span:nth-child(2)]:w-[290px] [&_>_span:nth-child(2)]:h-[290px] [&_>_span:nth-child(2)]:top-[65px] [&_>_span:nth-child(2)]:left-[70px] [&_>_span:nth-child(3)]:w-[210px] [&_>_span:nth-child(3)]:h-[210px] [&_>_span:nth-child(3)]:top-[105px] [&_>_span:nth-child(3)]:left-[110px] [&_>_span:nth-child(4)]:w-[130px] [&_>_span:nth-child(4)]:h-[130px] [&_>_span:nth-child(4)]:top-[145px] [&_>_span:nth-child(4)]:left-[150px] [&_>_span:nth-child(5)]:w-[50px] [&_>_span:nth-child(5)]:h-[50px] [&_>_span:nth-child(5)]:top-[185px] [&_>_span:nth-child(5)]:left-[190px] [&_>_span:nth-child(5)]:[background:var(--accent-secondary,_#c4e98f)] [&_>_span:nth-child(5)]:[border:0] [&_>_div]:absolute [&_>_div]:bottom-[27px] [&_>_div]:right-[35px] [&_>_div]:font-mono [&_>_div]:text-[0.625rem] [&_>_div]:tracking-[2px] [&_>_div]:leading-[1.6] [&_>_div]:[color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] compact:hidden"
+                  aria-hidden="true"
+                >
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <div>
+                    OPS
+                    <br />/ SUPPORT
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-          <div
-            className="hero-lines relative overflow-hidden opacity-[0.7] [&_>_span]:absolute [&_>_span]:w-[370px] [&_>_span]:h-[370px] [&_>_span]:[border:1px_solid_var(--hero-line)] [&_>_span]:rounded-full [&_>_span]:top-[25px] [&_>_span]:left-[30px] [&_>_span:nth-child(2)]:w-[290px] [&_>_span:nth-child(2)]:h-[290px] [&_>_span:nth-child(2)]:top-[65px] [&_>_span:nth-child(2)]:left-[70px] [&_>_span:nth-child(3)]:w-[210px] [&_>_span:nth-child(3)]:h-[210px] [&_>_span:nth-child(3)]:top-[105px] [&_>_span:nth-child(3)]:left-[110px] [&_>_span:nth-child(4)]:w-[130px] [&_>_span:nth-child(4)]:h-[130px] [&_>_span:nth-child(4)]:top-[145px] [&_>_span:nth-child(4)]:left-[150px] [&_>_span:nth-child(5)]:w-[50px] [&_>_span:nth-child(5)]:h-[50px] [&_>_span:nth-child(5)]:top-[185px] [&_>_span:nth-child(5)]:left-[190px] [&_>_span:nth-child(5)]:[background:var(--accent-secondary,_#c4e98f)] [&_>_span:nth-child(5)]:[border:0] [&_>_div]:absolute [&_>_div]:bottom-[27px] [&_>_div]:right-[35px] [&_>_div]:font-mono [&_>_div]:text-[0.625rem] [&_>_div]:tracking-[2px] [&_>_div]:leading-[1.6] [&_>_div]:[color:color-mix(in_srgb,_var(--hero-ink)_85%,_var(--hero))] compact:hidden"
-            aria-hidden="true"
-          >
-            <span />
-            <span />
-            <span />
-            <span />
-            <span />
-            <div>
-              OPS
-              <br />/ SUPPORT
+          {heroSections.map((section) => (
+            <div
+              id={section.id}
+              key={section.id}
+              className="hero-chat px-15 pb-9 compact:pt-5 compact:px-6.25 compact:pb-7.5"
+              aria-label={section.label}
+            >
+              <section.component {...ctx} surface="hero" />
             </div>
-          </div>
+          ))}
         </div>
-        {sections.map((section, i) => (
+        {bodySections.map((section, i) => (
           <section
             key={section.id}
             id={section.id}

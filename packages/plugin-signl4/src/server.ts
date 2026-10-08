@@ -156,6 +156,18 @@ function demoTeam(): Person[] {
       phones: ['+49 000 000003'],
       role: 'Service Management',
     },
+    {
+      id: 'demo-sara',
+      name: 'Sara Beispiel',
+      phones: ['+49 000 000004'],
+      role: 'Customer Support',
+    },
+    {
+      id: 'demo-jonas',
+      name: 'Jonas Muster',
+      phones: ['+49 000 000005'],
+      role: 'Technical Support',
+    },
   ];
 }
 export default {

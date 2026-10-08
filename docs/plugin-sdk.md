@@ -96,3 +96,13 @@ CLI-Mutationen sind für eigenständige Kundenrepos vorgesehen. Ein `pnpm-worksp
 Browser und Server als ESM mit Typdeklarationen bauen, `dist/` in den npm-Paketinhalt aufnehmen und das SDK als kompatible Abhängigkeit deklarieren. Browsercode darf keine Node-/Provider-Secrets importieren. Paket-Tarball in einer frischen Kundeninstanz installieren und über die CLI registrieren; beide Anwendungsteile neu bauen. Inkompatible SDK-Versionen und fehlende `requires` gezielt prüfen.
 
 Weiter: [Plugins und CLI](plugins.md), [Entwicklung und Tests](development.md), [API](api.md).
+
+## Persönlicher Header
+
+`BrowserPlugin.hero` kann eine Komponente für den persönlichen Einstieg liefern. Ohne Hero-Plugin zeigt Core weiterhin den konfigurierten Slogan. `Section.placement: 'hero'` platziert eine Sektion unter der Begrüßung im Header; sie erhält `BrowserContext.surface: 'hero'`. Die Sektion erscheint dort genau einmal und bleibt über ihre ID in der Navigation erreichbar.
+
+SIGNL4 stellt die aktuelle Schichtperson aus `/schedule` dar, mit Bild aus den Avatar-Zuordnungen oder `/team`. Überlappende Schichten nennen weitere zuständige Personen. Schichtwechsel werden jede Sekunde geprüft; Daten werden im konfigurierten Intervall neu geladen. Bei veralteten oder fehlenden Schichtdaten wird keine Zuständigkeit bestätigt.
+
+Ohne aktive Schicht nennt der Header den frühesten gültigen zukünftigen Beginn. Heute, morgen und übermorgen werden nach dem Kalendertag der Schicht-Zeitzone berechnet, auch beim Wechsel der Sommerzeit. Für spätere Schichten erscheint ein Datum. Ohne geplanten Beginn wird keine Rückkehrzeit erfunden.
+
+Das Chat-Plugin zeigt im Header das Eingabefeld und den Sitzungsverlauf. Es kennzeichnet automatische Antworten als digitalen Assistenten; persönlicher Kontakt bleibt über die Hotline möglich. Ohne Chat-Plugin entsteht kein Eingabefeld. Die Demo enthält fünf synthetische Personen und freigestellte Beispielbilder unter `apps/demo/public/team`.
