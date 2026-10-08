@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/kieksme/csp/compare/v0.5.0...v0.6.0) (2026-10-08)
+
+
+### Features
+
+* **portal:** show on-duty person and next shift in service header ([#17](https://github.com/kieksme/csp/issues/17)) ([13e8f5c](https://github.com/kieksme/csp/commit/13e8f5cdf01210359c00bf418cb7419144e82aec))
+
 ## [0.5.0](https://github.com/kieksme/csp/compare/v0.4.0...v0.5.0) (2026-10-07)
 
 
