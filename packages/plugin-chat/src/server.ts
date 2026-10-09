@@ -5,6 +5,7 @@ import { createProvider, type Message } from './providers.js';
 export const configSchema = z
   .object({
     CSP_DEMO: z.string().optional(),
+    CSP_CHAT_DEMO: z.enum(['true', 'false']).optional(),
     CSP_CHAT_PROVIDER: z.enum(['openai', 'azure', 'ollama']).default('ollama'),
     CSP_CHAT_MODEL: z.string().optional(),
     CSP_CHAT_OPENAI_API_KEY: z.string().optional(),
@@ -20,6 +21,12 @@ export const configSchema = z
       .min(128)
       .max(16384)
       .default(1024),
+    CSP_CHAT_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .min(1000)
+      .max(300000)
+      .default(60000),
     CSP_CHAT_CONTEXT_CHARS: z.coerce
       .number()
       .int()
@@ -28,7 +35,11 @@ export const configSchema = z
       .default(16000),
   })
   .superRefine((c, ctx) => {
-    if (c.CSP_DEMO === 'true') return;
+    if (
+      c.CSP_CHAT_DEMO === 'true' ||
+      (c.CSP_CHAT_DEMO !== 'false' && c.CSP_DEMO === 'true')
+    )
+      return;
     if (!c.CSP_CHAT_MODEL)
       ctx.addIssue({
         code: 'custom',
@@ -129,7 +140,9 @@ export default {
   configSchema,
   setup(ctx) {
     const c = configSchema.parse(ctx.env);
-    const provider = ctx.demo
+    const demo =
+      c.CSP_CHAT_DEMO === 'true' || (c.CSP_CHAT_DEMO !== 'false' && ctx.demo);
+    const provider = demo
       ? undefined
       : createProvider(
           {
@@ -168,7 +181,10 @@ export default {
       windows.set(request.ip, window);
       active++;
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 60000);
+      const timeout = setTimeout(
+        () => controller.abort(),
+        c.CSP_CHAT_TIMEOUT_MS,
+      );
       const cancel = () => controller.abort();
       reply.raw.on('close', cancel);
       try {
@@ -212,7 +228,7 @@ export default {
           'sources',
           sources.map(({ text: _text, ...source }) => source),
         );
-        if (ctx.demo) {
+        if (demo) {
           send('delta', {
             text: 'Dies ist eine synthetische Demo-Antwort. Bei einer dringenden Störung rufen Sie bitte die Operations-Hotline an. Der Dienstplan und die aktuellen Meldungen stehen direkt im Portal. Die produktive KI-Anbindung wird pro Kundeninstanz konfiguriert.',
           });

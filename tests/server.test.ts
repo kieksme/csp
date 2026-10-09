@@ -263,3 +263,54 @@ it('returns a streaming error without provider credentials when the AI fails', a
     await app.close();
   }
 });
+
+it('uses Ollama with synthetic portal sources when chat demo is explicitly disabled', async () => {
+  const fetcher = vi.fn(
+    async (_url: string | URL | Request, _init?: RequestInit) =>
+      new Response(
+        JSON.stringify({
+          message: { content: 'Ollama-Testantwort' },
+          done: true,
+        }) + '\n',
+      ),
+  );
+  const app = await createServer({
+    config,
+    env: {
+      ...env,
+      CSP_CHAT_DEMO: 'false',
+      CSP_CHAT_PROVIDER: 'ollama',
+      CSP_CHAT_MODEL: 'local-test',
+      CSP_CHAT_OLLAMA_URL: 'http://ollama.example.invalid:11434',
+    },
+    plugins: [signl4, kuma, chat],
+    fetch: fetcher,
+  });
+  try {
+    expect(
+      (await app.inject({ url: '/api/v1/team' })).json().data,
+    ).toHaveLength(5);
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/v1/chat',
+      payload: { messages: [{ role: 'user', content: 'Wer hat Schicht?' }] },
+    });
+    expect(response.body).toContain('Ollama-Testantwort');
+    expect(response.body).not.toContain('synthetische Demo-Antwort');
+    expect(fetcher).toHaveBeenCalledOnce();
+    expect(fetcher.mock.calls[0]?.[0]).toBe(
+      'http://ollama.example.invalid:11434/api/chat',
+    );
+  } finally {
+    await app.close();
+  }
+});
+it('requires a model when a real chat provider is enabled inside portal demo mode', async () => {
+  await expect(
+    createServer({
+      config,
+      env: { ...env, CSP_CHAT_DEMO: 'false' },
+      plugins: [chat],
+    }),
+  ).rejects.toThrow();
+});
