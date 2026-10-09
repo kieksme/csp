@@ -114,3 +114,5 @@ Das Chat-Plugin zeigt im Header das Eingabefeld und den Sitzungsverlauf. Es kenn
 Im Chat-Textfeld sendet `⌘ + Enter` auf macOS bzw. `Strg + Enter` auf anderen Systemen die Nachricht über denselben Ablauf wie die Senden-Schaltfläche. `Enter` allein fügt einen Zeilenumbruch ein. Der dezente Hinweis zeigt das passende Tastenkürzel des Systems und steht unten rechts innerhalb des Textfelds und ist als Eingabebeschreibung zugänglich. Leere Nachrichten und Tastenkürzel während einer laufenden Antwort werden nicht gesendet.
 
 Das Eingabefeld beginnt mit einer Textzeile und wächst automatisch bei Zeilenumbrüchen oder umgebrochenem Text. Nach dem Kürzen oder Absenden schrumpft es wieder; Breitenänderungen werden ebenfalls berücksichtigt.
+
+Beim Laden der Seite erhält das Chat-Textfeld automatisch den Fokus, sodass direkt geschrieben werden kann.

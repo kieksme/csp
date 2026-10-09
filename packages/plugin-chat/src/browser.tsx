@@ -193,6 +193,7 @@ function Chat(ctx: BrowserContext) {
               id="chat-input"
               ref={inputField}
               rows={1}
+              autoFocus
               className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block overflow-hidden"
               value={input}
               maxLength={4000}
