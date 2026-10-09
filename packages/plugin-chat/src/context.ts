@@ -39,7 +39,55 @@ function sourceData<T>(source: Source | undefined, schema: z.ZodType<T>) {
     return undefined;
   }
 }
-export function chatContext(sources: Source[], now: number) {
+function serviceText(value: string) {
+  return value
+    .toLowerCase()
+    .normalize('NFKC')
+    .replace(/e[ -]?mails?|gmail|outlook|exchange|imap|smtp/g, 'email');
+}
+export function relevantStatus(
+  status: z.infer<typeof statusSchema> | undefined,
+  query: string,
+) {
+  if (!status) return null;
+  const normalized = serviceText(query);
+  // A named email problem must never inherit availability from a generic cloud/portal monitor.
+  const email = normalized.includes('email');
+  if (!query) return status;
+  const words = normalized.split(/[^\p{L}\p{N}]+/u).filter((w) => w.length > 2);
+  const monitors = status.monitors.filter((m) =>
+    email
+      ? serviceText(m.name).includes('email')
+      : words.some((w) => serviceText(m.name).includes(w)),
+  );
+  if (monitors.length) return { ...status, monitors };
+  const overview =
+    !email &&
+    (/systemstatus|übersicht|alle dienste|alle systeme/.test(normalized) ||
+      words.every((w) =>
+        [
+          'wie',
+          'ist',
+          'der',
+          'den',
+          'die',
+          'das',
+          'bitte',
+          'aktueller',
+          'aktuelle',
+          'status',
+          'systeme',
+          'dienste',
+          'störungen',
+          'ausfälle',
+          'welche',
+          'sind',
+          'läuft',
+        ].includes(w),
+      ));
+  return overview ? status : { monitors: [] };
+}
+export function chatContext(sources: Source[], now: number, query = '') {
   const schedule = sourceData(
     sources.find((s) => s.id === 'schedule'),
     scheduleSchema,
@@ -60,7 +108,7 @@ export function chatContext(sources: Source[], now: number) {
       schedule && !person && duty.next
         ? nextShiftLabel(duty.next.start, now, schedule.timezone)
         : null,
-    status: status ?? null,
+    status: relevantStatus(status, query),
     now: new Date(now).toISOString(),
   };
 }

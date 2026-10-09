@@ -2,6 +2,7 @@ import { expect, it } from 'vitest';
 import {
   chatContext,
   servicePrompt,
+  relevantStatus,
 } from '../packages/plugin-chat/src/context.js';
 import { answerParts } from '../packages/plugin-chat/src/answer.js';
 import { selectSources } from '../packages/plugin-chat/src/server.js';
@@ -156,4 +157,31 @@ it('turns only known source markers into safe readable links', () => {
   expect(answerParts('<script>alert(1)</script>', tickets)).toEqual([
     { text: '<script>alert(1)</script>' },
   ]);
+});
+
+it('isolates email monitor facts from unrelated portal and cloud availability', () => {
+  const unrelated = {
+    monitors: [
+      { id: 'portal', name: 'Kundenportal', status: 'up' as const },
+      { id: 'cloud', name: 'Cloud-Infrastruktur', status: 'up' as const },
+    ],
+  };
+  expect(
+    relevantStatus(unrelated, 'Ich kann meine E-Mails nicht lesen'),
+  ).toEqual({ monitors: [] });
+  for (const status of ['up', 'down', 'maintenance', 'unknown'] as const) {
+    const email = { id: 'email', name: 'Exchange Online', status };
+    expect(
+      relevantStatus(
+        { monitors: [...unrelated.monitors, email] },
+        'Meine Emails funktionieren nicht',
+      )?.monitors,
+    ).toEqual([email]);
+  }
+  expect(
+    relevantStatus(unrelated, 'Wie ist der Systemstatus?')?.monitors,
+  ).toHaveLength(2);
+  expect(
+    relevantStatus(unrelated, 'Das Kundenportal ist langsam')?.monitors,
+  ).toEqual([unrelated.monitors[0]]);
 });

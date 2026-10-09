@@ -15,12 +15,12 @@ export function answerParts(
   streaming = false,
 ): AnswerPart[] {
   // Hide a marker while its final chunk is still arriving.
-  const complete = streaming ? text.replace(/\[[\w:-]*$/, '') : text;
+  const complete = streaming ? text.replace(/\[[^\[\]\r\n]*$/, '') : text;
   return complete
-    .split(/(\[[\w:-]+\])/g)
+    .split(/(\[[^\[\]\r\n]+\])/g)
     .filter(Boolean)
     .flatMap((part) => {
-      const marker = /^\[([\w:-]+)\]$/.exec(part);
+      const marker = /^\[([^\[\]\r\n]+)\]$/.exec(part);
       if (!marker) return [{ text: part }];
       const source = sources.find((s) => s.id === marker[1]);
       if (!source) return [];
