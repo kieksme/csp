@@ -101,10 +101,38 @@ Weiter: [Plugins und CLI](plugins.md), [Entwicklung und Tests](development.md), 
 
 `BrowserPlugin.hero` kann eine Komponente für den persönlichen Einstieg liefern. Ohne Hero-Plugin zeigt Core weiterhin den konfigurierten Slogan. `Section.placement: 'hero'` platziert eine Sektion unter der Begrüßung im Header; sie erhält `BrowserContext.surface: 'hero'`. Die Sektion erscheint dort genau einmal und bleibt über ihre ID in der Navigation erreichbar.
 
-Der Kundenportalname bleibt unabhängig vom Schichtstatus die Hauptüberschrift; der konfigurierte Slogan steht darunter. Die kompakte persönliche Ansprache und der bestätigte Dienststatus stehen neben dem freigestellten Porträt. Das Porträt hat einen runden unteren Ausschnitt mit sichtbarem Kopf über dem Kreisrahmen, in den Farben des Kunden. Auf kleinen Bildschirmen steht die Kundenidentität über dem Ansprechpartner. Transparente Bilder liefern den freigestellten Effekt; fehlende Bilder zeigen Initialen.
+Der persönliche Header zeigt links die große Begrüßung als Hauptüberschrift und den bestätigten Dienststatus, rechts das freigestellte Porträt. Das Porträt hat immer einen runden unteren Ausschnitt mit einem Kreisrahmen in den Kundenfarben; der Kopf ragt darüber hinaus. Unter dem Porträt stehen Name und Diensthinweis. Zusätzliche Serviceportal-Überschriften entfallen; die Kundenidentität bleibt über das Logo und den Namen in Navigation und Fußzeile sichtbar. Auf kleinen Bildschirmen folgt das Porträt auf die Begrüßung. Fehlende Bilder zeigen Initialen.
 
 SIGNL4 stellt die aktuelle Schichtperson aus `/schedule` dar, mit Bild aus den Avatar-Zuordnungen oder `/team`. Überlappende Schichten nennen weitere zuständige Personen. Schichtwechsel werden jede Sekunde geprüft; Daten werden im konfigurierten Intervall neu geladen. Bei veralteten oder fehlenden Schichtdaten wird keine Zuständigkeit bestätigt.
 
 Ohne aktive Schicht nennt der Header den frühesten gültigen zukünftigen Beginn. Heute, morgen und übermorgen werden nach dem Kalendertag der Schicht-Zeitzone berechnet, auch beim Wechsel der Sommerzeit. Für spätere Schichten erscheint ein Datum. Ohne geplanten Beginn wird keine Rückkehrzeit erfunden.
 
 Das Chat-Plugin zeigt im Header das Eingabefeld und den Sitzungsverlauf. Es kennzeichnet automatische Antworten als digitalen Assistenten; persönlicher Kontakt bleibt über die Hotline möglich. Ohne Chat-Plugin entsteht kein Eingabefeld. Die Demo enthält fünf synthetische Personen und freigestellte Beispielbilder unter `apps/demo/public/team`.
+
+### Chat-Eingabe
+
+Im Chat-Textfeld sendet `⌘ + Enter` auf macOS bzw. `Strg + Enter` auf anderen Systemen die Nachricht über denselben Ablauf wie die Senden-Schaltfläche. `Enter` allein fügt einen Zeilenumbruch ein. Der dezente Hinweis zeigt das passende Tastenkürzel des Systems und steht unten rechts innerhalb des Textfelds und ist als Eingabebeschreibung zugänglich. Leere Nachrichten und Tastenkürzel während einer laufenden Antwort werden nicht gesendet.
+
+Das Eingabefeld beginnt mit einer Textzeile und wächst automatisch bei Zeilenumbrüchen oder umgebrochenem Text. Nach dem Kürzen oder Absenden schrumpft es wieder; Breitenänderungen werden ebenfalls berücksichtigt.
+
+Beim Laden der Seite erhält das Chat-Textfeld automatisch den Fokus, sodass direkt geschrieben werden kann.
+
+Das fokussierte Chat-Feld verwendet einen dezenten Rahmen von 1 px in der sekundären Textfarbe mit 2 px Abstand. Er folgt dem aktiven Farbschema.
+
+### FAQ-Kategorien
+
+Die Kategorie-Chips sind abgerundete Schaltflächen mit 40 px Mindesthöhe, klarer Schrift und einer geschlossenen Kontur. Die aktive Kategorie trägt die Akzentfarbe; Hover und Tastaturfokus sind gesondert erkennbar. Farben folgen dem hellen bzw. dunklen Design.
+
+Der Porträtkreis verwendet die aktuelle Marken-Akzentfarbe mit 35 % Deckkraft; sein Rahmen verwendet dieselbe Farbe mit 50 %. Design-Schalter und FAQ-Chips teilen dezente, zum Farbschema passende Schatten und verstärken diese beim Hover.
+
+### Dekorativer Header-Hintergrund
+
+Die gesamte `.hero`-Fläche, einschließlich Begrüßung, Porträt und Chat, unterstützt eine austauschbare Hintergrundgrafik über `--hero-background-image` im Kunden-Stylesheet. Ohne Angabe bleibt die Hintergrundfarbe erhalten. Beispiel:
+
+```css
+.hero {
+  --hero-background-image: url('../public/header-waves.svg');
+}
+```
+
+Die Grafik wird mittig mit `cover` skaliert und an den abgerundeten Header-Rändern abgeschnitten. SVGs können transparent bleiben; Linien sollten hinter Texten zurückhaltend sein. Als rein dekorativer CSS-Hintergrund benötigt die Grafik keinen Alternativtext. Die lokale Asset-URL wird durch Vite im Entwicklungsserver und Build aufgelöst.

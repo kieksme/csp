@@ -4,4 +4,4 @@ Part of the Customer Service Portal. See the product README and docs/plugin-sdk.
 
 The plugin supplies the service header with the confirmed on-duty person and their configured or provider avatar. When no shift is active, it shows the next scheduled start in the schedule timezone; missing or stale data never confirms availability. Overlapping shifts list additional on-duty people. See [the header contract](../../docs/plugin-sdk.md#persönlicher-header).
 
-The customer portal name remains the main heading in every duty state. A compact greeting and confirmed duty badge sit beside the transparent portrait, with a circular lower crop and the head above the frame. On mobile the customer identity appears above this contact panel.
+A large personal greeting is the main heading on the left. The portrait on the right always uses a circular lower crop and frame, with the transparent head extending above it. There are no additional service-portal headings; customer branding remains in navigation and footer. On mobile the portrait follows the greeting.

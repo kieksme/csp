@@ -173,7 +173,9 @@ Quellen: [SIGNL4 OpenAPI](https://connect.signl4.com/api/docs/v3/swagger.json), 
 
 ## KI-Provider
 
-`CSP_CHAT_PROVIDER` ist `openai`, `azure` oder `ollama` (Standard). Außerhalb der Demo ist `CSP_CHAT_MODEL` erforderlich: bei Azure der Deployment-Name, bei Ollama ein lokal installiertes Modell.
+`CSP_CHAT_DEMO` ist eine optionale Runtime-Variable für das Chat-Plugin. Zulässig sind die Strings `true` und `false`; ohne Angabe übernimmt der Chat den globalen Demo-Modus. `CSP_DEMO=true` mit `CSP_CHAT_DEMO=false` lässt Schichten und Status synthetisch, verwendet aber den echten konfigurierten Chat-Provider. `true` erzwingt synthetische Chat-Antworten. Die Variable wird nur serverseitig ausgewertet und nicht in den Frontend-Build übernommen. Bei `false` sind Modell und Provider-Zugangsdaten wie im Live-Modus erforderlich. Der echte Provider erhält die ausgewählten Demo-Quellen und die eingegebenen Nachrichten.
+
+`CSP_CHAT_PROVIDER` ist `openai`, `azure` oder `ollama` (Standard). Bei einem echten Chat-Provider ist `CSP_CHAT_MODEL` erforderlich: bei Azure der Deployment-Name, bei Ollama ein lokal installiertes Modell.
 
 | Provider     | Runtime-Variablen                                                                                                             |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -183,14 +185,15 @@ Quellen: [SIGNL4 OpenAPI](https://connect.signl4.com/api/docs/v3/swagger.json), 
 
 OpenAI und Azure verwenden Responses mit SSE und `store: false`. Ollama verwendet natives `/api/chat` mit NDJSON. Der Portal-Service übersetzt beide in `sources`, `delta`, `done` und `error` SSE-Ereignisse. Provider-Endpunkte müssen vom API-Container erreichbar sein; `localhost` im Container bezeichnet den Container selbst.
 
-| Variable                 | Standard | Zulässiger Bereich / Bedeutung        |
-| ------------------------ | -------- | ------------------------------------- |
-| `CSP_CHAT_RATE_LIMIT`    | `10`     | 1–1000 Anfragen/Minute/IP.            |
-| `CSP_CHAT_CONCURRENCY`   | `2`      | 1–100 aktive Anfragen je API-Prozess. |
-| `CSP_CHAT_MAX_TOKENS`    | `1024`   | 128–16384 generierte Tokens.          |
-| `CSP_CHAT_CONTEXT_CHARS` | `16000`  | 1000–100000 Zeichen Quellkontext.     |
+| Variable                 | Standard | Zulässiger Bereich / Bedeutung         |
+| ------------------------ | -------- | -------------------------------------- |
+| `CSP_CHAT_RATE_LIMIT`    | `10`     | 1–1000 Anfragen/Minute/IP.             |
+| `CSP_CHAT_CONCURRENCY`   | `2`      | 1–100 aktive Anfragen je API-Prozess.  |
+| `CSP_CHAT_MAX_TOKENS`    | `1024`   | 128–16384 generierte Tokens.           |
+| `CSP_CHAT_TIMEOUT_MS`    | `60000`  | 1000–300000 Millisekunden pro Antwort. |
+| `CSP_CHAT_CONTEXT_CHARS` | `16000`  | 1000–100000 Zeichen Quellkontext.      |
 
-Alle vier Limits sind ganzzahlig. Gesprächshistorie: maximal 20 Nachrichten, 4000 Zeichen je Nachricht, insgesamt 16000 Zeichen. Provider-/Chat-Zeitlimit: 60 Sekunden. Gespräch und API-Antworten werden nicht dauerhaft gespeichert. Externe KI-Provider erhalten die ausgewählten statischen und Live-Quellen dieser Instanz.
+Alle fünf Limits sind optionale, ganzzahlige Runtime-Variablen und werden nicht in den Frontend-Build übernommen. Gesprächshistorie: maximal 20 Nachrichten, 4000 Zeichen je Nachricht, insgesamt 16000 Zeichen. Das Provider-/Chat-Zeitlimit beträgt standardmäßig 60 Sekunden; für langsame lokale Modelle kann es auf bis zu fünf Minuten erhöht werden. Gespräch und API-Antworten werden nicht dauerhaft gespeichert. Externe KI-Provider erhalten die ausgewählten statischen und Live-Quellen dieser Instanz.
 
 Quellen: [OpenAI Responses](https://developers.openai.com/api/docs/guides/streaming-responses), [Azure Responses](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/responses), [Ollama Chat](https://docs.ollama.com/api/chat).
 
@@ -220,3 +223,7 @@ Priorität: zentrale Defaults → Profil → unterstützte öffentliche Env-Over
 `csp migrate` ergänzt ein Basisprofil aus der alten Plugin-Liste, ohne bestehende Dateien zu überschreiben oder zu löschen. Bestehende `.env.branding`-Werte und explizite Overrides werden weiter gelesen. Kundenspezifische TypeScript-Konfiguration, Styles und Komponenten müssen vor Entfernung der alten Einstiege auf die gemeinsame Schnittstelle abgebildet und verglichen werden. Die CLI migriert solche Anpassungen nicht automatisch. Alte `portal.plugins.json`-Instanzen unterstützen weiterhin Plugin-Verwaltung.
 
 Das Editor-Schema liegt im CLI-Paket unter `runtime/portal.schema.json`. Es dokumentiert die Profilstruktur; die Zod-Validierung im Loader ist maßgeblich. Die deklarative Avatar-Datei enthält getrennte `ids` und `names`, lokale Webdateien oder HTTP(S)-URLs. Provider-IDs haben Vorrang vor normalisierten Namen; fehlerhafte Bilder fallen auf Initialen zurück.
+
+## Header-Hintergrundgrafik
+
+`--hero-background-image` ist eine optionale öffentliche CSS-Einstellung für die gesamte Header-Fläche (Standard `none`). Sie akzeptiert einen CSS-Bildwert, etwa `url('../public/header-waves.svg')`, im per `package.json` unter `csp.stylesheet` eingebundenen Kunden-Stylesheet. Lokale URLs sind relativ zu diesem Stylesheet und werden beim Frontend-Build als Assets aufgelöst. Die Grafik wird mittig mit `cover` skaliert; transparente Bereiche zeigen die konfigurierte Header-Farbe. Es ist keine API-Runtime-Variable und kein Provider-Geheimnis. Ein Austausch der Datei oder URL erfordert einen neuen Frontend-Build. Siehe [Header-Gestaltung](plugin-sdk.md#dekorativer-header-hintergrund).

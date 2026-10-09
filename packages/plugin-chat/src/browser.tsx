@@ -1,14 +1,36 @@
 import { cspPlugin } from '../package.json';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { BrowserPlugin, BrowserContext, Source } from '@kieksme/csp-sdk';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
+function resizeInput(field: HTMLTextAreaElement | null) {
+  if (!field) return;
+  field.style.height = 'auto';
+  field.style.height = `${field.scrollHeight + field.offsetHeight - field.clientHeight}px`;
+}
 function Chat(ctx: BrowserContext) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const inputField = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => resizeInput(inputField.current), [input]);
+  useEffect(() => {
+    const field = inputField.current;
+    if (!field) return;
+    let width = field.clientWidth;
+    const observer = new ResizeObserver(() => {
+      if (field.clientWidth !== width) {
+        width = field.clientWidth;
+        resizeInput(field);
+      }
+    });
+    observer.observe(field);
+    return () => observer.disconnect();
+  }, []);
   const [busy, setBusy] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+  useEffect(() => setIsMac(/Mac/.test(navigator.platform)), []);
   const [error, setError] = useState('');
   const [sources, setSources] = useState<Omit<Source, 'text'>[]>([]);
   const abort = useRef<AbortController | null>(null);
@@ -160,21 +182,46 @@ function Chat(ctx: BrowserContext) {
           </div>
         )}
         <form
-          className="chat-form flex gap-2.5 items-end [&_textarea]:resize-y [&_textarea]:min-h-[50px] [&_textarea]:[flex:1] [&_textarea]:min-w-0 [&_button]:bg-accent [&_button]:text-accent-ink [&_button]:[border:0] [&_button]:w-[50px] [&_button]:h-[50px] [&_button]:rounded-card [&_button]:text-[1.25rem] [&_button:disabled]:opacity-[0.5]"
+          className="chat-form flex gap-2.5 items-end [&_textarea]:resize-none [&_textarea]:min-h-[50px] [&_textarea]:[flex:1] [&_textarea]:min-w-0 [&_button]:bg-accent [&_button]:text-accent-ink [&_button]:[border:0] [&_button]:w-[50px] [&_button]:h-[50px] [&_button]:rounded-card [&_button]:text-[1.25rem] [&_button:disabled]:opacity-[0.5]"
           onSubmit={submit}
         >
           <label className="sr-only" htmlFor="chat-input">
             Ihre Frage
           </label>
-          <textarea
-            id="chat-input"
-            className="search bg-card border border-line rounded-card py-3.5 px-4.5 text-ink w-full"
-            value={input}
-            maxLength={4000}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ihre Frage an unser Team …"
-            required
-          />
+          <div className="relative flex-1 min-w-0">
+            <textarea
+              id="chat-input"
+              ref={inputField}
+              rows={1}
+              autoFocus
+              className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block overflow-hidden"
+              value={input}
+              maxLength={4000}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (
+                  e.key === 'Enter' &&
+                  (e.ctrlKey || e.metaKey) &&
+                  !e.nativeEvent.isComposing &&
+                  !e.repeat
+                ) {
+                  e.preventDefault();
+                  if (!busy && input.trim())
+                    e.currentTarget.form?.requestSubmit();
+                }
+              }}
+              aria-keyshortcuts="Control+Enter Meta+Enter"
+              aria-describedby="chat-shortcut"
+              placeholder="Ihre Frage an unser Team …"
+              required
+            />
+            <span
+              id="chat-shortcut"
+              className="absolute right-4.5 bottom-2 text-[0.625rem] text-muted pointer-events-none"
+            >
+              {isMac ? '⌘' : 'Strg'} + Enter zum Senden
+            </span>
+          </div>
           <button
             type="submit"
             disabled={busy || !input.trim()}
