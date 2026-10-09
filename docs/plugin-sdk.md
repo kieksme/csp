@@ -122,3 +122,5 @@ Das fokussierte Chat-Feld verwendet einen dezenten Rahmen von 1 px in der sekund
 ### FAQ-Kategorien
 
 Die Kategorie-Chips sind abgerundete Schaltflächen mit 40 px Mindesthöhe, klarer Schrift und einer geschlossenen Kontur. Die aktive Kategorie trägt die Akzentfarbe; Hover und Tastaturfokus sind gesondert erkennbar. Farben folgen dem hellen bzw. dunklen Design.
+
+Der Porträtkreis verwendet die aktuelle Marken-Akzentfarbe mit 35 % Deckkraft; sein Rahmen verwendet dieselbe Farbe mit 50 %. Design-Schalter und FAQ-Chips teilen dezente, zum Farbschema passende Schatten und verstärken diese beim Hover.

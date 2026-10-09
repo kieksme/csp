@@ -11,3 +11,5 @@ The SIGNL4 hero shows a large personal greeting beside a portrait with a circula
 The chat input has a subtle 1px focus outline in the theme-muted text color, offset by 2px.
 
 FAQ category chips use rounded, theme-aware surfaces with distinct selected, hover and keyboard-focus states and a 40px minimum height.
+
+Duty portrait circles use the customer accent at 35% opacity with a 50% accent border. Theme buttons and FAQ chips share subtle theme-aware shadows and hover elevation.
