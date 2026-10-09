@@ -116,3 +116,5 @@ Im Chat-Textfeld sendet `⌘ + Enter` auf macOS bzw. `Strg + Enter` auf anderen 
 Das Eingabefeld beginnt mit einer Textzeile und wächst automatisch bei Zeilenumbrüchen oder umgebrochenem Text. Nach dem Kürzen oder Absenden schrumpft es wieder; Breitenänderungen werden ebenfalls berücksichtigt.
 
 Beim Laden der Seite erhält das Chat-Textfeld automatisch den Fokus, sodass direkt geschrieben werden kann.
+
+Das fokussierte Chat-Feld verwendet einen dezenten Rahmen von 1 px in der sekundären Textfarbe mit 2 px Abstand. Er folgt dem aktiven Farbschema.

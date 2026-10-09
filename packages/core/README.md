@@ -7,3 +7,5 @@ Core and bundled plugins declare Tailwind utility classes directly in JSX. Core 
 The service header renders an optional plugin hero and sections marked `placement: 'hero'`. Without a hero plugin it keeps the configured tagline. Header sections stay reachable from navigation and are omitted from the body to prevent duplicate forms. See [the header contract](../../docs/plugin-sdk.md#persönlicher-header).
 
 The SIGNL4 hero shows a large personal greeting beside a portrait with a circular lower crop and frame, without additional service-portal headings.
+
+The chat input has a subtle 1px focus outline in the theme-muted text color, offset by 2px.
