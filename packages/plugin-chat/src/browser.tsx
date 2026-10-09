@@ -166,15 +166,37 @@ function Chat(ctx: BrowserContext) {
           <label className="sr-only" htmlFor="chat-input">
             Ihre Frage
           </label>
-          <textarea
-            id="chat-input"
-            className="search bg-card border border-line rounded-card py-3.5 px-4.5 text-ink w-full"
-            value={input}
-            maxLength={4000}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ihre Frage an unser Team …"
-            required
-          />
+          <div className="relative flex-1 min-w-0">
+            <textarea
+              id="chat-input"
+              className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block"
+              value={input}
+              maxLength={4000}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (
+                  e.key === 'Enter' &&
+                  e.ctrlKey &&
+                  !e.nativeEvent.isComposing &&
+                  !e.repeat
+                ) {
+                  e.preventDefault();
+                  if (!busy && input.trim())
+                    e.currentTarget.form?.requestSubmit();
+                }
+              }}
+              aria-keyshortcuts="Control+Enter"
+              aria-describedby="chat-shortcut"
+              placeholder="Ihre Frage an unser Team …"
+              required
+            />
+            <span
+              id="chat-shortcut"
+              className="absolute right-4.5 bottom-2 text-[0.625rem] text-muted pointer-events-none"
+            >
+              Strg + Enter zum Senden
+            </span>
+          </div>
           <button
             type="submit"
             disabled={busy || !input.trim()}
