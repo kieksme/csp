@@ -8,4 +8,4 @@ For local provider testing, set `CSP_DEMO=true` and `CSP_CHAT_DEMO=false`: porta
 
 Langsame lokale Modelle können mit der Runtime-Variable `CSP_CHAT_TIMEOUT_MS` mehr Antwortzeit erhalten (Standard `60000`, Bereich `1000`–`300000` ms).
 
-Send a message with Ctrl + Enter or the send button. Plain Enter inserts a line break. A subtle shortcut hint appears at the bottom right inside the text field; blank messages and shortcuts during an active reply do not send.
+Send a message with Cmd + Enter on macOS, Ctrl + Enter on other systems, or the send button. The hint displays the system-specific shortcut. Plain Enter inserts a line break. A subtle shortcut hint appears at the bottom right inside the text field; blank messages and shortcuts during an active reply do not send.

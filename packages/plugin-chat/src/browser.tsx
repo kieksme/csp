@@ -9,6 +9,8 @@ function Chat(ctx: BrowserContext) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+  useEffect(() => setIsMac(/Mac/.test(navigator.platform)), []);
   const [error, setError] = useState('');
   const [sources, setSources] = useState<Omit<Source, 'text'>[]>([]);
   const abort = useRef<AbortController | null>(null);
@@ -176,7 +178,7 @@ function Chat(ctx: BrowserContext) {
               onKeyDown={(e) => {
                 if (
                   e.key === 'Enter' &&
-                  e.ctrlKey &&
+                  (e.ctrlKey || e.metaKey) &&
                   !e.nativeEvent.isComposing &&
                   !e.repeat
                 ) {
@@ -185,7 +187,7 @@ function Chat(ctx: BrowserContext) {
                     e.currentTarget.form?.requestSubmit();
                 }
               }}
-              aria-keyshortcuts="Control+Enter"
+              aria-keyshortcuts="Control+Enter Meta+Enter"
               aria-describedby="chat-shortcut"
               placeholder="Ihre Frage an unser Team …"
               required
@@ -194,7 +196,7 @@ function Chat(ctx: BrowserContext) {
               id="chat-shortcut"
               className="absolute right-4.5 bottom-2 text-[0.625rem] text-muted pointer-events-none"
             >
-              Strg + Enter zum Senden
+              {isMac ? '⌘' : 'Strg'} + Enter zum Senden
             </span>
           </div>
           <button
