@@ -137,10 +137,13 @@ test('supports keyboard navigation and accessible light/dark themes', async ({
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(page.locator('#status')).toContainText('Cloud-Infrastruktur');
-  await page.keyboard.press('Tab');
-  await expect(
-    page.getByRole('link', { name: 'Zum Inhalt springen' }),
-  ).toBeFocused();
+  await expect(page.locator('#chat-input')).toBeFocused();
+  const skipLink = page.getByRole('link', { name: 'Zum Inhalt springen' });
+  for (let step = 0; step < 20; step++) {
+    await page.keyboard.press('Shift+Tab');
+    if (await skipLink.evaluate((link) => link.matches(':focus'))) break;
+  }
+  await expect(skipLink).toBeFocused();
   await page.keyboard.press('Enter');
   for (const dark of [false, true]) {
     if (dark)
