@@ -13,3 +13,5 @@ The chat input has a subtle 1px focus outline in the theme-muted text color, off
 FAQ category chips use rounded, theme-aware surfaces with distinct selected, hover and keyboard-focus states and a 40px minimum height.
 
 Duty portrait circles use the customer accent at 35% opacity with a 50% accent border. Theme buttons and FAQ chips share subtle theme-aware shadows and hover elevation.
+
+Set `--hero-background-image` in the customer stylesheet to add a decorative image across the entire service header. It defaults to `none`; local SVG/image URLs are resolved by the frontend build. See docs/plugin-sdk.md and docs/configuration.md.

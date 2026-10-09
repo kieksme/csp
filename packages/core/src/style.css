@@ -197,3 +197,10 @@ section .faq-controls button:hover {
   outline: 2px solid var(--muted);
   outline-offset: 2px;
 }
+
+.hero {
+  background-image: var(--hero-background-image, none);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

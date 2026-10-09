@@ -124,3 +124,15 @@ Das fokussierte Chat-Feld verwendet einen dezenten Rahmen von 1 px in der sekund
 Die Kategorie-Chips sind abgerundete Schaltflächen mit 40 px Mindesthöhe, klarer Schrift und einer geschlossenen Kontur. Die aktive Kategorie trägt die Akzentfarbe; Hover und Tastaturfokus sind gesondert erkennbar. Farben folgen dem hellen bzw. dunklen Design.
 
 Der Porträtkreis verwendet die aktuelle Marken-Akzentfarbe mit 35 % Deckkraft; sein Rahmen verwendet dieselbe Farbe mit 50 %. Design-Schalter und FAQ-Chips teilen dezente, zum Farbschema passende Schatten und verstärken diese beim Hover.
+
+### Dekorativer Header-Hintergrund
+
+Die gesamte `.hero`-Fläche, einschließlich Begrüßung, Porträt und Chat, unterstützt eine austauschbare Hintergrundgrafik über `--hero-background-image` im Kunden-Stylesheet. Ohne Angabe bleibt die Hintergrundfarbe erhalten. Beispiel:
+
+```css
+.hero {
+  --hero-background-image: url('../public/header-waves.svg');
+}
+```
+
+Die Grafik wird mittig mit `cover` skaliert und an den abgerundeten Header-Rändern abgeschnitten. SVGs können transparent bleiben; Linien sollten hinter Texten zurückhaltend sein. Als rein dekorativer CSS-Hintergrund benötigt die Grafik keinen Alternativtext. Die lokale Asset-URL wird durch Vite im Entwicklungsserver und Build aufgelöst.
