@@ -296,6 +296,13 @@ it('uses Ollama with synthetic portal sources when chat demo is explicitly disab
       payload: { messages: [{ role: 'user', content: 'Wer hat Schicht?' }] },
     });
     expect(response.body).toContain('Ollama-Testantwort');
+    expect(response.body).toContain('event: responder');
+    expect(response.body).toContain('"name":"Lena Beispiel","role":"on-duty"');
+    const providerBody = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
+    expect(providerBody.messages[0].content).toContain('Ich-Form');
+    expect(providerBody.messages[1].content).toContain(
+      '"availability":"on-duty"',
+    );
     expect(response.body).not.toContain('synthetische Demo-Antwort');
     expect(fetcher).toHaveBeenCalledOnce();
     expect(fetcher.mock.calls[0]?.[0]).toBe(

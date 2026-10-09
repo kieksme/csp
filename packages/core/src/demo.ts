@@ -55,7 +55,7 @@ export function staticDemoRequest(config: PublicConfig): typeof fetch {
         (config.content.faq[0]?.answer ??
           'Für echte Auskünfte wenden Sie sich an das Service-Team.');
       return new Response(
-        `event: sources\ndata: ${JSON.stringify(sources)}\n\nevent: delta\ndata: ${JSON.stringify({ text })}\n\nevent: done\ndata: {}\n\n`,
+        `event: responder\ndata: ${JSON.stringify({ name: team[0].name, role: 'on-duty' })}\n\nevent: sources\ndata: ${JSON.stringify(sources)}\n\nevent: delta\ndata: ${JSON.stringify({ text })}\n\nevent: done\ndata: {}\n\n`,
         { headers: { 'Content-Type': 'text/event-stream' } },
       );
     } else

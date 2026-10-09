@@ -22,7 +22,7 @@ docker run --rm -p 3001:3001 --env-file customer-runtime.env customer-api
 - `GET /health`: Prozesszustand und registrierte Plugin-IDs. Dies bestätigt **keine** erfolgreiche Provider-Verbindung.
 - `GET /api/v1/team`, `/schedule`, `/alerts`, `/status`: JSON mit Datenstand und Veraltet-Markierung.
 - `GET /api/v1/team/:id/avatar` und `/vcard`: nur Mitglieder des konfigurierten Teams.
-- `POST /api/v1/chat`: `{ "messages": [{ "role": "user", "content": "…" }] }`, Antwort als SSE.
+- `POST /api/v1/chat`: `{ "messages": [{ "role": "user", "content": "…" }] }`, Antwort als SSE mit Absender (`responder`), Quellen und Text pro Antwort.
 
 Nur installierte Plugins registrieren die jeweiligen Routen. API-Antworten sind `no-store`. PWA-Caches enthalten statische Hilfe und Assets; API- und Chat-Daten werden nicht vom Service Worker gecacht. Veraltete Statusdaten werden nicht als aktuelle grüne Verfügbarkeit dargestellt. Die Hotline bleibt auch bei Offline-/Provider-Ausfall nutzbar.
 

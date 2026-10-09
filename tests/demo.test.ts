@@ -9,8 +9,9 @@ it('provides browser-only synthetic data and a complete chat stream', async () =
   expect(
     (await (await request('https://unused/api/v1/team')).json()).data,
   ).toHaveLength(5);
-  expect(await (await request('https://unused/api/v1/chat')).text()).toContain(
-    'event: done',
-  );
+  const stream = await (await request('https://unused/api/v1/chat')).text();
+  expect(stream).toContain('event: done');
+  expect(stream).toContain('event: responder');
+  expect(stream).toContain('"name":"Lena Demo","role":"on-duty"');
   expect((await request('https://unused/api/v1/unknown')).status).toBe(404);
 });
