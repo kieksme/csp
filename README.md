@@ -84,7 +84,7 @@ Alle acht Pakete verwenden das Präfix `@kieksme/csp-` und werden mit identische
 | `@kieksme/csp-plugin-content` | Prozesse, Ticketlinks/-vorlagen und FAQ                      |
 | `@kieksme/csp-plugin-chat`    | Öffentlicher Chat: OpenAI, Azure OpenAI, Ollama              |
 
-Vollständige Kontaktinformationen und Alert-Beschreibungen sind öffentlich. Provider-Schlüssel bleiben im API-Service. Der Chat liest statische Inhalte und die Live-Daten **seiner eigenen Instanz**, führt aber keine Aktionen aus. Gesprächsverläufe werden weder in einer Datenbank noch im Browser-Storage gespeichert.
+Vollständige Kontaktinformationen und Alert-Beschreibungen sind öffentlich. Provider-Schlüssel bleiben im API-Service. Der Chat liest statische Inhalte und die Live-Daten **seiner eigenen Instanz**, führt aber keine Aktionen aus. Jedes Plugin stellt zusätzlich lesende [WebMCP](docs/webmcp.md)-Tools für Browser-Agenten bereit (Dienst und Schichten, Team, Alerts, Status, Hotline, FAQ, Ticketvorlagen, Chat); standardmäßig an, mit `public.webmcp: false` abschaltbar. Gesprächsverläufe werden weder in einer Datenbank noch im Browser-Storage gespeichert.
 
 Projekt-Dokumentation: [Startseite und Übersicht](docs/Home.md), [Architektur](docs/architecture.md), [Installation](docs/installation.md), [Deployment](docs/deployment.md), [API](docs/api.md), [Dokumentation und Wiki](docs/wiki.md).
 

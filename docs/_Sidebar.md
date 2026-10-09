@@ -12,5 +12,6 @@
 - [Plugin-SDK](plugin-sdk.md)
 - [Entwicklung und Tests](development.md)
 - [Sicherheit und Daten](security.md)
+- [WebMCP](webmcp.md)
 - [Fehlerbehebung](troubleshooting.md)
 - [Dokumentation und Wiki](wiki.md)

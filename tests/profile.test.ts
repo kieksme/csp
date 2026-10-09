@@ -113,3 +113,18 @@ it('loads API env files in documented order without build-mode files', async () 
     'Process',
   );
 });
+it('enables WebMCP by default and lets the profile or environment opt out', () => {
+  const { file } = fixture();
+  expect(loadProfile(file).config.webmcp).toBe(true);
+  const off = fixture({
+    public: { apiUrl: 'https://api.example.org', webmcp: false },
+  });
+  expect(loadProfile(off.file).config.webmcp).toBe(false);
+  expect(loadProfile(file, { CSP_WEBMCP: 'false' }).config.webmcp).toBe(false);
+  expect(loadProfile(off.file, { CSP_WEBMCP: 'true' }).config.webmcp).toBe(
+    true,
+  );
+  expect(() => loadProfile(file, { CSP_WEBMCP: 'maybe' })).toThrow(
+    'CSP_WEBMCP must be true or false',
+  );
+});

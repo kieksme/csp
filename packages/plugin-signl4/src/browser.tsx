@@ -1,6 +1,7 @@
 import { Avatar } from './avatar.js';
 import { DutyHero } from './duty-hero.js';
 import { cspPlugin } from '../package.json';
+import { signl4Tools } from './tools.js';
 import { useEffect, useState } from 'react';
 import { useLive, DataState } from '@kieksme/csp-sdk/browser';
 import {
@@ -171,6 +172,7 @@ export default {
   id: 'signl4',
   hero: DutyHero,
   sdkVersion: cspPlugin.sdkVersion,
+  tools: signl4Tools,
   sections: [
     {
       id: 'schedule',

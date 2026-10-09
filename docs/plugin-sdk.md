@@ -91,6 +91,16 @@ Server-Konfiguration wird für alle Plugins validiert, bevor Routen registriert 
 
 CLI-Mutationen sind für eigenständige Kundenrepos vorgesehen. Ein `pnpm-workspace.yaml` mit reinen Einstellungen ist erlaubt; ein übergeordnetes Monorepo wird abgelehnt, damit nicht dessen Lockfile verändert wird. Fehlgeschlagene Installationen stellen Paketdatei, Lockfile, pnpm-Konfiguration und Registrierungen wieder her und versuchen, den ursprünglichen Dependency-Baum erneut zu installieren.
 
+## WebMCP-Tools
+
+Browser-Plugins können optional `tools` für Browser-Agenten bereitstellen (siehe [WebMCP](webmcp.md)). Ein `WebMcpTool` hat `name`, `description`, ein JSON-Schema `inputSchema`, optional `annotations: { readOnlyHint }` und `execute(args, ctx)`. `ctx` ist der `BrowserContext` mit `api`, `config` und `request`.
+
+- Der Name beginnt mit der Plugin-ID (`my-service` wird zu `my_service_`), besteht aus `a-z`, `0-9` und `_` und hat höchstens 64 Zeichen. `validatePlugins` lehnt andere und doppelte Namen ab.
+- `execute` liefert `webMcpJson(value)` oder `webMcpError(message)`. Ausnahmen werden abgefangen und ohne Details gemeldet.
+- Hilfen: `optString` und `optInt` für Argumente, `UNTRUSTED_NOTE` für Ergebnisse mit externen Texten.
+- Tools lesen nur öffentliche Routen; schreibende Tools sind nicht als `readOnlyHint` zu markieren und brauchen eine eigene Bestätigung. Sie ändern nichts am Vertrag von `ServerPlugin`.
+- Core registriert die Tools mit `registerWebMcpTools` und meldet sie beim Verlassen ab; `findModelContext` erkennt `document.modelContext` und `navigator.modelContext`.
+
 ## Veröffentlichen und einbinden
 
 Browser und Server als ESM mit Typdeklarationen bauen, `dist/` in den npm-Paketinhalt aufnehmen und das SDK als kompatible Abhängigkeit deklarieren. Browsercode darf keine Node-/Provider-Secrets importieren. Paket-Tarball in einer frischen Kundeninstanz installieren und über die CLI registrieren; beide Anwendungsteile neu bauen. Inkompatible SDK-Versionen und fehlende `requires` gezielt prüfen.

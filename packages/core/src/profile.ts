@@ -67,6 +67,7 @@ export const profileSchema = z
         pollMs: z.number().int().min(1000).optional(),
         demo: z.boolean().optional(),
         staticDemo: z.boolean().optional(),
+        webmcp: z.boolean().optional(),
       })
       .strict()
       .optional(),
@@ -102,6 +103,7 @@ const overrides: Record<string, string> = {
   CSP_DOMAIN: 'public.domain',
   CSP_POLL_MS: 'public.pollMs',
   CSP_DEMO: 'public.demo',
+  CSP_WEBMCP: 'public.webmcp',
   CSP_CONTENT_PATH: 'contentFile',
   CSP_AVATARS_PATH: 'avatarsFile',
   CSP_LOGO_URL: 'branding.logoFile',
@@ -132,6 +134,7 @@ export function loadProfile(file: string, env: Env = {}, production = false) {
   assign('CSP_DOMAIN', p.public?.domain);
   assign('CSP_POLL_MS', p.public?.pollMs);
   assign('CSP_DEMO', p.public?.demo);
+  assign('CSP_WEBMCP', p.public?.webmcp);
   assign('CSP_CONTENT_PATH', p.contentFile);
   assign('CSP_AVATARS_PATH', p.avatarsFile);
   assign('CSP_ICON_PATH', p.branding.iconFile);
@@ -146,6 +149,11 @@ export function loadProfile(file: string, env: Env = {}, production = false) {
     !['true', 'false'].includes(values.CSP_DEMO)
   )
     throw new Error('CSP_DEMO must be true or false');
+  if (
+    values.CSP_WEBMCP !== undefined &&
+    !['true', 'false'].includes(values.CSP_WEBMCP)
+  )
+    throw new Error('CSP_WEBMCP must be true or false');
   if (values.CSP_POLL_MS !== undefined && !/^\d+$/.test(values.CSP_POLL_MS))
     throw new Error('CSP_POLL_MS must be an integer');
   for (const key of ['CSP_CONTENT_PATH', 'CSP_AVATARS_PATH', 'CSP_ICON_PATH'])

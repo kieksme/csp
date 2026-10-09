@@ -1,5 +1,6 @@
 import { resolveThemeTokens, themeTokenKeys, tokenVariable } from './theme.js';
 import { staticDemoRequest } from './demo.js';
+import { useWebMcp } from './webmcp.js';
 import { useMemo, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -84,6 +85,7 @@ export function Portal({
     [config.apiUrl, request],
   );
   const ctx = { config, api, request };
+  useWebMcp(config, plugins, ctx);
   return (
     <div
       className="portal"

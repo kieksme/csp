@@ -348,3 +348,93 @@ test('keeps each streamed reply sender and safe ticket links across a shift chan
     first.getByRole('link', { name: 'Support-Ticket erstellen', exact: true }),
   ).toHaveAttribute('href', 'https://tickets.example.invalid/support/0');
 });
+
+// Stub of the WebMCP entry point that records registered tools on window.
+const webMcpStub = () => {
+  const tools = new Map<string, { execute: (a: object) => Promise<unknown> }>();
+  Object.defineProperty(document, 'modelContext', {
+    configurable: true,
+    value: {
+      registerTool(
+        tool: { name: string; execute: never },
+        o?: { signal?: AbortSignal },
+      ) {
+        tools.set(tool.name, tool);
+        o?.signal?.addEventListener('abort', () => tools.delete(tool.name));
+        return Promise.resolve();
+      },
+    },
+  });
+  (window as unknown as { __tools: typeof tools }).__tools = tools;
+};
+const toolNames = (page: import('@playwright/test').Page) =>
+  page.evaluate(() =>
+    [
+      ...(
+        window as unknown as { __tools: Map<string, unknown> }
+      ).__tools.keys(),
+    ].sort(),
+  );
+
+test('registers WebMCP tools for every plugin and answers with live demo data', async ({
+  page,
+}) => {
+  await page.addInitScript(webMcpStub);
+  await page.goto('/');
+  await expect
+    .poll(() => toolNames(page))
+    .toEqual([
+      'chat_ask',
+      'contact_get_hotline',
+      'content_list_processes',
+      'content_list_ticket_templates',
+      'content_search_faq',
+      'kuma_get_status',
+      'portal_get_info',
+      'signl4_get_on_duty',
+      'signl4_get_shift_schedule',
+      'signl4_get_vcard',
+      'signl4_list_alerts',
+      'signl4_list_team',
+    ]);
+  const onDuty = await page.evaluate(async () => {
+    const tools = (
+      window as unknown as {
+        __tools: Map<
+          string,
+          { execute: (a: object) => Promise<{ content: { text: string }[] }> }
+        >;
+      }
+    ).__tools;
+    return JSON.parse(
+      (await tools.get('signl4_get_on_duty')!.execute({})).content[0].text,
+    );
+  });
+  expect(onDuty.confirmed).toBe(true);
+  expect(onDuty.onDuty[0].name).toBe('Lena Beispiel');
+});
+
+test('registers only the tools of installed plugins on a second brand', async ({
+  page,
+}) => {
+  await page.addInitScript(webMcpStub);
+  await page.goto('http://127.0.0.1:4174');
+  await expect
+    .poll(() => toolNames(page))
+    .toEqual([
+      'chat_ask',
+      'contact_get_hotline',
+      'content_list_processes',
+      'content_list_ticket_templates',
+      'content_search_faq',
+      'portal_get_info',
+    ]);
+});
+
+test('runs normally without WebMCP support', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/');
+  await expect(page.locator('.duty-greeting')).toContainText('Lena Beispiel');
+  expect(errors).toEqual([]);
+});

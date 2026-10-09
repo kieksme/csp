@@ -41,3 +41,5 @@ Eine synthetische API-Demo aktiviert `public.demo: true`. Zusätzlich aktiviert 
 Plugins verwalten: `pnpm exec csp plugin add @kieksme/csp-plugin-signl4`, `remove <name>`, `list`. Versionen werden im Paketmanifest und Lockfile verwaltet. Ein Plugin muss installiert, in `dependencies` deklariert und SDK-kompatibel sein.
 
 Die CI-Vorlage ruft den gemeinsamen Workflow auf. Der Workflow ist auf eine konkrete CSP-Commit-SHA fixiert. `pages: true` aktiviert GitHub Pages; sonst werden nur Artefakte erzeugt. Öffentliche Overrides werden als JSON übergeben, ohne leere GitHub-Variablen. Das API-Image ist ein Build-Artefakt; der API-Host und dessen Deployment müssen separat eingerichtet werden.
+
+WebMCP-Tools für Browser-Agenten sind standardmäßig aktiv. Mit `"public": { "webmcp": false }` in `portal.config.json` oder `CSP_WEBMCP=false` beim Build schalten Sie sie ab; die Tools gehören zu den installierten Plugins. Siehe [WebMCP](https://github.com/kieksme/csp/blob/main/docs/webmcp.md).
