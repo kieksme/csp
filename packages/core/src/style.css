@@ -112,3 +112,40 @@ h3 {
     scroll-behavior: auto !important;
   }
 }
+
+.faq-controls {
+  gap: 8px;
+}
+section .faq-controls button {
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+}
+section .faq-controls button:hover {
+  background: var(--soft);
+  border-color: var(--muted);
+}
+section .faq-controls button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+section .faq-controls button:focus-visible {
+  outline: 2px solid var(--muted);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  section .faq-controls button {
+    transition: none;
+  }
+}

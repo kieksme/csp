@@ -118,3 +118,7 @@ Das Eingabefeld beginnt mit einer Textzeile und wächst automatisch bei Zeilenum
 Beim Laden der Seite erhält das Chat-Textfeld automatisch den Fokus, sodass direkt geschrieben werden kann.
 
 Das fokussierte Chat-Feld verwendet einen dezenten Rahmen von 1 px in der sekundären Textfarbe mit 2 px Abstand. Er folgt dem aktiven Farbschema.
+
+### FAQ-Kategorien
+
+Die Kategorie-Chips sind abgerundete Schaltflächen mit 40 px Mindesthöhe, klarer Schrift und einer geschlossenen Kontur. Die aktive Kategorie trägt die Akzentfarbe; Hover und Tastaturfokus sind gesondert erkennbar. Farben folgen dem hellen bzw. dunklen Design.
