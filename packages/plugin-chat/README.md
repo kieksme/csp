@@ -13,3 +13,5 @@ Send a message with Cmd + Enter on macOS, Ctrl + Enter on other systems, or the 
 The input starts with one text row and automatically grows with wrapped text or line breaks. It shrinks when text is removed or sent and adjusts when its width changes.
 
 The chat input receives focus automatically when the page loads.
+
+Chat-Antworten verwenden die aktuelle Bereitschaftsperson in Ich-Form, mit Name und Kennzeichnung als digitaler Assistent. Ohne bestätigte Bereitschaft antwortet das Service-Team. Dienststatus wird nur für passende Monitore bestätigt; Ticketquellen werden als direkte Links angezeigt. Details: [Chat-Vertrag](../../docs/plugin-sdk.md#persönliche-chat-antworten).

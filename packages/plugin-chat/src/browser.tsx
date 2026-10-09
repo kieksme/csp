@@ -1,9 +1,18 @@
 import { cspPlugin } from '../package.json';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import type { BrowserPlugin, BrowserContext, Source } from '@kieksme/csp-sdk';
+import type {
+  BrowserPlugin,
+  BrowserContext,
+  Source,
+  ChatResponder,
+} from '@kieksme/csp-sdk';
+import { answerParts, sourceHref } from './answer.js';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  responder?: ChatResponder;
+  sources?: Omit<Source, 'text'>[];
+  complete?: boolean;
 }
 function resizeInput(field: HTMLTextAreaElement | null) {
   if (!field) return;
@@ -32,14 +41,13 @@ function Chat(ctx: BrowserContext) {
   const [isMac, setIsMac] = useState(false);
   useEffect(() => setIsMac(/Mac/.test(navigator.platform)), []);
   const [error, setError] = useState('');
-  const [sources, setSources] = useState<Omit<Source, 'text'>[]>([]);
   const abort = useRef<AbortController | null>(null);
   useEffect(() => () => abort.current?.abort(), []);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!input.trim() || busy) return;
     const history = [
-      ...messages,
+      ...messages.map(({ role, content }) => ({ role, content })),
       { role: 'user' as const, content: input.trim() },
     ].slice(-19);
     let bounded = [...history];
@@ -48,11 +56,14 @@ function Chat(ctx: BrowserContext) {
       bounded.length > 1
     )
       bounded = bounded.slice(1);
-    setMessages([...history, { role: 'assistant', content: '' }]);
+    setMessages([
+      ...messages,
+      { role: 'user', content: input.trim() },
+      { role: 'assistant', content: '', sources: [], complete: false },
+    ]);
     setInput('');
     setBusy(true);
     setError('');
-    setSources([]);
     const controller = new AbortController();
     abort.current = controller;
     try {
@@ -97,7 +108,21 @@ function Chat(ctx: BrowserContext) {
                 };
                 return next;
               });
-            if (type === 'sources') setSources(event);
+            if (type === 'sources' || type === 'responder' || type === 'done')
+              setMessages((previous) =>
+                previous.map((message, index) =>
+                  index === previous.length - 1
+                    ? {
+                        ...message,
+                        ...(type === 'sources'
+                          ? { sources: event }
+                          : type === 'responder'
+                            ? { responder: event }
+                            : { complete: true }),
+                      }
+                    : message,
+                ),
+              );
             if (type === 'error') throw new Error(event.message);
             if (type === 'done') complete = true;
           }
@@ -159,28 +184,48 @@ function Chat(ctx: BrowserContext) {
                 m.role
               }
             >
-              <span className="sr-only">
-                {m.role === 'user' ? 'Sie: ' : 'Assistent: '}
-              </span>
-              {m.content || 'Antwort wird vorbereitet …'}
+              {m.role === 'user' ? (
+                <span className="sr-only">Sie: </span>
+              ) : (
+                <span className="block text-[0.6875rem] text-muted mb-1">
+                  {m.responder?.role === 'on-duty'
+                    ? m.responder.name
+                    : 'Service-Team'}{' '}
+                  · Digitaler Assistent
+                </span>
+              )}
+              {m.role === 'user'
+                ? m.content
+                : m.content
+                  ? answerParts(m.content, m.sources ?? [], !m.complete).map(
+                      (part, index) =>
+                        part.href ? (
+                          <a key={index} href={part.href}>
+                            {part.text}
+                          </a>
+                        ) : (
+                          <span key={index}>{part.text}</span>
+                        ),
+                    )
+                  : 'Antwort wird vorbereitet …'}
+              {m.role === 'assistant' && !!m.sources?.length && (
+                <div className="sources text-[0.6875rem] text-muted mt-3 mb-1 [&_a]:mr-3">
+                  Referenzquellen:{' '}
+                  {m.sources.map((source) =>
+                    sourceHref(source.href) ? (
+                      <a key={source.id} href={sourceHref(source.href)}>
+                        {source.title}
+                        {source.stale ? ' (veraltet)' : ''}
+                      </a>
+                    ) : (
+                      <span key={source.id}>{source.title} </span>
+                    ),
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
-        {sources.length > 0 && (
-          <div className="sources text-[0.6875rem] text-muted mt-3.75 mb-3.75 ml-[0] mr-[0] [&_a]:mr-3">
-            Referenzquellen:{' '}
-            {sources.map((s) =>
-              s.href ? (
-                <a key={s.id} href={s.href}>
-                  {s.title}
-                  {s.stale ? ' (veraltet)' : ''}
-                </a>
-              ) : (
-                <span key={s.id}>{s.title} </span>
-              ),
-            )}
-          </div>
-        )}
         <form
           className="chat-form flex gap-2.5 items-end [&_textarea]:resize-none [&_textarea]:min-h-[50px] [&_textarea]:[flex:1] [&_textarea]:min-w-0 [&_button]:bg-accent [&_button]:text-accent-ink [&_button]:[border:0] [&_button]:w-[50px] [&_button]:h-[50px] [&_button]:rounded-card [&_button]:text-[1.25rem] [&_button:disabled]:opacity-[0.5]"
           onSubmit={submit}

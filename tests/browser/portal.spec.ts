@@ -280,3 +280,71 @@ test('changes duty at the shift boundary without reloading', async ({
     '/team/noah-example.png',
   );
 });
+
+test('keeps each streamed reply sender and safe ticket links across a shift change', async ({
+  page,
+}) => {
+  let turn = 0;
+  await page.route('**/api/v1/chat', async (route) => {
+    const current = turn++;
+    const name = current === 0 ? 'Lena Beispiel' : 'Noah Muster';
+    const href = `https://tickets.example.invalid/support/${current}`;
+    const events = [
+      ['responder', { name, role: 'on-duty' }],
+      [
+        'sources',
+        [
+          { id: 'ticket:0', title: 'Support-Anfrage', href },
+          { id: 'ticket:bad', title: 'Unsafe', href: 'javascript:alert(1)' },
+        ],
+      ],
+      [
+        'delta',
+        { text: 'Ich helfe Ihnen. Bitte erstellen Sie eine Anfrage: [ticket:' },
+      ],
+      ['delta', { text: '0]. [invented:9] <script>alert(1)</script>' }],
+      ['done', {}],
+    ];
+    await route.fulfill({
+      contentType: 'text/event-stream',
+      body: events
+        .map(
+          ([type, data]) => `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`,
+        )
+        .join(''),
+    });
+  });
+  await page.goto('/');
+  for (const theme of ['light', 'dark']) {
+    if (theme === 'dark')
+      await page
+        .getByRole('button', { name: 'Dunkles Design aktivieren' })
+        .click();
+    await page
+      .locator('#chat-input')
+      .fill('Ich kann meine E-Mails nicht lesen');
+    await page.locator('#chat-input').press('Control+Enter');
+    const reply = page.locator('.chat-history .assistant').last();
+    await expect(reply).toContainText(
+      `${theme === 'light' ? 'Lena Beispiel' : 'Noah Muster'} · Digitaler Assistent`,
+    );
+    await expect(
+      reply.getByRole('link', {
+        name: 'Support-Ticket erstellen',
+        exact: true,
+      }),
+    ).toHaveAttribute(
+      'href',
+      `https://tickets.example.invalid/support/${theme === 'light' ? 0 : 1}`,
+    );
+    await expect(reply).not.toContainText('[ticket:0]');
+    await expect(reply).not.toContainText('[invented:9]');
+    await expect(reply.locator('script')).toHaveCount(0);
+    await expect(reply.locator('a[href^="javascript:"]')).toHaveCount(0);
+  }
+  const first = page.locator('.chat-history .assistant').first();
+  await expect(first).toContainText('Lena Beispiel · Digitaler Assistent');
+  await expect(
+    first.getByRole('link', { name: 'Support-Ticket erstellen', exact: true }),
+  ).toHaveAttribute('href', 'https://tickets.example.invalid/support/0');
+});

@@ -67,3 +67,9 @@ Ein HTTP-200-Stream kann mit `error` enden; ein Client darf HTTP 200 allein nich
 Core setzt `Cache-Control: no-store` und `X-Content-Type-Options: nosniff`. CORS erlaubt die in `CSP_ALLOWED_ORIGINS` aufgeführten Origins, GET/POST und keine Credentials. Es gibt keine Benutzeranmeldung. Nicht-Browser-Clients sind durch CORS nicht von öffentlichen Daten ausgeschlossen.
 
 Weiter: [Konfiguration](configuration.md), [Sicherheit und Daten](security.md), [Betrieb](operations.md).
+
+### Absender und Links im Chat
+
+Vor den Antworttexten sendet die API zusätzlich `event: responder` mit `{ "name": "Lena Beispiel", "role": "on-duty" }`. Ohne bestätigte aktive Bereitschaft lautet der Wert `{ "name": null, "role": "service-team" }`. Bestehende `sources`, `delta`, `done` und `error` bleiben erhalten; Clients dürfen unbekannte Ereignisse ignorieren. Die Anfrage bleibt unverändert.
+
+Absender und Quellen gehören jeweils zu einer Antwort, nicht zum gesamten Verlauf. Quellenmarker wie `[ticket:0]` werden im Browser anhand der übermittelten Quellen zu verständlichen Links; unbekannte technische IDs und unsichere Linkziele erzeugen keine Links. Modelltext wird nicht als HTML ausgeführt.

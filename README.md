@@ -89,3 +89,5 @@ Vollständige Kontaktinformationen und Alert-Beschreibungen sind öffentlich. Pr
 Projekt-Dokumentation: [Startseite und Übersicht](docs/Home.md), [Architektur](docs/architecture.md), [Installation](docs/installation.md), [Deployment](docs/deployment.md), [API](docs/api.md), [Dokumentation und Wiki](docs/wiki.md).
 
 Weitere Dokumentation: [Plugin-SDK](docs/plugin-sdk.md), [Konfiguration](docs/configuration.md), [Betrieb und Releases](docs/operations.md). Umsetzung der Anforderungen aus [circle-zero #304](https://github.com/ThinkportRepo/circle-zero/issues/304). Das bestehende PoC bleibt unverändert.
+
+Chat-Antworten verwenden die aktuelle Bereitschaftsperson in Ich-Form, mit Name und Kennzeichnung als digitaler Assistent. Ohne bestätigte Bereitschaft antwortet das Service-Team. Dienststatus wird nur für passende Monitore bestätigt; Ticketquellen werden als direkte Links angezeigt. Details: [Chat-Vertrag](docs/plugin-sdk.md#persönliche-chat-antworten).

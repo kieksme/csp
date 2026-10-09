@@ -136,3 +136,11 @@ Die gesamte `.hero`-Fläche, einschließlich Begrüßung, Porträt und Chat, unt
 ```
 
 Die Grafik wird mittig mit `cover` skaliert und an den abgerundeten Header-Rändern abgeschnitten. SVGs können transparent bleiben; Linien sollten hinter Texten zurückhaltend sein. Als rein dekorativer CSS-Hintergrund benötigt die Grafik keinen Alternativtext. Die lokale Asset-URL wird durch Vite im Entwicklungsserver und Build aufgelöst.
+
+### Persönliche Chat-Antworten
+
+Der Chat antwortet in Ich-Form aus Sicht der im Header ausgewählten Bereitschaftsperson. Die Antwort zeigt ihren Namen mit „Digitaler Assistent“; der Hinweis auf automatische Antworten bleibt sichtbar. Ohne bestätigte aktive Schicht antwortet das Service-Team in Wir-Form. Fehlende oder veraltete Schichtdaten bestätigen keine Bereitschaft. Ein nächster Schichtbeginn wird nur aus bestätigten Daten genannt.
+
+Das SDK exportiert `ChatResponder` (`name: string | null`, `role: 'on-duty' | 'service-team'`) sowie `dutyState(shifts, now)` und `nextShiftLabel(start, now, timezone)`. Header und Chat verwenden damit dieselbe Schichtauswahl: frühester aktiver Beginn, dann Benutzer-ID, jeweils nur eine Schicht pro Person. Die Auswahl erfolgt je Antwort; ältere Antworten behalten ihren Absender und ihre Quellen.
+
+Statusauskünfte beziehen sich ausschließlich auf einen zum Problem passenden Monitor. Ein verfügbarer Monitor bestätigt nicht die Funktion beim Benutzer. Bei fehlendem, unbekanntem oder veraltetem Status wird die fehlende Bestätigung ausdrücklich genannt. Passende Ticketquellen erscheinen als direkte Links in der Antwort. Der Chat legt keine Tickets an und behauptet keine persönliche Prüfung. Synthetische und statische Demos bleiben ausdrücklich gekennzeichnet; ihre Daten werden dadurch nicht erweitert.

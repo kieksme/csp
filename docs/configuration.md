@@ -183,7 +183,7 @@ Quellen: [SIGNL4 OpenAPI](https://connect.signl4.com/api/docs/v3/swagger.json), 
 | Azure OpenAI | `CSP_CHAT_AZURE_API_KEY`, `CSP_CHAT_AZURE_ENDPOINT` als Ressourcen-Origin, beispielsweise `https://resource.openai.azure.com` |
 | Ollama       | `CSP_CHAT_OLLAMA_URL`, Standard `http://localhost:11434`                                                                      |
 
-OpenAI und Azure verwenden Responses mit SSE und `store: false`. Ollama verwendet natives `/api/chat` mit NDJSON. Der Portal-Service übersetzt beide in `sources`, `delta`, `done` und `error` SSE-Ereignisse. Provider-Endpunkte müssen vom API-Container erreichbar sein; `localhost` im Container bezeichnet den Container selbst.
+OpenAI und Azure verwenden Responses mit SSE und `store: false`. Ollama verwendet natives `/api/chat` mit NDJSON. Der Portal-Service übersetzt beide in `responder`, `sources`, `delta`, `done` und `error` SSE-Ereignisse. `responder` kennzeichnet die aktuelle Bereitschaftsperson beziehungsweise das Service-Team pro Antwort; Details stehen im [API-Vertrag](api.md#absender-und-links-im-chat). Provider-Endpunkte müssen vom API-Container erreichbar sein; `localhost` im Container bezeichnet den Container selbst.
 
 | Variable                 | Standard | Zulässiger Bereich / Bedeutung         |
 | ------------------------ | -------- | -------------------------------------- |
