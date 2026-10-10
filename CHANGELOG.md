@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/kieksme/csp/compare/v0.8.0...v0.9.0) (2026-10-10)
+
+
+### Features
+
+* WebMCP-Tools für Browser-Agenten pro Plugin ([#26](https://github.com/kieksme/csp/issues/26)) ([b6b59f9](https://github.com/kieksme/csp/commit/b6b59f920061f6b70bfca505cdadefb7cd690d24))
+
 ## [0.8.0](https://github.com/kieksme/csp/compare/v0.7.0...v0.8.0) (2026-10-10)
 
 
