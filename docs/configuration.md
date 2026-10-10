@@ -232,22 +232,23 @@ Das Editor-Schema liegt im CLI-Paket unter `runtime/portal.schema.json`. Es doku
 
 Optionales `@kieksme/csp-plugin-teams`; [vollständige Einrichtung](teams-support.md). Alle folgenden Werte sind API-Runtime-Konfiguration. `chatSupport` im Profil enthält ausschließlich öffentliche Frontend-Einstellungen und wird beim Build festgelegt. Zulässige Modi: `teams` oder `demo`. Im Teams-Modus sind `tenantId` und `clientId` als GUID sowie der vollständige API-`scope` Pflicht; Teams-Plugin muss installiert sein. Demo-Modus erfordert das synthetische Portal. Optionales `chatSupport.auth`: `msal` (Standard bei fehlender Angabe) oder `session`. Build-Einstellung; im Session-Modus verwendet der Browser die vorhandene gleichursprüngliche Portal-Sitzung und erhält nur den API-bestätigten Anzeigenamen. Ein vertrauenswürdiger Gateway muss ein delegiertes API-Token mit passendem Tenant, Audience und `Chat.Access`-Scope ausschließlich serverseitig weitergeben. Die API-Tokenprüfung bleibt unverändert. API und Web-Gateway dürfen nicht direkt öffentlich erreichbar sein; schreibende Cookie-Anfragen benötigen Origin-/CSRF-Prüfung. Demo-Modus benötigt keine Anmeldung.
 
-| Variable                     | Standard                                 | Pflicht und Grenzen                                         |
-| ---------------------------- | ---------------------------------------- | ----------------------------------------------------------- |
-| `CSP_TEAMS_ENABLED`          | `false`                                  | `true`/`false`; aktiviert produktiven Support               |
-| `CSP_TEAMS_DEMO`             | `false`                                  | `true`/`false`; nur mit `CSP_DEMO=true` und ohne Live-Teams |
-| `CSP_CHAT_DATABASE_URL`      | keiner                                   | Live: PostgreSQL-URL, Secret; eigene Datenbank              |
-| `CSP_CHAT_RETENTION_DAYS`    | `30`                                     | Ganzzahl 1–365; Portal-Daten nach Inaktivität löschen       |
-| `CSP_ENTRA_TENANT_ID`        | keiner                                   | Live: Tenant-GUID, entspricht Frontend                      |
-| `CSP_ENTRA_API_AUDIENCE`     | keiner                                   | Live: v2-API-Application-ID                                 |
-| `CSP_ENTRA_API_SCOPE`        | `Chat.Access`                            | Delegierter Scope, nicht leer                               |
-| `CSP_ENTRA_PORTAL_CLIENT_ID` | keiner                                   | Live: SPA-App-GUID, entspricht Frontend                     |
-| `CSP_TEAMS_APP_ID`           | keiner                                   | Live: Bot-App-GUID                                          |
-| `CSP_TEAMS_APP_SECRET`       | keiner                                   | Live: Bot-App-Secret, ausschließlich Runtime                |
-| `CSP_TEAMS_TEAM_ID`          | keiner                                   | Live: tatsächliche Teams-Team-ID, nicht leer                |
-| `CSP_TEAMS_CHANNEL_ID`       | keiner                                   | Live: Standard-Channel-ID, nicht leer                       |
-| `CSP_TEAMS_SUPPORT_GROUP_ID` | keiner                                   | Live: Entra-Gruppen-GUID                                    |
-| `CSP_TEAMS_SERVICE_URL`      | `https://smba.trafficmanager.net/teams/` | Microsoft-Service-URL; Public/GCC/GCC High/DoD-Hosts        |
+| Variable                     | Standard                                 | Pflicht und Grenzen                                                                                                                   |
+| ---------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `CSP_TEAMS_ENABLED`          | `false`                                  | `true`/`false`; aktiviert produktiven Support                                                                                         |
+| `CSP_TEAMS_DEMO`             | `false`                                  | `true`/`false`; nur mit `CSP_DEMO=true` und ohne Live-Teams                                                                           |
+| `CSP_CHAT_DATABASE_URL`      | keiner                                   | Live: PostgreSQL-URL, Secret; eigene Datenbank                                                                                        |
+| `CSP_CHAT_RETENTION_DAYS`    | `30`                                     | Ganzzahl 1–365; Portal-Daten nach Inaktivität löschen                                                                                 |
+| `CSP_ENTRA_TENANT_ID`        | keiner                                   | Live: Tenant-GUID, entspricht Frontend                                                                                                |
+| `CSP_ENTRA_API_AUDIENCE`     | keiner                                   | Live: v2-API-Application-ID                                                                                                           |
+| `CSP_ENTRA_API_SCOPE`        | `Chat.Access`                            | Delegierter Scope, nicht leer                                                                                                         |
+| `CSP_ENTRA_PORTAL_CLIENT_ID` | keiner                                   | Live: Portal-Login-App-GUID, entspricht Frontend                                                                                      |
+| `CSP_TEAMS_APP_ID`           | keiner                                   | Live: Bot-App-GUID                                                                                                                    |
+| `CSP_TEAMS_APP_SECRET`       | keiner                                   | Live: Bot-App-Secret, ausschließlich Runtime                                                                                          |
+| `CSP_TEAMS_TEAM_ID`          | keiner                                   | Live: tatsächliche Teams-Team-ID, nicht leer                                                                                          |
+| `CSP_TEAMS_CHANNEL_ID`       | keiner                                   | Live: Standard-Channel-ID, nicht leer                                                                                                 |
+| `CSP_TEAMS_SUPPORT_GROUP_ID` | keiner                                   | Live: Entra-Gruppen-GUID                                                                                                              |
+| `CSP_TEAMS_SUPPORT_AUTH`     | `group`                                  | API-Runtime: `group` prüft beliebige Entra-Gruppe; `team` prüft Teams-Mitglieder mit RSC, Support-Gruppen-ID muss Team-ID entsprechen |
+| `CSP_TEAMS_SERVICE_URL`      | `https://smba.trafficmanager.net/teams/` | Microsoft-Service-URL; Public/GCC/GCC High/DoD-Hosts                                                                                  |
 
 Frontend-Scope: `api://<CSP_ENTRA_API_AUDIENCE>/<CSP_ENTRA_API_SCOPE>`. Für Live-Support müssen alle Pflichtwerte gesetzt sein; fehlende Werte oder abweichendes Frontend-/Runtime-Profil verhindern den API-Start. Chat-Limits und Provider-Konfiguration gelten weiter. Ein API-Replikat mit `Recreate` verwenden.
 

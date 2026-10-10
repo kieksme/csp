@@ -582,3 +582,69 @@ it('returns only a verified display name for an existing gateway session and rej
     await app.close();
   }
 });
+it('checks team-scoped RSC membership on every action and fails closed without tenant-wide group reads', async () => {
+  const team = randomUUID(),
+    user = randomUUID();
+  let member = true;
+  const fetcher = vi.fn<typeof fetch>(async (input) =>
+    String(input).includes('/token')
+      ? Response.json({ access_token: 'token', expires_in: 3600 })
+      : Response.json({ value: member ? [{ userId: user }] : [] }),
+  );
+  const authorize = supportAuthorizer(
+    randomUUID(),
+    randomUUID(),
+    'secret',
+    team,
+    fetcher,
+    team,
+  );
+  expect(await authorize(user)).toBe(true);
+  member = false;
+  expect(await authorize(user)).toBe(false);
+  expect(fetcher).toHaveBeenCalledTimes(3);
+  const url = new URL(String(fetcher.mock.calls[1][0]));
+  expect(url.pathname).toBe(`/v1.0/teams/${team}/members`);
+  expect(url.searchParams.get('$filter')).toContain(user);
+  expect(url.searchParams.get('$select')).toBe('userId');
+  expect(
+    await supportAuthorizer(
+      randomUUID(),
+      randomUUID(),
+      'secret',
+      team,
+      async () => new Response(null, { status: 403 }),
+      team,
+    )(user),
+  ).toBe(false);
+  expect(
+    await supportAuthorizer(
+      randomUUID(),
+      randomUUID(),
+      'secret',
+      randomUUID(),
+      fetcher,
+      team,
+    )(user),
+  ).toBe(false);
+  const enabled = {
+    CSP_TEAMS_ENABLED: 'true',
+    CSP_CHAT_DATABASE_URL: 'postgresql://localhost/support',
+    CSP_ENTRA_TENANT_ID: randomUUID(),
+    CSP_ENTRA_API_AUDIENCE: randomUUID(),
+    CSP_ENTRA_PORTAL_CLIENT_ID: randomUUID(),
+    CSP_TEAMS_APP_ID: randomUUID(),
+    CSP_TEAMS_APP_SECRET: 'secret',
+    CSP_TEAMS_TEAM_ID: team,
+    CSP_TEAMS_CHANNEL_ID: 'channel',
+    CSP_TEAMS_SUPPORT_GROUP_ID: team,
+    CSP_TEAMS_SUPPORT_AUTH: 'team',
+  };
+  expect(configSchema.safeParse(enabled).success).toBe(true);
+  expect(
+    configSchema.safeParse({
+      ...enabled,
+      CSP_TEAMS_SUPPORT_GROUP_ID: randomUUID(),
+    }).success,
+  ).toBe(false);
+});
