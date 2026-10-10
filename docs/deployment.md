@@ -36,6 +36,8 @@ Das Kundenrepo muss dafür ein Lockfile enthalten. Kontakt und Inhalte stammen a
 
 TLS am Reverse-Proxy/Host terminieren. `CSP_TRUST_PROXY=true` nur setzen, wenn der vertrauenswürdige Proxy eingehende Forwarded-Header ersetzt. SSE für Chat ohne Response-Buffering weiterleiten und das 60-Sekunden-Zeitlimit berücksichtigen. `/health` und installierte Provider-Routen von außen prüfen.
 
+Das Kunden-API-Image enthält `curl`, damit Hosting-Plattformen ihren HTTP-Healthcheck im Container ausführen können. In Coolify den Typ **HTTP**, `GET /health`, Host `localhost`, internen Port `3001` und erwarteten Status `200` verwenden. Als Intervall `30` Sekunden, Timeout `5` Sekunden und Startzeit `15` Sekunden setzen. Diese Prüfung bestätigt die Erreichbarkeit der API, nicht die Anmeldung bei OpenAI oder anderen Providern. Ein neuer Runtime-Dockerfile-Stand benötigt einen Image-Neubau.
+
 ## Änderungen und Rollback
 
 Branding und Inhalte benötigen einen neuen Frontend-Build; Runtime-/Inhaltsänderungen benötigen einen API-Neustart. Plugin-Änderungen erfordern den Neubau beider Teile. Für Rollbacks das vorherige Kunden-Lockfile, Frontend-Artefakt, API-Image und passende Runtime-Konfiguration gemeinsam verwenden.
