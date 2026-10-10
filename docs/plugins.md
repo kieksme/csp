@@ -38,3 +38,7 @@ Provider-Variablen am API-Host ergänzen oder entfernen, Frontend und API neu ba
 Plugin-Mutationen sind in einem übergeordneten pnpm-Workspace nicht erlaubt. Eine `pnpm-workspace.yaml` mit reinen pnpm-Einstellungen ist in einem eigenständigen Kundenrepo zulässig; eine eigene Workspace-Paketliste wird abgelehnt.
 
 Weiter: [Plugin-SDK](plugin-sdk.md), [Konfiguration](configuration.md), [API](api.md).
+
+## Teams-Support
+
+`@kieksme/csp-plugin-teams` benötigt `chat`, registriert Gesprächs- und Bot-Routen bei Aktivierung und hat keine eigene Browser-Sektion. Die Chat-UI nutzt `chatSupport` im Profil. [Einrichtung und Demo](teams-support.md).

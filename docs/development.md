@@ -41,3 +41,5 @@ Die CLI-Vorlage stammt aus `templates/customer`. Änderungen dort vornehmen und 
 Änderungen als Conventional Commits liefern, einschließlich des Squash-Merge-Titels. `fix:` löst Patch-, `feat:` Minor- und `feat!:`/`BREAKING CHANGE:` inkompatible Releases aus. Dokumentation im selben PR wie die betroffene Funktion aktualisieren. Secrets und reale Kundendaten nicht in Testfixtures aufnehmen.
 
 Weiter: [Plugin-SDK](plugin-sdk.md), [Betrieb und Releases](operations.md), [Dokumentation und Wiki](wiki.md).
+
+Teams-Support wird über API-/JWT-/Übernahme-Tests sowie `tests/browser/support.spec.ts` geprüft. CI startet PostgreSQL 17 für Persistenz-, Outbox- und Lease-Tests; lokal mit `CSP_TEST_DATABASE_URL` aktivieren. Der Support-Browser-Test nutzt die gebaute synthetische Demo auf Port 4176 und deren API auf 3017. Echte Teams-Verbindung separat abnehmen.

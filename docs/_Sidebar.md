@@ -15,3 +15,4 @@
 - [WebMCP](webmcp.md)
 - [Fehlerbehebung](troubleshooting.md)
 - [Dokumentation und Wiki](wiki.md)
+- [Teams-Support und Übernahme](teams-support.md)

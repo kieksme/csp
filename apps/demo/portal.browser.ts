@@ -4,4 +4,5 @@ import plugin1 from '@kieksme/csp-plugin-signl4/browser';
 import plugin2 from '@kieksme/csp-plugin-kuma/browser';
 import plugin3 from '@kieksme/csp-plugin-content/browser';
 import plugin4 from '@kieksme/csp-plugin-chat/browser';
-export default [plugin0, plugin1, plugin2, plugin3, plugin4];
+import plugin5 from '@kieksme/csp-plugin-teams/browser';
+export default [plugin0, plugin1, plugin2, plugin3, plugin4, plugin5];

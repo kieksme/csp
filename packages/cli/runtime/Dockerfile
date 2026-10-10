@@ -4,6 +4,9 @@ RUN corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --prod --frozen-lockfile
 FROM node:22-bookworm-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ARG PORTAL_CONFIG=portal.config.json
 ENV CSP_CONFIG_PATH=$PORTAL_CONFIG

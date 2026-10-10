@@ -1,0 +1,52 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.20/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.20",
+  "version": "1.0.0",
+  "id": "REPLACE_WITH_TEAMS_APP_ID",
+  "developer": {
+    "name": "Thinkport",
+    "websiteUrl": "https://thinkport.digital",
+    "privacyUrl": "REPLACE_WITH_PRIVACY_URL",
+    "termsOfUseUrl": "REPLACE_WITH_TERMS_URL"
+  },
+  "name": {
+    "short": "Portal-Support",
+    "full": "Thinkport Portal-Support"
+  },
+  "description": {
+    "short": "Portal-Chats beobachten und \u00fcbernehmen",
+    "full": "Spiegelt Portal-Gespr\u00e4che in einen konfigurierten Support-Channel. Liest Team-Channel-Nachrichten, verarbeitet nur zugeordnete Support-Threads und \u00fcbertr\u00e4gt nach expliziter \u00dcbernahme Textantworten der zust\u00e4ndigen Supportperson an den Portal-Nutzer."
+  },
+  "icons": {
+    "outline": "outline.png",
+    "color": "color.png"
+  },
+  "accentColor": "#FF5722",
+  "bots": [
+    {
+      "botId": "REPLACE_WITH_BOT_APP_ID",
+      "scopes": ["team"],
+      "isNotificationOnly": false,
+      "supportsFiles": false
+    }
+  ],
+  "authorization": {
+    "permissions": {
+      "resourceSpecific": [
+        {
+          "name": "ChannelMessage.Read.Group",
+          "type": "Application"
+        },
+        {
+          "name": "TeamMember.Read.Group",
+          "type": "Application"
+        }
+      ]
+    }
+  },
+  "validDomains": [],
+  "webApplicationInfo": {
+    "id": "REPLACE_WITH_BOT_APP_ID",
+    "resource": "api://REPLACE_WITH_BOT_APP_ID"
+  }
+}

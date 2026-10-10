@@ -122,7 +122,25 @@ export interface ThemeTokens {
   fontMono?: string;
   fontFamily?: string;
 }
+export interface ChatSupportConfig {
+  mode: 'teams' | 'demo';
+  auth?: 'msal' | 'session';
+  tenantId?: string;
+  clientId?: string;
+  scope?: string;
+}
+export interface ChatEvent {
+  type: 'responder' | 'sources' | 'delta' | 'done';
+  data: unknown;
+}
+export interface ChatEngine {
+  stream(
+    messages: { role: 'user' | 'assistant'; content: string }[],
+    signal: AbortSignal,
+  ): AsyncIterable<ChatEvent>;
+}
 export interface PublicConfig {
+  chatSupport?: ChatSupportConfig;
   theme?: {
     mode: 'light' | 'dark' | 'system';
     tokens?: ThemeTokens;
@@ -176,6 +194,7 @@ export interface BrowserPlugin extends PluginMeta {
   tools?: WebMcpTool[];
 }
 export interface ServerContext {
+  chat?: ChatEngine;
   app: FastifyInstance;
   env: Env;
   config: PublicConfig;
