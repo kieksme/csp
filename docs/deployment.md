@@ -53,3 +53,7 @@ Das API-Image enthält Kundenprofil, Inhalte und referenzierte Assets aus dem Ku
 ## Optionaler Teams-Support
 
 Entra-/Bot-Registrierung, PostgreSQL, Standard-Channel und Runtime-Secrets sind zusätzlich erforderlich. Ein API-Replikat mit `Recreate`; der PostgreSQL-Lock verhindert parallele Instanzen. `/api/messages` muss per HTTPS für Microsoft erreichbar sein; Gesprächsrouten validieren Entra-API-Tokens. Einrichtung und Live-Abnahme: [Teams-Support](teams-support.md).
+
+## Infrastruktur der eingerichteten Instanzen
+
+Die [Infrastrukturübersicht](infrastructure.md) dokumentiert Hosting, Netzgrenzen, Releasewege und den belegten Live-Stand. Details: [Coolify](infrastructure-coolify.md), [Thinkport und Teams](infrastructure-thinkport.md), [Lieferkette und Wiederherstellung](infrastructure-operations.md).

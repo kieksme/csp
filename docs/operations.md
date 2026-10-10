@@ -51,3 +51,7 @@ CI prüft Typen, Unit-/Integrationstests, alle Builds, gepackte Pakete in einer 
 ## Weitere Betriebsdokumentation
 
 [Deployment](deployment.md) beschreibt GitHub Pages und den API-Host, [API](api.md) die Antworten und SSE-Ereignisse, [Fehlerbehebung](troubleshooting.md) häufige Störungen.
+
+## Infrastruktur der eingerichteten Instanzen
+
+Die [Infrastrukturübersicht](infrastructure.md) dokumentiert Hosting, Netzgrenzen, Releasewege und den belegten Live-Stand. Details: [Coolify](infrastructure-coolify.md), [Thinkport und Teams](infrastructure-thinkport.md), [Lieferkette und Wiederherstellung](infrastructure-operations.md).
