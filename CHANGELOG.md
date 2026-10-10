@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0](https://github.com/kieksme/csp/compare/v0.6.1...v0.7.0) (2026-10-10)
+
+
+### Features
+
+* **chat:** answer as the current on-duty responder ([784a3a3](https://github.com/kieksme/csp/commit/784a3a373ee29ef03579be22b8ddaf48cef030d7))
+* **portal:** refine service header and chat interaction ([9dc2ebe](https://github.com/kieksme/csp/commit/9dc2ebef91dba3544013f53542ee0ce584dd6711))
+* **teams:** add portal monitoring and human support handoff ([2131cae](https://github.com/kieksme/csp/commit/2131cae6d4d135d9ef54797fa14b3cbf54206ce8))
+
+
+### Bug Fixes
+
+* **chat:** clarify assistant identity and support scope ([#27](https://github.com/kieksme/csp/issues/27)) ([07f9633](https://github.com/kieksme/csp/commit/07f9633edff1c7b0641f83ea26f5b7c368971ba9))
+
 ## [0.6.1](https://github.com/kieksme/csp/compare/v0.6.0...v0.6.1) (2026-10-08)
 
 
