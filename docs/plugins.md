@@ -10,7 +10,7 @@
 | `@kieksme/csp-plugin-content` | `content` | Prozesse, Ticketlinks/-vorlagen, FAQ und Chat-Quellen      | `CSP_CONTENT_PATH`                          |
 | `@kieksme/csp-plugin-chat`    | `chat`    | Gestreamte Antworten aus statischen und Live-Quellen       | Provider, Modell und gegebenenfalls API-Key |
 
-Jedes Plugin stellt zusätzlich WebMCP-Tools für Browser-Agenten bereit: `signl4_*` (Dienst, Schichtplan, Team, vCard, Alerts), `kuma_get_status`, `contact_get_hotline`, `content_*` (FAQ, Prozesse, Ticketvorlagen) und `chat_ask`. Die Liste mit Parametern steht unter [WebMCP](webmcp.md). Mit dem Hinzufügen oder Entfernen eines Plugins ändern sich die Tools automatisch; `public.webmcp: false` schaltet sie ab.
+Die Plugins `contact`, `signl4`, `kuma`, `content` und `chat` stellen zusätzlich WebMCP-Tools für Browser-Agenten bereit: `signl4_*` (Dienst, Schichtplan, Team, vCard, Alerts), `kuma_get_status`, `contact_get_hotline`, `content_*` (FAQ, Prozesse, Ticketvorlagen) und `chat_ask`; das Teams-Plugin stellt keine Tools bereit. Die Liste mit Parametern steht unter [WebMCP](webmcp.md). Mit dem Hinzufügen oder Entfernen eines Plugins ändern sich die Tools automatisch; `public.webmcp: false` schaltet sie ab.
 
 `apps/demo` registriert alle fünf Plugins. `apps/northstar` und `templates/customer` registrieren Kontakt, Inhalte und Chat. Die mitgelieferten Plugins haben keine verpflichtenden Plugin-Abhängigkeiten; der Chat verwendet die Wissensquellen der tatsächlich installierten Plugins.
 
@@ -38,3 +38,7 @@ Provider-Variablen am API-Host ergänzen oder entfernen, Frontend und API neu ba
 Plugin-Mutationen sind in einem übergeordneten pnpm-Workspace nicht erlaubt. Eine `pnpm-workspace.yaml` mit reinen pnpm-Einstellungen ist in einem eigenständigen Kundenrepo zulässig; eine eigene Workspace-Paketliste wird abgelehnt.
 
 Weiter: [Plugin-SDK](plugin-sdk.md), [Konfiguration](configuration.md), [API](api.md).
+
+## Teams-Support
+
+`@kieksme/csp-plugin-teams` benötigt `chat`, registriert Gesprächs- und Bot-Routen bei Aktivierung und hat keine eigene Browser-Sektion. Die Chat-UI nutzt `chatSupport` im Profil. [Einrichtung und Demo](teams-support.md).

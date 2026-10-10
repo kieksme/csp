@@ -394,6 +394,31 @@ describe('chat tool', () => {
       expect.objectContaining({ method: 'POST' }),
     );
   });
+  it('does not call the locked chat route in Teams support mode', async () => {
+    const request = vi.fn();
+    const ctx = {
+      ...context(
+        {},
+        {
+          chatSupport: {
+            mode: 'teams',
+            auth: 'session',
+            tenantId: 't',
+            clientId: 'c',
+            scope: 's',
+          } as never,
+        },
+      ),
+      request: request as never,
+    };
+    const result = await tool(chatTools, 'chat_ask').execute(
+      { messages: [{ role: 'user', content: 'Hi' }] },
+      ctx,
+    );
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Supportmodus');
+    expect(request).not.toHaveBeenCalled();
+  });
   it('reports truncated streams and rate limits as errors', async () => {
     const run = (response: Response) =>
       tool(chatTools, 'chat_ask').execute(

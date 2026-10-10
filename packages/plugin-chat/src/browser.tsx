@@ -8,6 +8,7 @@ import type {
   ChatResponder,
 } from '@kieksme/csp-sdk';
 import { answerParts, sourceHref } from './answer.js';
+import { SupportChat } from './support-chat.js';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -21,6 +22,13 @@ function resizeInput(field: HTMLTextAreaElement | null) {
   field.style.height = `${field.scrollHeight + field.offsetHeight - field.clientHeight}px`;
 }
 function Chat(ctx: BrowserContext) {
+  return ctx.config.chatSupport ? (
+    <SupportChat {...ctx} />
+  ) : (
+    <LegacyChat {...ctx} />
+  );
+}
+function LegacyChat(ctx: BrowserContext) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const inputField = useRef<HTMLTextAreaElement>(null);
@@ -189,10 +197,9 @@ function Chat(ctx: BrowserContext) {
                 <span className="sr-only">Sie: </span>
               ) : (
                 <span className="block text-[0.6875rem] text-muted mb-1">
-                  {m.responder?.role === 'on-duty'
-                    ? m.responder.name
-                    : 'Service-Team'}{' '}
-                  · Digitaler Assistent
+                  {m.responder?.role === 'on-duty' && m.responder.name
+                    ? `Digitaler Assistent von ${m.responder.name}`
+                    : 'Digitaler Assistent des Service-Teams'}
                 </span>
               )}
               {m.role === 'user'

@@ -19,7 +19,8 @@
       "@kieksme/csp-plugin-kuma/*": ["./packages/plugin-kuma/src/*"],
       "@kieksme/csp-plugin-content/*": ["./packages/plugin-content/src/*"],
       "@kieksme/csp-plugin-chat/*": ["./packages/plugin-chat/src/*"],
-      "@kieksme/csp-sdk/browser": ["./packages/sdk/src/browser.tsx"]
+      "@kieksme/csp-sdk/browser": ["./packages/sdk/src/browser.tsx"],
+      "@kieksme/csp-plugin-teams/*": ["./packages/plugin-teams/src/*"]
     }
   },
   "include": ["packages", "apps", "templates", "tests", "scripts", "*.ts"],

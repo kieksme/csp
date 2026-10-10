@@ -12,3 +12,5 @@ dist-api/
 packages/cli/template/
 
 .csp/
+
+apps/demo/dist-support/

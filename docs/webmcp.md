@@ -1,6 +1,6 @@
 # WebMCP für Browser-Agenten
 
-Das Portal stellt seine Funktionen über [WebMCP](https://webmachinelearning.github.io/webmcp/) bereit. Ein KI-Agent im Browser kann damit Dienstplan, Team, Alerts, Systemstatus, Hotline, FAQ und Ticketvorlagen als Tools aufrufen, statt die Oberfläche zu bedienen. Jedes mitgelieferte Plugin bringt seine eigenen Tools mit; Core ergänzt `portal_get_info`.
+Das Portal stellt seine Funktionen über [WebMCP](https://webmachinelearning.github.io/webmcp/) bereit. Ein KI-Agent im Browser kann damit Dienstplan, Team, Alerts, Systemstatus, Hotline, FAQ und Ticketvorlagen als Tools aufrufen, statt die Oberfläche zu bedienen. Die Plugins `contact`, `signl4`, `kuma`, `content` und `chat` bringen ihre eigenen Tools mit; Core ergänzt `portal_get_info`. Das Teams-Plugin hat bewusst keine (siehe unten).
 
 WebMCP ist ein frühes Browser-Angebot und noch nicht überall verfügbar. Das Portal erkennt `document.modelContext` und `navigator.modelContext` und registriert nur über `registerTool`. Fehlt die Schnittstelle, passiert nichts und die Oberfläche bleibt unverändert. Der Spezifikationsstand kann sich ändern; die Anbindung ist deshalb in einem Modul (`packages/sdk/src/webmcp.ts`) gekapselt.
 
@@ -32,6 +32,8 @@ Alle Tools lesen ausschließlich die bestehenden öffentlichen Routen unter `/ap
 | `content` | `content_list_processes`        | Prozesse mit Links                                                                    | nein       |
 | `content` | `content_list_ticket_templates` | Ticketarten mit Link und Textvorlage                                                  | nein       |
 | `chat`    | `chat_ask`                      | Fragt den digitalen Assistenten (`messages`, wie in der [API](api.md#chat-anfragen))  | Kontingent |
+
+Im Supportmodus (`chatSupport`, [Teams-Support](teams-support.md)) ist die öffentliche Chat-Route gesperrt; `chat_ask` meldet das und sendet keine Anfrage. Das Teams-Plugin selbst stellt bewusst keine Tools bereit: Seine Gespräche verlangen die Anmeldung der Person, und Nachrichten erreichen echte Support-Mitarbeitende. Solche Aktionen gehören nicht in lesende Agenten-Tools.
 
 `chat_ask` ändert keine Daten, verbraucht aber das IP-Limit und das KI-Kontingent der Instanz und ruft den konfigurierten Provider auf. Es ist deshalb nicht als `readOnlyHint` markiert. Alle anderen Tools sind es.
 

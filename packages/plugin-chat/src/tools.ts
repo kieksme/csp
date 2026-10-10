@@ -125,6 +125,11 @@ export const chatTools: WebMcpTool[] = [
     },
     annotations: { readOnlyHint: false },
     execute: async (args, ctx) => {
+      // Support mode (Teams plugin) locks the public chat route with 409.
+      if (ctx.config.chatSupport)
+        return webMcpError(
+          'Der Chat läuft im Supportmodus mit Anmeldung und ist per Tool nicht verfügbar. Bitte die Hotline nutzen.',
+        );
       const messages = parseMessages(args.messages);
       if (typeof messages === 'string') return webMcpError(messages);
       try {

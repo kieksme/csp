@@ -62,3 +62,5 @@ Im Produktrepo zuerst `pnpm build`, dann `node packages/cli/dist/index.js init /
 `GET http://localhost:3001/health` muss die registrierten Plugin-IDs liefern. Frontend öffnen und Kontakt, Hilfetexte und Chat prüfen. SIGNL4/Kuma nach Installation und Konfiguration zusätzlich über ihre API-Routen prüfen. Ein erfolgreicher Healthcheck bestätigt nur den Prozessstart, keine funktionierende Provider-Verbindung.
 
 Weiter: [Konfiguration](configuration.md), [Plugins und CLI](plugins.md), [Deployment](deployment.md).
+
+Für authentifizierte Gespräche und menschliche Übernahme das optionale Teams-Plugin ergänzen: [Teams-Support installieren](teams-support.md#installation-und-entra). Die lokale Support-Demo braucht keine Microsoft-Zugangsdaten.

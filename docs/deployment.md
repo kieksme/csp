@@ -36,6 +36,8 @@ Das Kundenrepo muss dafür ein Lockfile enthalten. Kontakt und Inhalte stammen a
 
 TLS am Reverse-Proxy/Host terminieren. `CSP_TRUST_PROXY=true` nur setzen, wenn der vertrauenswürdige Proxy eingehende Forwarded-Header ersetzt. SSE für Chat ohne Response-Buffering weiterleiten und das 60-Sekunden-Zeitlimit berücksichtigen. `/health` und installierte Provider-Routen von außen prüfen.
 
+Das Kunden-API-Image enthält `curl`, damit Hosting-Plattformen ihren HTTP-Healthcheck im Container ausführen können. In Coolify den Typ **HTTP**, `GET /health`, Host `localhost`, internen Port `3001` und erwarteten Status `200` verwenden. Als Intervall `30` Sekunden, Timeout `5` Sekunden und Startzeit `15` Sekunden setzen. Diese Prüfung bestätigt die Erreichbarkeit der API, nicht die Anmeldung bei OpenAI oder anderen Providern. Ein neuer Runtime-Dockerfile-Stand benötigt einen Image-Neubau.
+
 ## Änderungen und Rollback
 
 Branding und Inhalte benötigen einen neuen Frontend-Build; Runtime-/Inhaltsänderungen benötigen einen API-Neustart. Plugin-Änderungen erfordern den Neubau beider Teile. Für Rollbacks das vorherige Kunden-Lockfile, Frontend-Artefakt, API-Image und passende Runtime-Konfiguration gemeinsam verwenden.
@@ -47,3 +49,7 @@ Weiter: [Konfiguration](configuration.md), [Betrieb](operations.md), [Fehlerbehe
 `.github/workflows/customer-build.yml` verarbeitet den Kundencheckout: Installation mit Lockfile, produktive Profilvalidierung, Frontend/API-Build und API-Image-Artefakt. Das Dockerfile wird aus dem installierten CLI-Paket bereitgestellt. Der Aufruf im Kundenrepo erhält eine geprüfte Workflow-Commit-SHA, `config`, optional `pages` und `public-overrides` als JSON mit ausdrücklich gesetzten Werten. Provider-Secrets werden nicht an den Build übergeben. Pages benötigt entsprechende Caller-Rechte und das `github-pages`-Environment.
 
 Das API-Image enthält Kundenprofil, Inhalte und referenzierte Assets aus dem Kundencheckout und startet `dist-api/server.js`. Providerwerte kommen beim Start aus der Hosting-Secret-Verwaltung. Der Workflow deployt keine API; Hosting, Provider-Anbindung und Rollback sind im gewählten Staging separat zu prüfen. Frontend und API müssen zusammen mit Kundencommit, Lockfile, Paketversionen und derselben öffentlichen Konfiguration ausgerollt bzw. zurückgesetzt werden. CSP-Pakete und der Workflow müssen vor der Kundenmigration veröffentlicht sein; lokale Tarball-Tests ersetzen keine Registry-Veröffentlichung.
+
+## Optionaler Teams-Support
+
+Entra-/Bot-Registrierung, PostgreSQL, Standard-Channel und Runtime-Secrets sind zusätzlich erforderlich. Ein API-Replikat mit `Recreate`; der PostgreSQL-Lock verhindert parallele Instanzen. `/api/messages` muss per HTTPS für Microsoft erreichbar sein; Gesprächsrouten validieren Entra-API-Tokens. Einrichtung und Live-Abnahme: [Teams-Support](teams-support.md).
