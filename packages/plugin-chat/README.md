@@ -14,4 +14,8 @@ The input starts with one text row and automatically grows with wrapped text or 
 
 The chat input receives focus automatically when the page loads.
 
-Chat-Antworten verwenden die aktuelle Bereitschaftsperson in Ich-Form, mit Name und Kennzeichnung als digitaler Assistent. Ohne bestätigte Bereitschaft antwortet das Service-Team. Dienststatus wird nur für passende Monitore bestätigt; Ticketquellen werden als direkte Links angezeigt. Details: [Chat-Vertrag](../../docs/plugin-sdk.md#persönliche-chat-antworten).
+Chat-Antworten sprechen in Ich-Form als digitaler Assistent der aktuellen Bereitschaftsperson; die Beschriftung lautet „Digitaler Assistent von …“. Passende Support-Antworten bieten belegte Kontakte zur Person oder zum Support-Team an, ohne persönliche Handlungen zu behaupten. Ohne bestätigte Bereitschaft antwortet das Service-Team. Dienststatus wird nur für passende Monitore bestätigt; Ticketquellen werden als direkte Links angezeigt. Details: [Chat-Vertrag](../../docs/plugin-sdk.md#persönliche-chat-antworten).
+
+Der Assistent unterscheidet das Unternehmen von seinem Serviceportal: „Serviceportal von Thinkport“ statt „Thinkport ist ein Serviceportal“. Aussagen über Funktionen stammen ausschließlich aus den vorhandenen Portalquellen.
+
+Der System-Prompt begrenzt den Chat auf Support und Portalbedienung. Fachfremde Aufgaben werden kurz zum Support-Zweck zurückgeführt; unklare Anliegen werden durch eine Rückfrage eingeordnet.

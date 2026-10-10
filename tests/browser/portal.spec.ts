@@ -326,7 +326,7 @@ test('keeps each streamed reply sender and safe ticket links across a shift chan
     await page.locator('#chat-input').press('Control+Enter');
     const reply = page.locator('.chat-history .assistant').last();
     await expect(reply).toContainText(
-      `${theme === 'light' ? 'Lena Beispiel' : 'Noah Muster'} · Digitaler Assistent`,
+      `Digitaler Assistent von ${theme === 'light' ? 'Lena Beispiel' : 'Noah Muster'}`,
     );
     await expect(
       reply.getByRole('link', {
@@ -343,7 +343,7 @@ test('keeps each streamed reply sender and safe ticket links across a shift chan
     await expect(reply.locator('a[href^="javascript:"]')).toHaveCount(0);
   }
   const first = page.locator('.chat-history .assistant').first();
-  await expect(first).toContainText('Lena Beispiel · Digitaler Assistent');
+  await expect(first).toContainText('Digitaler Assistent von Lena Beispiel');
   await expect(
     first.getByRole('link', { name: 'Support-Ticket erstellen', exact: true }),
   ).toHaveAttribute('href', 'https://tickets.example.invalid/support/0');

@@ -188,10 +188,9 @@ function Chat(ctx: BrowserContext) {
                 <span className="sr-only">Sie: </span>
               ) : (
                 <span className="block text-[0.6875rem] text-muted mb-1">
-                  {m.responder?.role === 'on-duty'
-                    ? m.responder.name
-                    : 'Service-Team'}{' '}
-                  · Digitaler Assistent
+                  {m.responder?.role === 'on-duty' && m.responder.name
+                    ? `Digitaler Assistent von ${m.responder.name}`
+                    : 'Digitaler Assistent des Service-Teams'}
                 </span>
               )}
               {m.role === 'user'
