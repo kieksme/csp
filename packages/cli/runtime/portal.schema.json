@@ -296,6 +296,42 @@
         "type": "string",
         "pattern": "^(?:@[a-z0-9][a-z0-9._-]*/)?[a-z0-9][a-z0-9._-]*$"
       }
+    },
+    "chatSupport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "enum": ["teams", "demo"]
+        },
+        "tenantId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "clientId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "teams"
+              }
+            }
+          },
+          "then": {
+            "required": ["tenantId", "clientId", "scope"]
+          }
+        }
+      ]
     }
   },
   "required": [

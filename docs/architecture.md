@@ -39,7 +39,7 @@ Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicC
 
 ## Paketfamilie
 
-Die acht öffentlichen Pakete heißen `@kieksme/csp-sdk`, `@kieksme/csp-core`, `@kieksme/csp-cli` und `@kieksme/csp-plugin-{contact,signl4,kuma,content,chat}`. Alle erhalten dieselbe Release-Version. Private Apps und Kunden-Vorlage werden ebenfalls versioniert, aber nicht auf npm veröffentlicht.
+Die neun öffentlichen Pakete heißen `@kieksme/csp-sdk`, `@kieksme/csp-core`, `@kieksme/csp-cli` und `@kieksme/csp-plugin-{contact,signl4,kuma,content,chat,teams}`. Alle erhalten dieselbe Release-Version. Private Apps und Kunden-Vorlage werden ebenfalls versioniert, aber nicht auf npm veröffentlicht.
 
 Die Core-API trennt Exporte für `./browser`, `./server`, `./config`, `./profile` und `./build`. Plugins haben getrennte Browser- und Server-Exporte. SDK-Kompatibilität und Plugin-Abhängigkeiten werden zur Laufzeit überprüft. Kundenupdates erfolgen über Paketversionen und Lockfile mit anschließendem Build und Deployment.
 
@@ -50,3 +50,5 @@ Provider-Daten werden je Prozess 30 Sekunden im Speicher gehalten. Gleichzeitige
 Das Frontend pollt standardmäßig alle 60 Sekunden. Schichtgrenzen werden lokal alle 15 Sekunden neu bewertet. Die PWA lädt nach einem ersten erfolgreichen Besuch statische Hilfe und Assets auch offline. API- und Chat-Antworten werden nicht im Service Worker gespeichert; externe Bilder benötigen weiterhin Netzwerkzugriff.
 
 Weiter: [Plugins](plugins.md), [API](api.md), [Betrieb](operations.md).
+
+Das optionale Teams-Plugin ergänzt PostgreSQL-Persistenz, Entra-Zugriffsschutz und menschliche Übernahme. Frontend und Runtime aktivieren diese Funktion explizit. Details: [Teams-Support](teams-support.md).

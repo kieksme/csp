@@ -7,6 +7,7 @@ import type {
   ChatResponder,
 } from '@kieksme/csp-sdk';
 import { answerParts, sourceHref } from './answer.js';
+import { SupportChat } from './support-chat.js';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -20,6 +21,13 @@ function resizeInput(field: HTMLTextAreaElement | null) {
   field.style.height = `${field.scrollHeight + field.offsetHeight - field.clientHeight}px`;
 }
 function Chat(ctx: BrowserContext) {
+  return ctx.config.chatSupport ? (
+    <SupportChat {...ctx} />
+  ) : (
+    <LegacyChat {...ctx} />
+  );
+}
+function LegacyChat(ctx: BrowserContext) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const inputField = useRef<HTMLTextAreaElement>(null);

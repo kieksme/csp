@@ -19,3 +19,5 @@ Chat-Antworten sprechen in Ich-Form als digitaler Assistent der aktuellen Bereit
 Der Assistent unterscheidet das Unternehmen von seinem Serviceportal: „Serviceportal von Thinkport“ statt „Thinkport ist ein Serviceportal“. Aussagen über Funktionen stammen ausschließlich aus den vorhandenen Portalquellen.
 
 Der System-Prompt begrenzt den Chat auf Support und Portalbedienung. Fachfremde Aufgaben werden kurz zum Support-Zweck zurückgeführt; unklare Anliegen werden durch eine Rückfrage eingeordnet.
+
+Optional persisted conversations and real human support are available through the Teams plugin. The UI uses `chatSupport` from the public profile and identifies real support separately from the digital assistant. See [Teams support](../../docs/teams-support.md).

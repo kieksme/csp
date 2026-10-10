@@ -197,13 +197,18 @@ try {
     customer,
   );
   await run('pnpm', ['build'], customer);
-  async function verifyRoute(exists: boolean, directory = customer) {
+  async function verifyRoute(
+    exists: boolean,
+    directory = customer,
+    support = false,
+  ) {
     const child = spawn('node', [join(directory, 'dist-api/server.js')], {
       cwd: directory,
       env: {
         ...process.env,
         CSP_PORT: '3999',
         CSP_DEMO: 'true',
+        CSP_TEAMS_DEMO: support ? 'true' : 'false',
         CSP_CONTACT_PHONE: '+49000',
       },
       stdio: 'pipe',
@@ -232,11 +237,36 @@ try {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: [{ role: 'user', content: 'Help' }] }),
       });
-      assert.equal(chat.status, 200);
-      assert(
-        (await chat.text()).includes('event: done'),
-        'Demo chat stream did not finish',
-      );
+      assert.equal(chat.status, support ? 409 : 200);
+      if (support) {
+        const base = 'http://127.0.0.1:3999/api/v1/conversations';
+        const created = await fetch(base, { method: 'POST' });
+        assert.equal(created.status, 201);
+        const c = await created.json();
+        const send = await fetch(`${base}/${c.id}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: crypto.randomUUID(), content: 'Help' }),
+        });
+        assert.equal(send.status, 202);
+        for (const action of ['take', 'reply', 'release', 'take', 'close']) {
+          const response = await fetch(`${base}/${c.id}/demo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action }),
+          });
+          assert.equal(response.status, 200);
+        }
+        const restored = await (await fetch(`${base}/${c.id}`)).json();
+        assert.equal(restored.status, 'closed');
+        assert(
+          restored.messages.some((m: { kind: string }) => m.kind === 'support'),
+        );
+      } else
+        assert(
+          (await chat.text()).includes('event: done'),
+          'Demo chat stream did not finish',
+        );
     } finally {
       child.kill('SIGTERM');
       await exited;
@@ -269,8 +299,18 @@ try {
     root,
   );
   await verifyRoute(false, production);
+  const supportPkg = JSON.parse(await readFile(pkgPath, 'utf8'));
+  supportPkg.dependencies['@kieksme/csp-plugin-teams'] = sdkVersion;
+  await writeFile(pkgPath, JSON.stringify(supportPkg, null, 2));
+  const supportProfile = JSON.parse(await readFile(profilePath, 'utf8'));
+  supportProfile.plugins.push('@kieksme/csp-plugin-teams');
+  supportProfile.chatSupport = { mode: 'demo' };
+  await writeFile(profilePath, JSON.stringify(supportProfile, null, 2));
+  await run('pnpm', ['install'], customer);
+  await run('pnpm', ['build'], customer);
+  await verifyRoute(false, customer, true);
   console.log(
-    'Packed packages: fresh customer install, validation, root/subpath builds, referenced assets, secret scan, external plugin add/remove, production-only deployment and API routes passed.',
+    'Packed packages: fresh customer install, validation, root/subpath builds, referenced assets, secret scan, external plugin add/remove, production-only deployment, API routes and packed Teams support takeover passed.',
   );
 } finally {
   await rm(temp, { recursive: true, force: true });

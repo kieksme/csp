@@ -84,6 +84,16 @@
           "type": "json",
           "path": "templates/customer/package.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-teams/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-teams/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
         }
       ]
     }

@@ -88,7 +88,7 @@ export async function runPortal(
   loaded.config.customerVersion = pkg.version;
   await writeFile(
     join(work, 'main.tsx'),
-    `import { mountPortal } from '@kieksme/csp-core/browser';\nimport '@kieksme/csp-core/style.css';\nimport plugins from './portal.browser';\nmountPortal(__CSP_CONFIG__,plugins);\n`,
+    `import { mountPortal } from '@kieksme/csp-core/browser';\nimport '@kieksme/csp-core/style.css';\n${pkg.csp?.stylesheet ? `import ${JSON.stringify(resolve(directory, pkg.csp.stylesheet))};\n` : ''}import plugins from './portal.browser';\nmountPortal(__CSP_CONFIG__,plugins);\n`,
   );
   await writeFile(
     join(work, 'index.html'),
@@ -113,6 +113,24 @@ for(const signal of ['SIGTERM','SIGINT']) process.once(signal,()=>void app.close
   );
   const assetsPlugin = {
     name: 'csp-profile-assets',
+    configureServer(server: import('vite').ViteDevServer) {
+      server.middlewares.use((req, res, next) => {
+        const asset = loaded.assets.find(
+          (a) => req.url?.split('?')[0] === loaded.config.basePath + a.fileName,
+        );
+        if (!asset) return next();
+        const ext = asset.fileName.split('.').pop();
+        res.setHeader(
+          'Content-Type',
+          ext === 'svg'
+            ? 'image/svg+xml'
+            : ext === 'jpg' || ext === 'jpeg'
+              ? 'image/jpeg'
+              : `image/${ext}`,
+        );
+        res.end(readFileSync(asset.source));
+      });
+    },
     generateBundle(this: {
       emitFile: (x: {
         type: 'asset';
@@ -154,22 +172,6 @@ for(const signal of ['SIGTERM','SIGINT']) process.once(signal,()=>void app.close
   if (command === 'dev') {
     // Serve only explicitly referenced assets.
     const server = await createViteServer(options);
-    server.middlewares.use((req, res, next) => {
-      const asset = loaded.assets.find(
-        (a) => req.url?.split('?')[0] === loaded.config.basePath + a.fileName,
-      );
-      if (!asset) return next();
-      const ext = asset.fileName.split('.').pop();
-      res.setHeader(
-        'Content-Type',
-        ext === 'svg'
-          ? 'image/svg+xml'
-          : ext === 'jpg' || ext === 'jpeg'
-            ? 'image/jpeg'
-            : `image/${ext}`,
-      );
-      res.end(readFileSync(asset.source));
-    });
     await bundle({
       entryPoints: [join(work, 'server.ts')],
       bundle: true,
