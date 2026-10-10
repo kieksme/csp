@@ -70,6 +70,22 @@ export const profileSchema = z
       })
       .strict()
       .optional(),
+    chatSupport: z
+      .object({
+        mode: z.enum(['teams', 'demo']),
+        tenantId: z.string().uuid().optional(),
+        clientId: z.string().uuid().optional(),
+        scope: z.string().min(1).optional(),
+      })
+      .strict()
+      .superRefine((c, ctx) => {
+        if (c.mode === 'teams' && (!c.tenantId || !c.clientId || !c.scope))
+          ctx.addIssue({
+            code: 'custom',
+            message: 'Teams chat requires tenantId, clientId and API scope',
+          });
+      })
+      .optional(),
     contentFile: z.string().min(1),
     avatarsFile: z.string().min(1).optional(),
     plugins: z
@@ -177,6 +193,11 @@ export function loadProfile(file: string, env: Env = {}, production = false) {
   if (p.branding.logoFile && !env.CSP_LOGO_URL)
     config.logo = asset(p.branding.logoFile);
   config.theme = p.theme;
+  config.chatSupport = p.chatSupport;
+  if (p.chatSupport && !p.plugins.includes('@kieksme/csp-plugin-teams'))
+    throw new Error('chatSupport requires the Teams plugin');
+  if (p.chatSupport?.mode === 'demo' && !config.demo)
+    throw new Error('Support demo requires demo=true');
   config.staticDemo = p.public?.staticDemo;
   if (config.staticDemo && !config.demo)
     throw new Error('staticDemo requires demo=true');

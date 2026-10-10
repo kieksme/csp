@@ -51,6 +51,7 @@ export function publicConfig(env: Env, cwd = process.cwd()): PublicConfig {
     : {};
   for (const url of Object.values(avatars)) safeUrl(url);
   return {
+    chatSupport: env.CSP_TEAMS_DEMO === 'true' ? { mode: 'demo' } : undefined,
     name: c.CSP_NAME,
     tagline: c.CSP_TAGLINE,
     description: c.CSP_DESCRIPTION,

@@ -1,11 +1,12 @@
 {
-  "name": "@kieksme/csp-plugin-chat",
+  "name": "@kieksme/csp-plugin-teams",
   "version": "0.6.1",
   "type": "module",
   "license": "MIT",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "teams-app"
   ],
   "exports": {
     "./browser": {
@@ -25,29 +26,34 @@
     "build": "tsup src/browser.tsx src/server.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom"
   },
   "dependencies": {
-    "@azure/msal-browser": "^5.25.0",
     "@kieksme/csp-sdk": "workspace:^",
-    "openai": "^6.3.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "jose": "^6.1.0",
+    "pg": "^8.16.3",
+    "@microsoft/teams.apps": "^2.0.0",
+    "@microsoft/teams.api": "^2.0.0"
   },
   "engines": {
     "node": ">=22.12"
   },
-  "peerDependencies": {
-    "react": "^19.0.0"
-  },
   "cspPlugin": {
-    "id": "chat",
+    "id": "teams",
     "sdkVersion": "^0.6.1",
     "browser": "./browser",
-    "server": "./server"
+    "server": "./server",
+    "requires": [
+      "chat"
+    ]
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kieksme/customer-service-portal.git",
-    "directory": "packages/plugin-chat"
+    "directory": "packages/plugin-teams"
   },
   "bugs": {
     "url": "https://github.com/kieksme/customer-service-portal/issues"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.6"
   }
 }

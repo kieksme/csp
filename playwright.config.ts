@@ -23,6 +23,18 @@ export default defineConfig({
   webServer: [
     {
       command:
+        'pnpm --filter csp-demo exec vite preview --outDir dist-support --host 127.0.0.1 --port 4176 --strictPort',
+      url: 'http://127.0.0.1:4176',
+      reuseExistingServer: false,
+    },
+    {
+      command:
+        'CSP_DEMO=true CSP_TEAMS_DEMO=true CSP_TEAMS_ENABLED=false CSP_HOST=127.0.0.1 CSP_PORT=3017 CSP_CONTACT_PHONE=+49000 CSP_ALLOWED_ORIGINS=http://127.0.0.1:4176 pnpm --filter csp-demo start:api',
+      url: 'http://127.0.0.1:3017/health',
+      reuseExistingServer: false,
+    },
+    {
+      command:
         'pnpm --filter csp-demo exec vite preview --host 127.0.0.1 --port 4173 --strictPort',
       url: 'http://127.0.0.1:4173',
       reuseExistingServer: false,

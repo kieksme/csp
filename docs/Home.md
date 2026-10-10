@@ -22,7 +22,7 @@ Das Customer Service Portal bündelt Notfallkontakt, Operations-Team, Schichtpla
 
 ## Produktgrenzen
 
-Das Portal ist öffentlich und hat keine Anmeldung. Teamkontakte und Alert-Beschreibungen sind öffentlich lesbar. Provider-Schlüssel verbleiben im API-Service. Der Chat beantwortet Fragen anhand der Inhalte und Live-Quellen seiner Instanz; er legt keine Tickets an und verändert keine Alerts oder Schichten.
+Die Standard-Module sind öffentlich. Das optionale [Teams-Support-Plugin](teams-support.md) schützt gespeicherte Chat-Gespräche über Entra-Anmeldung. Teamkontakte und Alert-Beschreibungen sind öffentlich lesbar. Provider-Schlüssel verbleiben im API-Service. Der Chat beantwortet Fragen anhand der Inhalte und Live-Quellen seiner Instanz; er legt keine Tickets an und verändert keine Alerts oder Schichten.
 
 `apps/demo` verwendet synthetische Daten. `apps/northstar` zeigt eine zweite Marke mit weniger Plugins. Die Kunden-Vorlage startet außerhalb des Demo-Modus und muss für ihre installierten Provider konfiguriert werden.
 

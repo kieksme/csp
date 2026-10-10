@@ -2,7 +2,7 @@
 
 ## Öffentliche Oberfläche
 
-Das Portal und seine API haben keine Anmeldung. Hotline, Teamkontakte, E-Mail-Adressen, Schichten, Alert-Beschreibungen, Status und statische Inhalte sind öffentlich, sobald die betreffenden Plugins aktiviert sind. Inhalte und Kontakte deshalb vor einem produktiven Deployment auf ihre Eignung zur Veröffentlichung prüfen.
+Die Standard-Module des Portals und deren API-Routen haben keine Anmeldung. Hotline, Teamkontakte, E-Mail-Adressen, Schichten, Alert-Beschreibungen, Status und statische Inhalte sind öffentlich, sobald die betreffenden Plugins aktiviert sind. Inhalte und Kontakte deshalb vor einem produktiven Deployment auf ihre Eignung zur Veröffentlichung prüfen.
 
 `CSP_ALLOWED_ORIGINS` begrenzt Browser-CORS-Zugriffe und ist keine Authentifizierung. Auch vCards und Team-Avatare sind öffentlich; die API beschränkt deren IDs auf das konfigurierte Team.
 
@@ -22,8 +22,12 @@ Quellen und Benutzertexte werden als Daten behandelt. Die Systemanweisung beschr
 
 ## Speicherung und Betriebsgrenzen
 
-Live-Caches und Chat-Limits liegen im Speicher des API-Prozesses. Das Portal speichert Gesprächsverläufe weder in einer Datenbank noch im Browser-Storage. Das Frontend hält den aktuellen Verlauf im Arbeitsspeicher und speichert lediglich die Designpräferenz unter `csp-theme`. Statische PWA-Inhalte/Assets werden gecacht; API-/Chat-Antworten nicht.
+Live-Caches und Chat-Limits liegen im Speicher des API-Prozesses. Ohne Support-Plugin speichert das Portal Gesprächsverläufe weder in einer Datenbank noch im Browser-Storage. Das Frontend hält den aktuellen Verlauf im Arbeitsspeicher und speichert lediglich die Designpräferenz unter `csp-theme`. Statische PWA-Inhalte/Assets werden gecacht; API-/Chat-Antworten nicht.
 
 TLS am Host/Reverse-Proxy bereitstellen. `CSP_TRUST_PROXY` bleibt standardmäßig aus; nur für einen vertrauenswürdigen Proxy einschalten. Chat besitzt IP- und Parallelitätslimits je Prozess. Bei mehreren API-Replikas ist zusätzlich eine gemeinsame Limitierung am Gateway erforderlich. Der API-Body ist auf 64 KiB begrenzt; Providerabfragen und Streams besitzen Zeitlimits.
 
 Weiter: [Konfiguration](configuration.md), [API](api.md), [Betrieb](operations.md).
+
+## Gespeicherte Teams-Gespräche
+
+Das optionale Teams-Plugin verlangt verifizierte Entra-API-Tokens und trennt Gespräche anhand Tenant-/Nutzer-ID. PostgreSQL speichert Verlauf und Übernahme, standardmäßig 30 Tage ohne Aktivität. MSAL-Anmeldeinformationen liegen im Session-Storage; die PWA speichert API-Inhalte nicht. Teams erhält eine eigene Verlaufskopie; deren Aufbewahrung ist unabhängig. Supportrechte werden über Graph bei jeder Aktion geprüft. RSC gilt teamweit, die Verarbeitung wird auf den konfigurierten Channel begrenzt. Vollständiger Datenfluss und Grenzen: [Teams-Support](teams-support.md).
