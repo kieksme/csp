@@ -306,7 +306,8 @@ try {
   supportProfile.plugins.push('@kieksme/csp-plugin-teams');
   supportProfile.chatSupport = { mode: 'demo' };
   await writeFile(profilePath, JSON.stringify(supportProfile, null, 2));
-  await run('pnpm', ['install'], customer);
+  // This fixture intentionally adds a package after its initial frozen installation.
+  await run('pnpm', ['install', '--no-frozen-lockfile'], customer);
   await run('pnpm', ['build'], customer);
   await verifyRoute(false, customer, true);
   console.log(
