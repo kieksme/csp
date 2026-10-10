@@ -2,6 +2,10 @@
 
 - [Startseite](Home.md)
 - [Architektur](architecture.md)
+- [Infrastrukturübersicht](infrastructure.md)
+- [Coolify-Infrastruktur](infrastructure-coolify.md)
+- [Thinkport-Infrastruktur](infrastructure-thinkport.md)
+- [Lieferkette und Betrieb](infrastructure-operations.md)
 - [Installation](installation.md)
 - [Konfiguration](configuration.md)
 - [Deployment](deployment.md)

@@ -52,3 +52,7 @@ Das Frontend pollt standardmäßig alle 60 Sekunden. Schichtgrenzen werden lokal
 Weiter: [Plugins](plugins.md), [API](api.md), [Betrieb](operations.md).
 
 Das optionale Teams-Plugin ergänzt PostgreSQL-Persistenz, Entra-Zugriffsschutz und menschliche Übernahme. Frontend und Runtime aktivieren diese Funktion explizit. Details: [Teams-Support](teams-support.md).
+
+## Infrastruktur der eingerichteten Instanzen
+
+Die [Infrastrukturübersicht](infrastructure.md) dokumentiert Hosting, Netzgrenzen, Releasewege und den belegten Live-Stand. Details: [Coolify](infrastructure-coolify.md), [Thinkport und Teams](infrastructure-thinkport.md), [Lieferkette und Wiederherstellung](infrastructure-operations.md).
