@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { BrowserContext, ChatResponder } from '@kieksme/csp-sdk';
 import { answerParts } from './answer.js';
+import { supportSession } from './support-session.js';
+type Session = Awaited<ReturnType<typeof supportSession>>;
 interface Message {
   id: string;
   kind: 'user' | 'bot' | 'support' | 'system';
@@ -16,45 +18,6 @@ interface Conversation {
   support?: { id: string; name: string };
   messages: Message[];
   seq: number;
-}
-interface Session {
-  token(): Promise<string>;
-  login(): Promise<void>;
-  name: string;
-}
-async function session(ctx: BrowserContext): Promise<Session> {
-  const c = ctx.config.chatSupport!;
-  if (c.mode === 'demo')
-    return {
-      token: async () => '',
-      login: async () => {},
-      name: 'Portal-Nutzer Demo',
-    };
-  const { PublicClientApplication } = await import('@azure/msal-browser');
-  const client = new PublicClientApplication({
-    auth: {
-      clientId: c.clientId!,
-      authority: `https://login.microsoftonline.com/${c.tenantId}`,
-      redirectUri: window.location.origin + ctx.config.basePath,
-    },
-    cache: { cacheLocation: 'sessionStorage' },
-  });
-  await client.initialize();
-  const redirected = await client.handleRedirectPromise();
-  const account =
-    redirected?.account ??
-    client.getAllAccounts().find((a) => a.tenantId === c.tenantId);
-  return {
-    name: account?.name ?? 'Microsoft-Konto',
-    async token() {
-      if (!account) throw new Error('Bitte mit Microsoft anmelden.');
-      return (await client.acquireTokenSilent({ account, scopes: [c.scope!] }))
-        .accessToken;
-    },
-    async login() {
-      await client.acquireTokenRedirect({ scopes: [c.scope!], account });
-    },
-  };
 }
 export function SupportChat(ctx: BrowserContext) {
   const [current, setCurrent] = useState<Conversation | null>(null),
@@ -72,7 +35,7 @@ export function SupportChat(ctx: BrowserContext) {
     const controller = new AbortController();
     async function init() {
       try {
-        const identity = await session(ctx);
+        const identity = await supportSession(ctx);
         if (!alive) return;
         setAuth(identity);
         const request = async (path: string, init: RequestInit = {}) => {
@@ -81,6 +44,7 @@ export function SupportChat(ctx: BrowserContext) {
             ctx.config.apiUrl + '/api/v1/conversations' + path,
             {
               ...init,
+              credentials: 'same-origin',
               headers: {
                 ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 ...(init.body !== undefined
@@ -304,7 +268,9 @@ export function SupportChat(ctx: BrowserContext) {
               )
           }
         >
-          Mit Microsoft anmelden
+          {ctx.config.chatSupport?.auth === 'session'
+            ? 'Portal-Anmeldung erneuern'
+            : 'Mit Microsoft anmelden'}
         </button>
       )}
       {ready && (
@@ -399,7 +365,9 @@ export function SupportChat(ctx: BrowserContext) {
               )
           }
         >
-          Microsoft-Anmeldung erneuern
+          {ctx.config.chatSupport?.auth === 'session'
+            ? 'Portal-Anmeldung erneuern'
+            : 'Microsoft-Anmeldung erneuern'}
         </button>
       )}
       {error && (

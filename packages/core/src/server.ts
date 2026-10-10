@@ -32,7 +32,12 @@ export async function createServer(options: {
   });
   app.addHook('onSend', async (_req, reply) => {
     reply.header('X-Content-Type-Options', 'nosniff');
-    reply.header('Cache-Control', 'no-store');
+    reply.header(
+      'Cache-Control',
+      _req.routeOptions.url?.startsWith('/api/v1/conversations')
+        ? 'no-store, private'
+        : 'no-store',
+    );
   });
   app.setErrorHandler((err, _req, reply) => {
     const status = (err as { statusCode?: number }).statusCode;

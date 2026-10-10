@@ -73,6 +73,7 @@ export const profileSchema = z
     chatSupport: z
       .object({
         mode: z.enum(['teams', 'demo']),
+        auth: z.enum(['msal', 'session']).optional(),
         tenantId: z.string().uuid().optional(),
         clientId: z.string().uuid().optional(),
         scope: z.string().min(1).optional(),

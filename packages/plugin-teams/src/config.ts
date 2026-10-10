@@ -24,6 +24,7 @@ export const configSchema = z
       .url()
       .default('https://smba.trafficmanager.net/teams/'),
     CSP_TEAMS_SUPPORT_GROUP_ID: z.string().uuid().optional(),
+    CSP_TEAMS_SUPPORT_AUTH: z.enum(['group', 'team']).default('group'),
   })
   .superRefine((c, ctx) => {
     if (c.CSP_TEAMS_DEMO === 'true') {
@@ -36,6 +37,16 @@ export const configSchema = z
       return;
     }
     if (c.CSP_TEAMS_ENABLED !== 'true') return;
+    if (
+      c.CSP_TEAMS_SUPPORT_AUTH === 'team' &&
+      c.CSP_TEAMS_SUPPORT_GROUP_ID !== c.CSP_TEAMS_TEAM_ID
+    )
+      ctx.addIssue({
+        code: 'custom',
+        path: ['CSP_TEAMS_SUPPORT_GROUP_ID'],
+        message:
+          'Team authorization requires the team Microsoft 365 group as support group',
+      });
     for (const key of [
       'CSP_CHAT_DATABASE_URL',
       'CSP_ENTRA_TENANT_ID',

@@ -103,6 +103,9 @@ export async function createTeamsBridge(
     config.CSP_TEAMS_APP_SECRET!,
     config.CSP_TEAMS_SUPPORT_GROUP_ID!,
     fetcher,
+    config.CSP_TEAMS_SUPPORT_AUTH === 'team'
+      ? config.CSP_TEAMS_TEAM_ID
+      : undefined,
   );
   teams.on('message', async ({ activity, reply }) => {
     const data = activity.channelData;

@@ -21,3 +21,5 @@ Der Assistent unterscheidet das Unternehmen von seinem Serviceportal: „Service
 Der System-Prompt begrenzt den Chat auf Support und Portalbedienung. Fachfremde Aufgaben werden kurz zum Support-Zweck zurückgeführt; unklare Anliegen werden durch eine Rückfrage eingeordnet.
 
 Optional persisted conversations and real human support are available through the Teams plugin. The UI uses `chatSupport` from the public profile and identifies real support separately from the digital assistant. See [Teams support](../../docs/teams-support.md).
+
+For portals with an existing same-origin authenticated gateway, set `chatSupport.auth` to `session` to reuse the login without browser tokens. The API still requires a validated delegated access token supplied by the internal gateway. See [Teams support](../../docs/teams-support.md#vorhandene-portal-anmeldung-verwenden).

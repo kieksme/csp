@@ -121,6 +121,7 @@ export interface ThemeTokens {
 }
 export interface ChatSupportConfig {
   mode: 'teams' | 'demo';
+  auth?: 'msal' | 'session';
   tenantId?: string;
   clientId?: string;
   scope?: string;

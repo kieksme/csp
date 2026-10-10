@@ -144,6 +144,12 @@ export async function setupConversations(
   }
   const auth = (headers: { authorization?: string }) =>
     authenticate(headers.authorization);
+  ctx.app.get('/api/v1/conversations/identity', async (req, reply) => {
+    const owner = await auth(req.headers);
+    return reply
+      .header('Cache-Control', 'no-store, private')
+      .send({ name: owner.name });
+  });
   ctx.app.get('/api/v1/conversations', async (req) => {
     const owner = await auth(req.headers);
     return (await store.list(owner))

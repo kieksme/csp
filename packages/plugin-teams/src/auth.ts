@@ -56,6 +56,7 @@ export function supportAuthorizer(
   secret: string,
   groupId: string,
   fetcher: typeof fetch = fetch,
+  teamId?: string,
 ) {
   let token: { value: string; expires: number } | undefined;
   return async (userId: string): Promise<boolean> => {
@@ -83,6 +84,29 @@ export function supportAuthorizer(
           expires:
             Date.now() + Math.max(0, Number(b.expires_in ?? 300) - 60) * 1000,
         };
+      }
+      if (teamId) {
+        if (teamId !== groupId || !/^[a-f0-9-]{36}$/i.test(teamId))
+          return false;
+        const query = new URLSearchParams({
+          $filter: `(microsoft.graph.aadUserConversationMember/userId eq '${userId}')`,
+          $select: 'userId',
+        });
+        const response = await fetcher(
+          `https://graph.microsoft.com/v1.0/teams/${teamId}/members?${query}`,
+          {
+            headers: { Authorization: `Bearer ${token.value}` },
+            signal: AbortSignal.timeout(10000),
+          },
+        );
+        if (!response.ok) return false;
+        const body = await response.json();
+        return (
+          Array.isArray(body.value) &&
+          body.value.some(
+            (member: { userId?: string }) => member.userId === userId,
+          )
+        );
       }
       const r = await fetcher(
         `https://graph.microsoft.com/v1.0/users/${userId}/checkMemberGroups`,
