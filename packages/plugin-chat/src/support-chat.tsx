@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { BrowserContext } from '@kieksme/csp-sdk';
+import type { BrowserContext, ChatResponder } from '@kieksme/csp-sdk';
 import { answerParts } from './answer.js';
 interface Message {
   id: string;
@@ -7,7 +7,7 @@ interface Message {
   content: string;
   name?: string;
   complete: boolean;
-  responder?: { name: string | null };
+  responder?: ChatResponder;
   sources?: Parameters<typeof answerParts>[1];
 }
 interface Conversation {
