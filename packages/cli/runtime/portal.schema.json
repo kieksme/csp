@@ -316,6 +316,11 @@
         "scope": {
           "type": "string",
           "minLength": 1
+        },
+        "auth": {
+          "type": "string",
+          "enum": ["msal", "session"],
+          "description": "MSAL (default) or existing same-origin authenticated gateway session; API still validates delegated Chat.Access access tokens."
         }
       },
       "allOf": [

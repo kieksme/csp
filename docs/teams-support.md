@@ -78,3 +78,11 @@ CSP_TEST_DATABASE_URL=postgresql://... pnpm test -- tests/teams.test.ts
 Vor Live-Freigabe mit zwei echten Portal-Nutzern und einer Supportperson prüfen: getrennte Verläufe, Thread-Zustellung, Übernahme während Streaming, echte Antwort, Rückgabe, Abschluss, Berechtigungsentzug sowie Wiederaufnahme nach API-Neustart. Demo- und Mock-Tests beweisen keine Microsoft-Konnektivität.
 
 Referenzen: [Teams SDK](https://learn.microsoft.com/en-us/microsoftteams/platform/teams-sdk/welcome), [RSC](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/conversations/channel-messages-with-rsc), [Entra-Tokenvalidierung](https://learn.microsoft.com/en-us/entra/identity-platform/claims-validation), [Graph checkMemberGroups](https://learn.microsoft.com/en-us/graph/api/directoryobject-checkmembergroups?view=graph-rest-1.0).
+
+## Vorhandene Portal-Anmeldung verwenden
+
+Für ein bereits durch OAuth2-Proxy geschütztes Portal `chatSupport.auth: "session"` setzen. Der Browser lädt `/api/v1/conversations/identity` über seine gleiche Origin und zeigt den durch die API bestätigten Namen; Access-Tokens gelangen weder ins Frontend noch in dessen Speicher. Bei abgelaufener Sitzung erneuert „Portal-Anmeldung erneuern“ durch Neuladen den vorhandenen Login. Ohne diese Einstellung bleibt MSAL der Standard.
+
+Der Login-Proxy muss den delegierten API-Scope `api://<API-App-GUID>/Chat.Access` anfordern und das Access-Token an den internen Web-Gateway geben. Dieser darf ausschließlich das vom Proxy gesetzte Token an Conversation-Routen weiterreichen, muss vom Client gesetzte Authentifizierungsheader verwerfen und Cookie-Schreibzugriffe über exakte Origin-/CSRF-Prüfung schützen. OAuth2-Proxy verwendet dafür `pass_access_token`; `pass_authorization_header` würde ein ID-Token liefern und ersetzt das delegierte API-Token nicht. API und Gateway bleiben intern. [OAuth2-Proxy Header-Konfiguration](https://oauth2-proxy.github.io/oauth2-proxy/configuration/overview/#header-options).
+
+Die API prüft auch in diesem Modus Signatur, Tenant, Audience, Ablauf und `Chat.Access`. `/identity` gibt ausschließlich den Anzeigenamen zurück und setzt `Cache-Control: no-store, private`. Benutzer-IDs, Mailadressen, Token und Sitzungsdaten werden darüber nicht veröffentlicht. Dieser Modus aktiviert weder Teams noch eine Datenbank allein.

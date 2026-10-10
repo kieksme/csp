@@ -534,3 +534,51 @@ it('authenticates the actual Teams SDK HTTP endpoint before accepting activities
     await app.close();
   }
 });
+it('returns only a verified display name for an existing gateway session and rejects unauthenticated identity reads', async () => {
+  const tenant = randomUUID(),
+    audience = randomUUID(),
+    user = randomUUID();
+  const keys = await generateKeyPair('RS256');
+  const authenticate = portalAuthenticator(
+    tenant,
+    audience,
+    'Chat.Access',
+    async () => keys.publicKey,
+  );
+  const plugin = {
+    ...teams,
+    async setup(ctx: Parameters<typeof setupConversations>[0]) {
+      await setupConversations(ctx, new MemoryStore(), authenticate, true);
+    },
+  };
+  const app = await createServer({ env, config, plugins: [chat, plugin] });
+  try {
+    expect(
+      (await app.inject('/api/v1/conversations/identity')).statusCode,
+    ).toBe(401);
+    const token = await new SignJWT({
+      tid: tenant,
+      oid: user,
+      scp: 'Chat.Access',
+      name: 'Ada',
+      preferred_username: 'private@example.org',
+    })
+      .setProtectedHeader({ alg: 'RS256' })
+      .setIssuer(`https://login.microsoftonline.com/${tenant}/v2.0`)
+      .setAudience(audience)
+      .setIssuedAt()
+      .setExpirationTime('5m')
+      .sign(keys.privateKey);
+    const response = await app.inject({
+      url: '/api/v1/conversations/identity',
+      headers: { authorization: `Bearer ${token}` },
+    });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual({ name: 'Ada' });
+    expect(response.headers['cache-control']).toBe('no-store, private');
+    expect(response.body).not.toContain(user);
+    expect(response.body).not.toContain('private@example.org');
+  } finally {
+    await app.close();
+  }
+});

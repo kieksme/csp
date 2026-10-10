@@ -113,3 +113,25 @@ it('loads API env files in documented order without build-mode files', async () 
     'Process',
   );
 });
+it('accepts the existing-session chat authentication mode and rejects unsupported modes', () => {
+  const chatSupport = {
+    mode: 'teams',
+    auth: 'session',
+    tenantId: '12e29f7c-8633-4490-ab9d-95ba84981681',
+    clientId: '88a2d0d0-971b-4963-b59f-805b08738f36',
+    scope: 'api://88a2d0d0-971b-4963-b59f-805b08738f36/Chat.Access',
+  };
+  const plugins = ['@kieksme/csp-plugin-chat', '@kieksme/csp-plugin-teams'];
+  expect(
+    loadProfile(fixture({ chatSupport, plugins }).file).config.chatSupport
+      ?.auth,
+  ).toBe('session');
+  expect(() =>
+    loadProfile(
+      fixture({
+        chatSupport: { ...chatSupport, auth: 'trusted-name-header' },
+        plugins,
+      }).file,
+    ),
+  ).toThrow();
+});
