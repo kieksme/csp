@@ -139,6 +139,10 @@ Die Grafik wird mittig mit `cover` skaliert und an den abgerundeten Header-Ränd
 
 ### Persönliche Chat-Antworten
 
+Der konfigurierte Name bezeichnet das Unternehmen. Der Assistent beschreibt die Oberfläche als dessen Serviceportal, beispielsweise „Sie befinden sich auf dem Serviceportal von Thinkport“. Er bezeichnet das Unternehmen selbst nicht als Serviceportal und nennt nur Funktionen, die durch die Portalquellen belegt sind.
+
+Der System-Prompt begrenzt Antworten auf technische Support-Anliegen, Dienststatus, Zugänge, Service-Anfragen, Tickets, Kontakte und die Bedienung des Portals. Eindeutig fachfremde Aufgaben wie Unterhaltung, Rezepte oder allgemeine Text- und Programmieraufträge werden nicht beantwortet; der Assistent verweist kurz auf den Support-Zweck. Bei unklarem Bezug fragt er nach dem betroffenen Dienst oder Problem und behandelt bei gemischten Anliegen nur den Support-Anteil. Die Erwähnung eines Unternehmens- oder Dienstnamens erweitert diesen Aufgabenbereich nicht. Diese modellgestützte Themenbegrenzung ersetzt nicht Authentifizierung, Anfragebegrenzung oder serverseitige Eingabevalidierung.
+
 Der Chat antwortet in Ich-Form aus Sicht der im Header ausgewählten Bereitschaftsperson. Die Antwort zeigt ihren Namen mit „Digitaler Assistent“; der Hinweis auf automatische Antworten bleibt sichtbar. Ohne bestätigte aktive Schicht antwortet das Service-Team in Wir-Form. Fehlende oder veraltete Schichtdaten bestätigen keine Bereitschaft. Ein nächster Schichtbeginn wird nur aus bestätigten Daten genannt.
 
 Das SDK exportiert `ChatResponder` (`name: string | null`, `role: 'on-duty' | 'service-team'`) sowie `dutyState(shifts, now)` und `nextShiftLabel(start, now, timezone)`. Header und Chat verwenden damit dieselbe Schichtauswahl: frühester aktiver Beginn, dann Benutzer-ID, jeweils nur eine Schicht pro Person. Die Auswahl erfolgt je Antwort; ältere Antworten behalten ihren Absender und ihre Quellen.
