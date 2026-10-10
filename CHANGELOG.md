@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/kieksme/csp/compare/v0.7.0...v0.8.0) (2026-10-10)
+
+
+### Features
+
+* **teams:** reuse portal login and authorize support with team-scoped consent ([#29](https://github.com/kieksme/csp/issues/29)) ([da4be89](https://github.com/kieksme/csp/commit/da4be89eff21a7a2009b644647580d1e3301411a))
+
+
+### Bug Fixes
+
+* **cli:** support HTTP healthchecks in customer API images ([#25](https://github.com/kieksme/csp/issues/25)) ([1f75546](https://github.com/kieksme/csp/commit/1f755464d4c2c2475585178605db19e4a400b50f))
+
 ## [0.7.0](https://github.com/kieksme/csp/compare/v0.6.1...v0.7.0) (2026-10-10)
 
 
