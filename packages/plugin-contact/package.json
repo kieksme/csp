@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-contact",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -36,7 +36,7 @@
   },
   "cspPlugin": {
     "id": "contact",
-    "sdkVersion": "^0.7.0",
+    "sdkVersion": "^0.8.0",
     "browser": "./browser",
     "server": "./server"
   },
