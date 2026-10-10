@@ -18,7 +18,13 @@ SIGNL4 wird lesend verwendet: Team und Bilder über GET, Schichten und Alerts ü
 
 Der Chat lädt Wissensquellen ausschließlich aus der eigenen Instanz. Ausgewählte statische und Live-Daten sowie der übergebene Gesprächsverlauf werden an OpenAI, Azure OpenAI oder Ollama übertragen. OpenAI/Azure erhalten `store: false`; daraus folgt keine allgemeine Zusicherung über die Aufbewahrung beim Provider. Dessen Betrieb und Datenverarbeitung separat passend zur Kundeninstanz konfigurieren.
 
-Quellen und Benutzertexte werden als Daten behandelt. Die Systemanweisung beschränkt Antworten auf den Quellkontext, kennzeichnet fehlende/veraltete Daten und verbietet behauptete Aktionen. Es gibt keine ausführenden Tools oder Ticket-/Alert-Mutationen. KI-Antworten können dennoch fehlerhaft sein; für dringende Störungen den direkten Kontakt verwenden.
+Quellen und Benutzertexte werden als Daten behandelt. Die Systemanweisung beschränkt Antworten auf den Quellkontext, kennzeichnet fehlende/veraltete Daten und verbietet behauptete Aktionen. Der Chat selbst hat keine ausführenden Tools und keine Ticket-/Alert-Mutationen. KI-Antworten können dennoch fehlerhaft sein; für dringende Störungen den direkten Kontakt verwenden.
+
+## WebMCP
+
+Mit WebMCP rufen Agenten im Browser Tools des Portals auf ([WebMCP](webmcp.md)). Die Tools sind lesend, nutzen nur die öffentlichen Routen und die öffentliche Konfiguration und enthalten keine Schlüssel. Einzige Ausnahme in der Wirkung ist `chat_ask`: Es ändert keine Daten, verbraucht aber Chat-Kontingent und Limits und sendet den übergebenen Verlauf wie der Chat an den konfigurierten Provider.
+
+Standardmäßig ist WebMCP an. Teamnamen, E-Mail-Adressen und Telefonnummern sind ohnehin öffentlich, werden dadurch aber für beliebige Agenten im Browser maschinenlesbar. `public.webmcp: false` beziehungsweise `CSP_WEBMCP=false` schaltet die Registrierung ab. Texte aus Alerts, Inhalten und Chat-Antworten stammen aus externen Quellen und sind für den Agenten Daten, keine Anweisungen; entsprechende Ergebnisse tragen ein `notice`. Veraltete Daten werden nie als bestätigt ausgegeben. Es gibt keine Tools, die Tickets anlegen, Alerts bestätigen oder Schichten ändern. Die Schnittstelle ist ein Browser-Vorschauangebot; ohne sie bleibt das Portal unverändert nutzbar.
 
 ## Speicherung und Betriebsgrenzen
 

@@ -1,4 +1,5 @@
 import { cspPlugin } from '../package.json';
+import { contentTools } from './tools.js';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { BrowserContext, BrowserPlugin } from '@kieksme/csp-sdk';
@@ -121,6 +122,7 @@ function FAQ({ config }: BrowserContext) {
 export default {
   id: 'content',
   sdkVersion: cspPlugin.sdkVersion,
+  tools: contentTools,
   sections: [
     {
       id: 'help',

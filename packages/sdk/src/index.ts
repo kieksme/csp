@@ -3,6 +3,9 @@ import { version } from '../package.json';
 import { z } from 'zod';
 import type { ComponentType } from 'react';
 import type { FastifyInstance } from 'fastify';
+import { WEBMCP_NAME, webMcpPrefix, type WebMcpTool } from './webmcp.js';
+
+export * from './webmcp.js';
 
 export const SDK_VERSION = version;
 export type Env = Record<string, string | undefined>;
@@ -159,6 +162,8 @@ export interface PublicConfig {
   phone: string;
   phoneLabel: string;
   demo: boolean;
+  /** WebMCP tools for browser agents; enabled unless set to `false`. */
+  webmcp?: boolean;
   pollMs: number;
   content: Content;
   avatarOverrides: Record<string, string>;
@@ -185,6 +190,8 @@ export interface PluginMeta {
 export interface BrowserPlugin extends PluginMeta {
   hero?: ComponentType<BrowserContext>;
   sections: Section[];
+  /** Optional WebMCP tools; names must start with the plugin id. */
+  tools?: WebMcpTool[];
 }
 export interface ServerContext {
   chat?: ChatEngine;
@@ -200,8 +207,11 @@ export interface ServerPlugin extends PluginMeta {
   configSchema: z.ZodTypeAny;
   setup: (ctx: ServerContext) => Promise<void> | void;
 }
-export function validatePlugins(plugins: PluginMeta[]) {
+export function validatePlugins(
+  plugins: (PluginMeta & { tools?: { name: string }[] })[],
+) {
   const ids = new Set<string>();
+  const toolNames = new Set<string>();
   for (const p of plugins) {
     if (!/^[a-z][a-z0-9-]*$/.test(p.id) || ids.has(p.id))
       throw new Error(`Invalid or duplicate plugin: ${p.id}`);
@@ -210,6 +220,15 @@ export function validatePlugins(plugins: PluginMeta[]) {
         `Plugin ${p.id} needs SDK ${p.sdkVersion}; running ${SDK_VERSION}`,
       );
     ids.add(p.id);
+    for (const tool of p.tools ?? []) {
+      if (
+        !WEBMCP_NAME.test(tool.name) ||
+        !tool.name.startsWith(webMcpPrefix(p.id)) ||
+        toolNames.has(tool.name)
+      )
+        throw new Error(`Invalid or duplicate WebMCP tool: ${tool.name}`);
+      toolNames.add(tool.name);
+    }
   }
   for (const p of plugins)
     for (const dep of p.requires ?? [])

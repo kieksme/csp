@@ -65,6 +65,7 @@ export function publicConfig(env: Env, cwd = process.cwd()): PublicConfig {
     icon: env.CSP_ICON_PATH,
     domain: env.CSP_DOMAIN ? new URL(env.CSP_DOMAIN).origin : undefined,
     demo: env.CSP_DEMO === 'true',
+    webmcp: env.CSP_WEBMCP !== 'false',
     pollMs: c.CSP_POLL_MS,
     content,
     avatarOverrides: avatars,

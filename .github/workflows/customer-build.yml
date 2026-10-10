@@ -32,7 +32,7 @@ jobs:
         run: |
           node --input-type=module <<'JS'
           import {appendFileSync} from 'node:fs';
-          const allowed = new Set(['CSP_NAME','CSP_TAGLINE','CSP_DESCRIPTION','CSP_COLOR','CSP_BACKGROUND','CSP_BASE_PATH','CSP_API_URL','CSP_DOMAIN','CSP_CONTACT_PHONE','CSP_CONTACT_LABEL','CSP_POLL_MS','CSP_DEMO','CSP_LOGO_URL']);
+          const allowed = new Set(['CSP_NAME','CSP_TAGLINE','CSP_DESCRIPTION','CSP_COLOR','CSP_BACKGROUND','CSP_BASE_PATH','CSP_API_URL','CSP_DOMAIN','CSP_CONTACT_PHONE','CSP_CONTACT_LABEL','CSP_POLL_MS','CSP_DEMO','CSP_WEBMCP','CSP_LOGO_URL']);
           const values=JSON.parse(process.env.OVERRIDES);
           if(!values || Array.isArray(values) || typeof values!=='object') throw new Error('Expected override object');
           for(const [key,value] of Object.entries(values)) {

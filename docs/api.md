@@ -64,7 +64,7 @@ Ein HTTP-200-Stream kann mit `error` enden; ein Client darf HTTP 200 allein nich
 
 ## Header und Zugriffe
 
-Core setzt `Cache-Control: no-store` und `X-Content-Type-Options: nosniff`. CORS erlaubt die in `CSP_ALLOWED_ORIGINS` aufgeführten Origins, GET/POST und keine Credentials. Die Standardrouten benötigen keine Benutzeranmeldung; gespeicherte Teams-Gespräche verlangen verifizierte Entra-API-Tokens. Nicht-Browser-Clients sind durch CORS nicht von öffentlichen Daten ausgeschlossen.
+Core setzt `Cache-Control: no-store` und `X-Content-Type-Options: nosniff`. CORS erlaubt die in `CSP_ALLOWED_ORIGINS` aufgeführten Origins, GET/POST und keine Credentials. Die Standardrouten benötigen keine Benutzeranmeldung; gespeicherte Teams-Gespräche verlangen verifizierte Entra-API-Tokens. WebMCP-Tools im Browser verwenden dieselben GET-Routen und `POST /api/v1/chat`; sie fügen keine Routen hinzu ([WebMCP](webmcp.md)). Nicht-Browser-Clients sind durch CORS nicht von öffentlichen Daten ausgeschlossen.
 
 Weiter: [Konfiguration](configuration.md), [Sicherheit und Daten](security.md), [Betrieb](operations.md).
 

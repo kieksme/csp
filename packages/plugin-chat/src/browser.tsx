@@ -1,4 +1,5 @@
 import { cspPlugin } from '../package.json';
+import { chatTools } from './tools.js';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type {
   BrowserPlugin,
@@ -303,6 +304,7 @@ function LegacyChat(ctx: BrowserContext) {
 export default {
   id: 'chat',
   sdkVersion: cspPlugin.sdkVersion,
+  tools: chatTools,
   sections: [
     {
       id: 'chat',

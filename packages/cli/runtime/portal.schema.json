@@ -278,6 +278,11 @@
         },
         "staticDemo": {
           "type": "boolean"
+        },
+        "webmcp": {
+          "type": "boolean",
+          "default": true,
+          "description": "Registers read-only WebMCP tools for browser agents. Set false to opt out."
         }
       }
     },

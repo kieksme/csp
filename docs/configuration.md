@@ -6,29 +6,30 @@ Neue Kundeninstanzen werden über `portal.config.json` konfiguriert. Kopiere zus
 
 Das Profil verwendet Schema-Version 1. Die folgenden Felder bilden die vollständige Profilstruktur ab; unbekannte Felder werden abgelehnt. Pflichtfelder sind `schemaVersion`, `id`, `branding.name`, `contact.phone`, `contentFile` und `plugins`. Optionale Werte verwenden die Core-Defaults.
 
-| Feld                   | Bedeutung / Standard                                                                                                                                         |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `schemaVersion`        | Muss `1` sein.                                                                                                                                               |
-| `id`                   | Instanzkennung; Kleinbuchstaben, Zahlen und Bindestriche, erstes Zeichen Buchstabe oder Zahl.                                                                |
-| `branding.name`        | Portal-/Kundenname.                                                                                                                                          |
-| `branding.tagline`     | Hauptüberschrift; Standard `Wir sind für Sie da.`                                                                                                            |
-| `branding.description` | Beschreibung; Standard `Ihr direkter Kontakt zum Operations-Team.`                                                                                           |
-| `branding.logoFile`    | Lokale Logodatei relativ zum Profilverzeichnis; wird als Webasset ausgeliefert.                                                                              |
-| `branding.iconFile`    | Lokale Bilddatei für generierte PWA-Icons; sonst neutrales Symbol.                                                                                           |
-| `theme.mode`           | Anfangsauswahl `light`, `dark` oder `system`; Standard `system`.                                                                                             |
-| `theme.tokens`         | Designwerte; vollständige Liste unten.                                                                                                                       |
-| `theme.darkTokens`     | Designwerte für den Dunkelmodus; überschreiben nur angegebene Werte aus `tokens`.                                                                            |
-| `contact.phone`        | Hotline; 3–40 Zeichen aus Zahlen, Leerzeichen, Klammern und Bindestrichen, optional führendes `+`.                                                           |
-| `contact.label`        | Hotline-Beschriftung; Standard `Operations-Hotline`.                                                                                                         |
-| `public.apiUrl`        | Öffentliche API-Adresse, optional mit Proxy-Präfix, ohne `/api/v1`; Standard `http://localhost:3001`.                                                        |
-| `public.basePath`      | `/` oder etwa `/kundenportal/`; führender und abschließender Slash, Pfadsegmente aus Buchstaben, Zahlen, `_` und `-`.                                        |
-| `public.domain`        | Öffentliche Origin für den Canonical-Link; richtet keine Domain oder DNS-Einträge ein.                                                                       |
-| `public.pollMs`        | Ganzzahliges Browser-Polling in Millisekunden, mindestens `1000`; Standard `60000`.                                                                          |
-| `public.demo`          | `true` aktiviert gekennzeichnete synthetische Provider-Daten; Standard `false`.                                                                              |
-| `public.staticDemo`    | `true` aktiviert browserseitige synthetische Daten ohne API-Anbindung; erfordert `public.demo: true` beziehungsweise den wirksamen Override `CSP_DEMO=true`. |
-| `contentFile`          | JSON-Datei für Prozesse, Ticketlinks/-vorlagen und FAQ.                                                                                                      |
-| `avatarsFile`          | Optionale JSON-Datei mit eigenen Mitarbeiterbildern; Format unten.                                                                                           |
-| `plugins`              | Liste installierter Plugin-Paketnamen ohne Duplikate; leere Liste möglich.                                                                                   |
+| Feld                   | Bedeutung / Standard                                                                                                                                            |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `schemaVersion`        | Muss `1` sein.                                                                                                                                                  |
+| `id`                   | Instanzkennung; Kleinbuchstaben, Zahlen und Bindestriche, erstes Zeichen Buchstabe oder Zahl.                                                                   |
+| `branding.name`        | Portal-/Kundenname.                                                                                                                                             |
+| `branding.tagline`     | Hauptüberschrift; Standard `Wir sind für Sie da.`                                                                                                               |
+| `branding.description` | Beschreibung; Standard `Ihr direkter Kontakt zum Operations-Team.`                                                                                              |
+| `branding.logoFile`    | Lokale Logodatei relativ zum Profilverzeichnis; wird als Webasset ausgeliefert.                                                                                 |
+| `branding.iconFile`    | Lokale Bilddatei für generierte PWA-Icons; sonst neutrales Symbol.                                                                                              |
+| `theme.mode`           | Anfangsauswahl `light`, `dark` oder `system`; Standard `system`.                                                                                                |
+| `theme.tokens`         | Designwerte; vollständige Liste unten.                                                                                                                          |
+| `theme.darkTokens`     | Designwerte für den Dunkelmodus; überschreiben nur angegebene Werte aus `tokens`.                                                                               |
+| `contact.phone`        | Hotline; 3–40 Zeichen aus Zahlen, Leerzeichen, Klammern und Bindestrichen, optional führendes `+`.                                                              |
+| `contact.label`        | Hotline-Beschriftung; Standard `Operations-Hotline`.                                                                                                            |
+| `public.apiUrl`        | Öffentliche API-Adresse, optional mit Proxy-Präfix, ohne `/api/v1`; Standard `http://localhost:3001`.                                                           |
+| `public.basePath`      | `/` oder etwa `/kundenportal/`; führender und abschließender Slash, Pfadsegmente aus Buchstaben, Zahlen, `_` und `-`.                                           |
+| `public.domain`        | Öffentliche Origin für den Canonical-Link; richtet keine Domain oder DNS-Einträge ein.                                                                          |
+| `public.pollMs`        | Ganzzahliges Browser-Polling in Millisekunden, mindestens `1000`; Standard `60000`.                                                                             |
+| `public.demo`          | `true` aktiviert gekennzeichnete synthetische Provider-Daten; Standard `false`.                                                                                 |
+| `public.staticDemo`    | `true` aktiviert browserseitige synthetische Daten ohne API-Anbindung; erfordert `public.demo: true` beziehungsweise den wirksamen Override `CSP_DEMO=true`.    |
+| `public.webmcp`        | `false` schaltet die WebMCP-Tools für Browser-Agenten ab; Standard `true` (an). Wirkt beim Build im Frontend, Override `CSP_WEBMCP`; siehe [WebMCP](webmcp.md). |
+| `contentFile`          | JSON-Datei für Prozesse, Ticketlinks/-vorlagen und FAQ.                                                                                                         |
+| `avatarsFile`          | Optionale JSON-Datei mit eigenen Mitarbeiterbildern; Format unten.                                                                                              |
+| `plugins`              | Liste installierter Plugin-Paketnamen ohne Duplikate; leere Liste möglich.                                                                                      |
 
 Beispiel für eine Kundeninstanz mit Kontakt und Inhalten, ohne Provider-Anbindung:
 
@@ -154,6 +155,7 @@ Die folgenden Variablen überschreiben die entsprechenden Profilwerte. `CSP_COLO
 | `CSP_CONTENT_PATH`                           | JSON-Datei für Prozesse, Tickets und FAQ; Vorlage `content.json`                          |
 | `CSP_POLL_MS`                                | Browser-Polling; mindestens 1000 ms, Standard 60000 ms                                    |
 | `CSP_DEMO`                                   | Nur `true` aktiviert synthetische Daten, sichtbar gekennzeichnet                          |
+| `CSP_WEBMCP`                                 | `false` schaltet WebMCP ab, `true` (Standard) lässt es an; andere Werte sind ungültig     |
 
 Prozesstexte und FAQ-Antworten unterstützen Markdown ohne HTML-Ausführung. Ticketvorlagen bleiben einfacher Text. JSON-Inhalte werden beim Build validiert und in das Frontend eingebunden; dieselbe Datei wird im API-Service als Chat-Wissensbasis gelesen. Inhaltsänderungen erfordern einen neuen Frontend-Build und API-Neustart.
 

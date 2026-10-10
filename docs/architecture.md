@@ -17,7 +17,7 @@ flowchart LR
   Content --> API
 ```
 
-Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicConfig`. Die API validiert die Konfiguration aller Server-Plugins vor ihrer Registrierung. Pro API-Prozess teilen sich Plugins einen `LiveCache` und eine Wissensquellen-Map für den Chat.
+Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicConfig`. Core registriert außerdem die Tools der installierten Plugins über WebMCP (`packages/core/src/webmcp.ts`, Hilfen im SDK), sofern der Browser die Schnittstelle bietet und `public.webmcp` nicht `false` ist; die Tools rufen dieselben öffentlichen `/api/v1`-Routen wie die Oberfläche, die API bleibt unverändert ([WebMCP](webmcp.md)). Die API validiert die Konfiguration aller Server-Plugins vor ihrer Registrierung. Pro API-Prozess teilen sich Plugins einen `LiveCache` und eine Wissensquellen-Map für den Chat.
 
 ## Repository-Struktur
 

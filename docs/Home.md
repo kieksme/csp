@@ -17,12 +17,13 @@ Das Customer Service Portal bündelt Notfallkontakt, Operations-Team, Schichtpla
 | Instanz betreiben und Pakete veröffentlichen        | [Betrieb und Releases](operations.md)         |
 | Änderungen entwickeln und prüfen                    | [Entwicklung und Tests](development.md)       |
 | Datenflüsse und öffentliche Informationen verstehen | [Sicherheit und Daten](security.md)           |
+| Portal für Browser-Agenten über WebMCP öffnen       | [WebMCP](webmcp.md)                           |
 | Störungen eingrenzen                                | [Fehlerbehebung](troubleshooting.md)          |
 | Dokumentation pflegen und ins Wiki spiegeln         | [Dokumentation und Wiki](wiki.md)             |
 
 ## Produktgrenzen
 
-Die Standard-Module sind öffentlich. Das optionale [Teams-Support-Plugin](teams-support.md) schützt gespeicherte Chat-Gespräche über Entra-Anmeldung. Teamkontakte und Alert-Beschreibungen sind öffentlich lesbar. Provider-Schlüssel verbleiben im API-Service. Der Chat beantwortet Fragen anhand der Inhalte und Live-Quellen seiner Instanz; er legt keine Tickets an und verändert keine Alerts oder Schichten.
+Die Standard-Module sind öffentlich. Das optionale [Teams-Support-Plugin](teams-support.md) schützt gespeicherte Chat-Gespräche über Entra-Anmeldung. Teamkontakte und Alert-Beschreibungen sind öffentlich lesbar. Provider-Schlüssel verbleiben im API-Service. Der Chat beantwortet Fragen anhand der Inhalte und Live-Quellen seiner Instanz; er legt keine Tickets an und verändert keine Alerts oder Schichten. Per WebMCP lesen Browser-Agenten dieselben öffentlichen Daten (standardmäßig an, abschaltbar); auch dabei werden keine Tickets angelegt.
 
 `apps/demo` verwendet synthetische Daten. `apps/northstar` zeigt eine zweite Marke mit weniger Plugins. Die Kunden-Vorlage startet außerhalb des Demo-Modus und muss für ihre installierten Provider konfiguriert werden.
 
