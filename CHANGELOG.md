@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/kieksme/csp/compare/v0.10.0...v0.10.1) (2026-10-11)
+
+
+### Bug Fixes
+
+* **slack:** validate real API responses and read requests ([#37](https://github.com/kieksme/csp/issues/37)) ([0863fcc](https://github.com/kieksme/csp/commit/0863fccc5706e9c8179b52f5f01500da20fdaf5d))
+
 ## [0.10.0](https://github.com/kieksme/csp/compare/v0.9.0...v0.10.0) (2026-10-11)
 
 
