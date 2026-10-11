@@ -32,7 +32,7 @@ const messageSchema = z.object({
   chat: chatSchema,
   message_thread_id: integer.positive().optional(),
   from: userSchema.optional(),
-  text: z.string().max(4000).optional(),
+  text: z.string().max(4096).optional(),
   sender_chat: z.unknown().optional(),
   forward_origin: z.unknown().optional(),
   via_bot: z.unknown().optional(),

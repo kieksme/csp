@@ -447,3 +447,16 @@ it('allows Telegram update sequence reset after a week without replaying old rec
   await f.send(first);
   expect((await f.store.get(f.c.id))?.status).toBe('bot');
 });
+
+it('acknowledges Telegram text above the portal limit without blocking subsequent updates', async () => {
+  const f = await fixture();
+  await f.send(f.click());
+  expect((await f.send(f.message('a'.repeat(4096)))).statusCode).toBe(200);
+  expect(
+    (await f.store.get(f.c.id))?.messages.some((m) => m.kind === 'support'),
+  ).toBe(false);
+  await f.send(f.message('Eine gültige Antwort'));
+  expect((await f.store.get(f.c.id))?.messages.at(-1)?.content).toBe(
+    'Eine gültige Antwort',
+  );
+});
