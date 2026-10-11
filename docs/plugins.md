@@ -46,3 +46,7 @@ Weiter: [Plugin-SDK](plugin-sdk.md), [Konfiguration](configuration.md), [API](ap
 ## Slack-Support
 
 `@kieksme/csp-plugin-slack` benötigt `chat`, hat keine eigene Browser-Sektion und nutzt dieselben authentifizierten Gesprächsrouten wie Teams. Zusätzlich registriert es signierte Slack-Events und Button-Aktionen. `chatSupport.mode: "slack"` aktiviert die gemeinsame Support-UI; pro Instanz ist genau ein Supporttransport zulässig. [Installation, Manifest, Berechtigungen und Demo](slack-support.md).
+
+## Telegram-Support
+
+`@kieksme/csp-plugin-telegram` benötigt `chat` und nutzt die gemeinsame Support-UI ohne zusätzliche Browser-Sektion. `chatSupport.mode: "telegram"` wählt diesen Transport; anonyme Besuchersitzungen und Entra sind verfügbar. Ein Thema je Gespräch in einer Forum-Supergruppe, Secret-geschützte Webhooks, dauerhafte Inbox und aktuelle Mitgliedschaftsprüfung. [Einrichtung und Architektur](telegram-support.md).

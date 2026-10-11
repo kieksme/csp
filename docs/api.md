@@ -79,3 +79,7 @@ Absender und Quellen gehören jeweils zu einer Antwort, nicht zum gesamten Verla
 Die optionalen Teams- und Slack-Plugins ergänzen authentifizierte Gesprächsrouten und einen wiederaufnehmbaren SSE-Strom. Im Supportmodus antwortet der Legacy-Chat-Endpunkt mit 409. Schnittstellen, Fehler und Grenzen: [Teams-Support-API](teams-support.md#api).
 
 Slack ergänzt `POST /api/slack/events` (JSON) und `POST /api/slack/actions` (URL-encoded `payload`). Beide prüfen den unveränderten Body mit Slack-Signatur und Zeitstempel; sie verwenden keine Portal-Tokens. Relevante Ereignisse werden vor Bestätigung dauerhaft gespeichert. [Details und Grenzen](slack-support.md).
+
+## Telegram-Webhook
+
+Das aktivierte Telegram-Plugin registriert `POST /api/telegram/webhook` (maximal 128 KiB). Erforderlicher Header: `X-Telegram-Bot-Api-Secret-Token`. Fehlendes/falsches Secret: 401; fehlerhaftes Update: 400; unbekannte Gruppe, Thema oder Nachrichtentyp: 200 ohne Verarbeitung. Zugeordnete Textnachrichten und Button-Aktionen werden vor HTTP-200 dauerhaft gespeichert; bei Datenbankfehlern 5xx für Telegram-Retry. Keine Inhalte oder Bot-Tokens loggen. Gesprächs- und Besuchersitzungsrouten entsprechen Slack. [Betrieb und Einrichtung](telegram-support.md).

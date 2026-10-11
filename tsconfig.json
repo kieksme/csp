@@ -21,7 +21,8 @@
       "@kieksme/csp-plugin-chat/*": ["./packages/plugin-chat/src/*"],
       "@kieksme/csp-sdk/browser": ["./packages/sdk/src/browser.tsx"],
       "@kieksme/csp-plugin-teams/*": ["./packages/plugin-teams/src/*"],
-      "@kieksme/csp-plugin-slack/*": ["./packages/plugin-slack/src/*"]
+      "@kieksme/csp-plugin-slack/*": ["./packages/plugin-slack/src/*"],
+      "@kieksme/csp-plugin-telegram/*": ["./packages/plugin-telegram/src/*"]
     }
   },
   "include": ["packages", "apps", "templates", "tests", "scripts", "*.ts"],

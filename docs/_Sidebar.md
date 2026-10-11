@@ -21,3 +21,5 @@
 - [Dokumentation und Wiki](wiki.md)
 - [Teams-Support und Übernahme](teams-support.md)
 - [Slack-Support und Übernahme](slack-support.md)
+
+- [Telegram-Support und Übernahme](telegram-support.md)

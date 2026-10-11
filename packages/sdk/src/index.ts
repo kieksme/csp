@@ -123,7 +123,7 @@ export interface ThemeTokens {
   fontFamily?: string;
 }
 export interface ChatSupportConfig {
-  mode: 'teams' | 'slack' | 'demo';
+  mode: 'teams' | 'slack' | 'telegram' | 'demo';
   auth?: 'msal' | 'session' | 'anonymous';
   tenantId?: string;
   clientId?: string;

@@ -35,3 +35,5 @@ Die Standard-Module sind öffentlich. Die optionalen Support-Plugins für [Teams
 Die Dokumentation wird im Produktrepo unter `docs/` gepflegt. Das Wiki zeigt die Dokumentation des zuletzt gespiegelten Release-Tags; Änderungen auf `main` erscheinen dort erst bei der nächsten Veröffentlichung. Details zum Abgleich stehen unter [Dokumentation und Wiki](wiki.md).
 
 Quellcode: [kieksme/csp](https://github.com/kieksme/csp). Lizenz: [MIT](https://github.com/kieksme/csp/blob/main/LICENSE).
+
+- [Telegram-Support und Übernahme](telegram-support.md)

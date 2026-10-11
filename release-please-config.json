@@ -104,6 +104,16 @@
           "type": "json",
           "path": "packages/plugin-slack/package.json",
           "jsonpath": "$.cspPlugin.sdkVersion"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-telegram/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-telegram/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
         }
       ]
     }

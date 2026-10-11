@@ -308,7 +308,7 @@
       "required": ["mode"],
       "properties": {
         "mode": {
-          "enum": ["teams", "slack", "demo"]
+          "enum": ["teams", "slack", "telegram", "demo"]
         },
         "tenantId": {
           "type": "string",
@@ -325,7 +325,7 @@
         "auth": {
           "type": "string",
           "enum": ["msal", "session", "anonymous"],
-          "description": "MSAL (default), authenticated same-origin gateway session, or anonymous browser session for Slack."
+          "description": "MSAL (default), authenticated same-origin gateway session, or anonymous browser session for Slack or Telegram."
         }
       },
       "allOf": [
@@ -333,7 +333,7 @@
           "if": {
             "properties": {
               "mode": {
-                "enum": ["teams", "slack"]
+                "enum": ["teams", "slack", "telegram"]
               }
             },
             "not": {
@@ -361,7 +361,7 @@
           "then": {
             "properties": {
               "mode": {
-                "const": "slack"
+                "enum": ["slack", "telegram"]
               }
             }
           }

@@ -93,3 +93,5 @@ Weitere Dokumentation: [Plugin-SDK](docs/plugin-sdk.md), [Konfiguration](docs/co
 Chat-Antworten verwenden die aktuelle Bereitschaftsperson in Ich-Form, mit Name und Kennzeichnung als digitaler Assistent. Ohne bestätigte Bereitschaft antwortet das Service-Team. Dienststatus wird nur für passende Monitore bestätigt; Ticketquellen werden als direkte Links angezeigt. Details: [Chat-Vertrag](docs/plugin-sdk.md#persönliche-chat-antworten).
 
 Optional: [Teams-Support mit Entra-Anmeldung und menschlicher Chat-Übernahme](docs/teams-support.md), einschließlich lokaler Demo ohne Microsoft-Zugangsdaten. Außerdem [Slack-Support mit Channel-Threads und menschlicher Übernahme](docs/slack-support.md); die echte Slack-Anbindung ist noch ungetestet.
+
+Telegram-Support ist als separates `@kieksme/csp-plugin-telegram` mit Themen, Übernahme und anonymen Besuchersitzungen verfügbar. [Einrichtung](docs/telegram-support.md); reale Verbindung noch ungetestet.
