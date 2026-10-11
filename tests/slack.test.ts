@@ -121,8 +121,12 @@ async function fixture(runtime = false) {
   const calls: { method: string; body: Record<string, any> }[] = [];
   const fetcher = vi.fn(
     async (input: string | URL | Request, options?: RequestInit) => {
-      const method = String(input).split('/').at(-1)!,
-        body = JSON.parse(String(options?.body ?? '{}'));
+      const url = new URL(String(input)),
+        method = url.pathname.split('/').at(-1)!,
+        body =
+          options?.method === 'GET'
+            ? Object.fromEntries(url.searchParams)
+            : JSON.parse(String(options?.body ?? '{}'));
       calls.push({ method, body });
       if (unavailable && method === 'users.info')
         return new Response('{}', { status: 503 });
@@ -624,4 +628,33 @@ it('honors Retry-After without sleeping or repeatedly calling the Slack API', as
   );
   await expect(api('users.info')).rejects.toThrow('rate limit active');
   expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+it('sends Slack read arguments in the query and preserves JSON message blocks', async () => {
+  const fetcher = vi.fn(
+    async () => new Response(JSON.stringify({ ok: true })),
+  ) as typeof fetch;
+  const api = slackApi(config, fetcher);
+  await api('conversations.info', { channel: 'C111' });
+  await api('users.info', { user: 'U111' });
+  await api('conversations.members', { channel: 'C111', cursor: 'next+page' });
+  for (const [input, options] of vi.mocked(fetcher).mock.calls) {
+    expect(options?.method).toBe('GET');
+    expect(options?.body).toBeUndefined();
+    expect(new URL(String(input)).searchParams.size).toBeGreaterThan(0);
+  }
+  expect(
+    new URL(String(vi.mocked(fetcher).mock.calls[2][0])).searchParams.get(
+      'cursor',
+    ),
+  ).toBe('next+page');
+  const body = {
+    channel: 'C111',
+    blocks: [{ type: 'section', text: { type: 'plain_text', text: 'Hallo' } }],
+  };
+  await api('chat.postMessage', body);
+  expect(vi.mocked(fetcher).mock.calls[3][1]?.method).toBe('POST');
+  expect(JSON.parse(String(vi.mocked(fetcher).mock.calls[3][1]?.body))).toEqual(
+    body,
+  );
 });

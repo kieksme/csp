@@ -159,13 +159,23 @@ export function slackApi(config: SlackConfig, fetcher: typeof fetch = fetch) {
   let blockedUntil = 0;
   return async (method: string, body: Record<string, unknown> = {}) => {
     if (Date.now() < blockedUntil) throw new Error('Slack rate limit active');
-    const response = await fetcher(`https://slack.com/api/${method}`, {
-      method: 'POST',
+    const read = [
+      'auth.test',
+      'users.info',
+      'conversations.info',
+      'conversations.members',
+    ].includes(method);
+    const url = new URL(`https://slack.com/api/${method}`);
+    if (read)
+      for (const [key, value] of Object.entries(body))
+        url.searchParams.set(key, String(value));
+    const response = await fetcher(url, {
+      method: read ? 'GET' : 'POST',
       headers: {
         Authorization: `Bearer ${config.CSP_SLACK_BOT_TOKEN}`,
         'Content-Type': 'application/json; charset=utf-8',
       },
-      body: JSON.stringify(body),
+      body: read ? undefined : JSON.stringify(body),
       signal: AbortSignal.timeout(10000),
     });
     if (response.status === 429) {
