@@ -10,9 +10,9 @@
 | `@kieksme/csp-plugin-content` | `content` | Prozesse, Ticketlinks/-vorlagen, FAQ und Chat-Quellen      | `CSP_CONTENT_PATH`                          |
 | `@kieksme/csp-plugin-chat`    | `chat`    | Gestreamte Antworten aus statischen und Live-Quellen       | Provider, Modell und gegebenenfalls API-Key |
 
-Die Plugins `contact`, `signl4`, `kuma`, `content` und `chat` stellen zusätzlich WebMCP-Tools für Browser-Agenten bereit: `signl4_*` (Dienst, Schichtplan, Team, vCard, Alerts), `kuma_get_status`, `contact_get_hotline`, `content_*` (FAQ, Prozesse, Ticketvorlagen) und `chat_ask`; die Teams- und Slack-Plugins stellen keine Tools bereit. Die Liste mit Parametern steht unter [WebMCP](webmcp.md). Mit dem Hinzufügen oder Entfernen eines Plugins ändern sich die Tools automatisch; `public.webmcp: false` schaltet sie ab.
+Die Plugins `contact`, `signl4`, `kuma`, `content` und `chat` stellen zusätzlich WebMCP-Tools für Browser-Agenten bereit: `signl4_*` (Dienst, Schichtplan, Team, vCard, Alerts), `kuma_get_status`, `contact_get_hotline`, `content_*` (FAQ, Prozesse, Ticketvorlagen) und `chat_ask`; die Teams-, Slack- und Telegram-Plugins stellen keine Tools bereit. Die Liste mit Parametern steht unter [WebMCP](webmcp.md). Mit dem Hinzufügen oder Entfernen eines Plugins ändern sich die Tools automatisch; `public.webmcp: false` schaltet sie ab.
 
-`apps/demo` registriert alle fünf Plugins. `apps/northstar` und `templates/customer` registrieren Kontakt, Inhalte und Chat. Teams und Slack benötigen `chat`; die übrigen mitgelieferten Plugins haben keine verpflichtenden Plugin-Abhängigkeiten; der Chat verwendet die Wissensquellen der tatsächlich installierten Plugins.
+`apps/demo` registriert alle fünf Plugins. `apps/northstar` und `templates/customer` registrieren Kontakt, Inhalte und Chat. Teams, Slack und Telegram benötigen `chat`; die übrigen mitgelieferten Plugins haben keine verpflichtenden Plugin-Abhängigkeiten; der Chat verwendet die Wissensquellen der tatsächlich installierten Plugins.
 
 ## CLI verwenden
 
