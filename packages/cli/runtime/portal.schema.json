@@ -324,8 +324,8 @@
         },
         "auth": {
           "type": "string",
-          "enum": ["msal", "session"],
-          "description": "MSAL (default) or existing same-origin authenticated gateway session; API still validates delegated Chat.Access access tokens."
+          "enum": ["msal", "session", "anonymous"],
+          "description": "MSAL (default), authenticated same-origin gateway session, or anonymous browser session for Slack."
         }
       },
       "allOf": [
@@ -335,10 +335,35 @@
               "mode": {
                 "enum": ["teams", "slack"]
               }
+            },
+            "not": {
+              "properties": {
+                "auth": {
+                  "const": "anonymous"
+                }
+              },
+              "required": ["auth"]
             }
           },
           "then": {
             "required": ["tenantId", "clientId", "scope"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "auth": {
+                "const": "anonymous"
+              }
+            },
+            "required": ["auth"]
+          },
+          "then": {
+            "properties": {
+              "mode": {
+                "const": "slack"
+              }
+            }
           }
         }
       ]

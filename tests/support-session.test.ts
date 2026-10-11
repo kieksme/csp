@@ -56,3 +56,37 @@ it('does not mark expired or malformed portal identity as authenticated and retr
   expect(await session.token()).toBe('');
   expect(session.name).toBe('Ada');
 });
+it('creates an anonymous session without MSAL and reuses it after a reload', async () => {
+  const storage = new Map<string, string>();
+  vi.stubGlobal('window', {
+    sessionStorage: {
+      getItem: (k: string) => storage.get(k) ?? null,
+      setItem: (k: string, v: string) => storage.set(k, v),
+      removeItem: (k: string) => storage.delete(k),
+    },
+    location: { reload: vi.fn() },
+  });
+  try {
+    const request = vi.fn<typeof fetch>(async () =>
+      Response.json({
+        token: 'server-signed-test-token',
+        name: 'Besucher abc',
+        expiresAt: Date.now() + 60000,
+      }),
+    );
+    const ctx = context(request);
+    ctx.config.chatSupport = { mode: 'slack', auth: 'anonymous' };
+    const first = await supportSession(ctx);
+    expect(await first.token()).toBe('server-signed-test-token');
+    const second = await supportSession(ctx);
+    expect(await second.token()).toBe('server-signed-test-token');
+    expect(second.name).toBe('Besucher abc');
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(request).toHaveBeenCalledWith(
+      'https://portal.example.org/api/v1/conversations/session',
+      { method: 'POST', credentials: 'omit', cache: 'no-store' },
+    );
+  } finally {
+    vi.unstubAllGlobals();
+  }
+});

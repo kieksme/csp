@@ -179,3 +179,20 @@ it('requires exactly one matching support transport and validates Slack Entra id
     loadProfile(fixture({ chatSupport: { mode: 'slack' }, plugins }).file),
   ).toThrow('requires tenantId');
 });
+it('allows anonymous Slack without Entra IDs but rejects anonymous Teams', () => {
+  const plugins = ['@kieksme/csp-plugin-chat', '@kieksme/csp-plugin-slack'];
+  expect(
+    loadProfile(
+      fixture({ plugins, chatSupport: { mode: 'slack', auth: 'anonymous' } })
+        .file,
+    ).config.chatSupport,
+  ).toEqual({ mode: 'slack', auth: 'anonymous' });
+  expect(() =>
+    loadProfile(
+      fixture({
+        plugins: ['@kieksme/csp-plugin-chat', '@kieksme/csp-plugin-teams'],
+        chatSupport: { mode: 'teams', auth: 'anonymous' },
+      }).file,
+    ),
+  ).toThrow('Anonymous support requires Slack');
+});

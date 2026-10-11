@@ -3,6 +3,7 @@ import {
   MemoryStore,
   PostgresStore,
   portalAuthenticator,
+  setupAnonymousSessions,
   setupConversations,
 } from '@kieksme/csp-core/support';
 import { cspPlugin } from '../package.json';
@@ -26,8 +27,12 @@ export default {
     }
     if (ctx.config.chatSupport?.mode !== (demo ? 'demo' : 'slack'))
       throw new Error('Frontend and runtime support modes differ');
+    const anonymous = c.CSP_SLACK_AUTH === 'anonymous';
+    if (!demo && anonymous !== (ctx.config.chatSupport.auth === 'anonymous'))
+      throw new Error('Frontend and runtime authentication modes differ');
     if (
       !demo &&
+      !anonymous &&
       (ctx.config.chatSupport.tenantId !== c.CSP_ENTRA_TENANT_ID ||
         ctx.config.chatSupport.clientId !== c.CSP_ENTRA_PORTAL_CLIENT_ID ||
         ctx.config.chatSupport.scope !==
@@ -43,11 +48,13 @@ export default {
           userId: 'demo-user',
           name: 'Portal-Nutzer Demo',
         })
-      : portalAuthenticator(
-          c.CSP_ENTRA_TENANT_ID!,
-          c.CSP_ENTRA_API_AUDIENCE!,
-          c.CSP_ENTRA_API_SCOPE,
-        );
+      : anonymous
+        ? setupAnonymousSessions(ctx, c.CSP_CHAT_SESSION_SECRET!)
+        : portalAuthenticator(
+            c.CSP_ENTRA_TENANT_ID!,
+            c.CSP_ENTRA_API_AUDIENCE!,
+            c.CSP_ENTRA_API_SCOPE,
+          );
     try {
       await setupConversations(ctx, store, authenticate, demo, (onTake) =>
         createSlackBridge(ctx.app, store, c, ctx.fetch, onTake),
