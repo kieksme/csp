@@ -121,6 +121,20 @@ export function telegramApi(
     return result.data.result;
   };
 }
+function chunks(text: string, limit: number) {
+  const result: string[] = [];
+  let part = '';
+  for (const char of text) {
+    // Stay below the limit even for UTF-16 counting, without splitting surrogate pairs.
+    if (part.length + char.length > limit) {
+      result.push(part);
+      part = '';
+    }
+    part += char;
+  }
+  if (part) result.push(part);
+  return result;
+}
 export function card(c: Conversation) {
   const status =
     c.status === 'bot'
@@ -377,7 +391,7 @@ export async function createTelegramBridge(
         const topic = z.object({ message_thread_id: integer.positive() }).parse(
           await api('createForumTopic', {
             chat_id: config.CSP_TELEGRAM_CHAT_ID,
-            name: `Support ${c.owner.name}`.slice(0, 128),
+            name: chunks(`Support ${c.owner.name}`, 128)[0],
           }),
         );
         // Persist topic before sending the card, so a card retry cannot create another topic.
@@ -414,11 +428,10 @@ export async function createTelegramBridge(
         const m = job.message,
           text = `${m.kind === 'user' ? c.owner.name : m.kind === 'bot' ? 'Digitaler Assistent' : (m.name ?? 'Support')}\n${m.content}`;
         // Plain text only; do not enable Markdown/HTML or link previews for visitor input.
-        const chars = Array.from(text);
-        for (let i = 0; i < chars.length; i += 3500)
+        for (const part of chunks(text, 3500))
           await api('sendMessage', {
             ...base,
-            text: chars.slice(i, i + 3500).join(''),
+            text: part,
             link_preview_options: { is_disabled: true },
           });
       }

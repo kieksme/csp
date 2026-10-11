@@ -311,7 +311,7 @@ it('maps topics durably before card delivery and retries the card without creati
   expect(
     messages.every(
       (c) =>
-        Array.from(c.body.text).length <= 3500 &&
+        c.body.text.length <= 3500 &&
         c.body.message_thread_id === 42 &&
         !c.body.parse_mode,
     ),
