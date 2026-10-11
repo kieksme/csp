@@ -166,7 +166,7 @@ async function fixture(runtime = false) {
           chat,
           {
             id: 'slack',
-            sdkVersion: '^0.8.0',
+            sdkVersion: slack.sdkVersion,
             requires: ['chat'],
             configSchema,
             async setup(ctx) {
