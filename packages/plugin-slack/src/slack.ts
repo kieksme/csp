@@ -140,15 +140,18 @@ const apiResult = z.object({
     .optional(),
   ts: z.string().optional(),
   user: z
-    .object({
-      id: z.string(),
-      team_id: z.string(),
-      deleted: z.boolean(),
-      is_bot: z.boolean(),
-      is_app_user: z.boolean(),
-      real_name: z.string().nullish(),
-      profile: z.object({ real_name: z.string().nullish() }).optional(),
-    })
+    .union([
+      z.string(),
+      z.object({
+        id: z.string(),
+        team_id: z.string(),
+        deleted: z.boolean(),
+        is_bot: z.boolean(),
+        is_app_user: z.boolean(),
+        real_name: z.string().nullish(),
+        profile: z.object({ real_name: z.string().nullish() }).optional(),
+      }),
+    ])
     .optional(),
   members: z.array(z.string()).optional(),
   response_metadata: z
@@ -159,13 +162,23 @@ export function slackApi(config: SlackConfig, fetcher: typeof fetch = fetch) {
   let blockedUntil = 0;
   return async (method: string, body: Record<string, unknown> = {}) => {
     if (Date.now() < blockedUntil) throw new Error('Slack rate limit active');
-    const response = await fetcher(`https://slack.com/api/${method}`, {
-      method: 'POST',
+    const read = [
+      'auth.test',
+      'users.info',
+      'conversations.info',
+      'conversations.members',
+    ].includes(method);
+    const url = new URL(`https://slack.com/api/${method}`);
+    if (read)
+      for (const [key, value] of Object.entries(body))
+        url.searchParams.set(key, String(value));
+    const response = await fetcher(url, {
+      method: read ? 'GET' : 'POST',
       headers: {
         Authorization: `Bearer ${config.CSP_SLACK_BOT_TOKEN}`,
         'Content-Type': 'application/json; charset=utf-8',
       },
-      body: JSON.stringify(body),
+      body: read ? undefined : JSON.stringify(body),
       signal: AbortSignal.timeout(10000),
     });
     if (response.status === 429) {
@@ -190,6 +203,7 @@ export function supportAuthorizer(
     const { user } = await api('users.info', { user: id });
     if (
       !user ||
+      typeof user === 'string' ||
       user.id !== id ||
       user.team_id !== config.CSP_SLACK_TEAM_ID ||
       user.deleted ||
