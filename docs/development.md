@@ -43,3 +43,5 @@ Die CLI-Vorlage stammt aus `templates/customer`. Änderungen dort vornehmen und 
 Weiter: [Plugin-SDK](plugin-sdk.md), [Betrieb und Releases](operations.md), [Dokumentation und Wiki](wiki.md).
 
 Teams-Support wird über API-/JWT-/Übernahme-Tests sowie `tests/browser/support.spec.ts` geprüft. CI startet PostgreSQL 17 für Persistenz-, Outbox- und Lease-Tests; lokal mit `CSP_TEST_DATABASE_URL` aktivieren. Der Support-Browser-Test nutzt die gebaute synthetische Demo auf Port 4176 und deren API auf 3017. Echte Teams-Verbindung separat abnehmen.
+
+Slack-Support wird in `tests/slack.test.ts` geprüft: HMAC, Kontextgrenzen, Mitgliedschaft, Übernahme, Antworten, Duplikate, Inbox-Neustart, Aufbewahrung, Bestätigungsfrist und API-Limits. Mit `CSP_TEST_DATABASE_URL` laufen Datenbanktests seriell, da beide Transporte denselben exklusiven Runtime-Lock prüfen. `pnpm test:packages` installiert beide Supporttransporte nacheinander als Tarballs in einer frischen Kundeninstanz. Echte Slack-Verbindung separat abnehmen.

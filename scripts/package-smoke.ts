@@ -200,7 +200,7 @@ try {
   async function verifyRoute(
     exists: boolean,
     directory = customer,
-    support = false,
+    support: false | 'teams' | 'slack' = false,
   ) {
     const child = spawn('node', [join(directory, 'dist-api/server.js')], {
       cwd: directory,
@@ -208,7 +208,8 @@ try {
         ...process.env,
         CSP_PORT: '3999',
         CSP_DEMO: 'true',
-        CSP_TEAMS_DEMO: support ? 'true' : 'false',
+        CSP_TEAMS_DEMO: support === 'teams' ? 'true' : 'false',
+        CSP_SLACK_DEMO: support === 'slack' ? 'true' : 'false',
         CSP_CONTACT_PHONE: '+49000',
       },
       stdio: 'pipe',
@@ -309,9 +310,20 @@ try {
   // This fixture intentionally adds a package after its initial frozen installation.
   await run('pnpm', ['install', '--no-frozen-lockfile'], customer);
   await run('pnpm', ['build'], customer);
-  await verifyRoute(false, customer, true);
+  await verifyRoute(false, customer, 'teams');
+  delete supportPkg.dependencies['@kieksme/csp-plugin-teams'];
+  supportPkg.dependencies['@kieksme/csp-plugin-slack'] = sdkVersion;
+  supportProfile.plugins = supportProfile.plugins.filter(
+    (p: string) => p !== '@kieksme/csp-plugin-teams',
+  );
+  supportProfile.plugins.push('@kieksme/csp-plugin-slack');
+  await writeFile(pkgPath, JSON.stringify(supportPkg, null, 2));
+  await writeFile(profilePath, JSON.stringify(supportProfile, null, 2));
+  await run('pnpm', ['install', '--no-frozen-lockfile'], customer);
+  await run('pnpm', ['build'], customer);
+  await verifyRoute(false, customer, 'slack');
   console.log(
-    'Packed packages: fresh customer install, validation, root/subpath builds, referenced assets, secret scan, external plugin add/remove, production-only deployment, API routes and packed Teams support takeover passed.',
+    'Packed packages: fresh customer install, validation, root/subpath builds, referenced assets, secret scan, external plugin add/remove, production-only deployment, API routes and packed Teams and Slack support takeover passed.',
   );
 } finally {
   await rm(temp, { recursive: true, force: true });

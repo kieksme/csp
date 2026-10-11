@@ -17,3 +17,5 @@ Duty portrait circles use the customer accent at 35% opacity with a 50% accent b
 Set `--hero-background-image` in the customer stylesheet to add a decorative image across the entire service header. It defaults to `none`; local SVG/image URLs are resolved by the frontend build. See docs/plugin-sdk.md and docs/configuration.md.
 
 Core registers the WebMCP tools of the portal (`portal_get_info`) and of all installed plugins when the browser offers `document.modelContext` or `navigator.modelContext`. It is a no-op otherwise. Set `public.webmcp: false` (or `CSP_WEBMCP=false`) to opt out. See [WebMCP](../../docs/webmcp.md).
+
+The server-only `@kieksme/csp-core/support` export shares authenticated conversation ownership, persistence, streaming and human takeover between Teams and Slack. It is not a browser entry point. See [Slack support](../../docs/slack-support.md) and [Teams support](../../docs/teams-support.md).

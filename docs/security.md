@@ -37,3 +37,7 @@ Weiter: [Konfiguration](configuration.md), [API](api.md), [Betrieb](operations.m
 ## Gespeicherte Teams-Gespräche
 
 Das optionale Teams-Plugin verlangt verifizierte Entra-API-Tokens und trennt Gespräche anhand Tenant-/Nutzer-ID. PostgreSQL speichert Verlauf und Übernahme, standardmäßig 30 Tage ohne Aktivität. MSAL-Anmeldeinformationen liegen im Session-Storage; die PWA speichert API-Inhalte nicht. Teams erhält eine eigene Verlaufskopie; deren Aufbewahrung ist unabhängig. Supportrechte werden über Graph bei jeder Aktion geprüft. RSC gilt teamweit, die Verarbeitung wird auf den konfigurierten Channel begrenzt. Vollständiger Datenfluss und Grenzen: [Teams-Support](teams-support.md).
+
+## Gespeicherte Slack-Gespräche
+
+Slack nutzt dieselbe Entra-Eigentümerprüfung und PostgreSQL-Aufbewahrung wie Teams. Supportrechte erfordern explizit erlaubte Slack-Nutzer-IDs, aktuelle Channel-Mitgliedschaft und einen aktiven menschlichen Nutzer des konfigurierten Workspaces. Slack-Request-Signaturen schützen beide Callback-Routen; App-, Workspace-, Channel- und Thread-Zuordnung werden geprüft. Die Allowlist wird nicht aus Namen oder E-Mail-Adressen abgeleitet. Slack-Scope-Rechte und Slack-Verlaufskopien sind weiter als der lokale Gesprächsbestand; den Bot nur in geeignete Channels einladen. [Datenfluss und Installation](slack-support.md).

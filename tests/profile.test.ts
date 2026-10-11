@@ -150,3 +150,32 @@ it('accepts the existing-session chat authentication mode and rejects unsupporte
     ),
   ).toThrow();
 });
+it('requires exactly one matching support transport and validates Slack Entra identity', () => {
+  const chatSupport = {
+    mode: 'slack',
+    tenantId: '12e29f7c-8633-4490-ab9d-95ba84981681',
+    clientId: '88a2d0d0-971b-4963-b59f-805b08738f36',
+    scope: 'api://88a2d0d0-971b-4963-b59f-805b08738f36/Chat.Access',
+  };
+  const plugins = ['@kieksme/csp-plugin-chat', '@kieksme/csp-plugin-slack'];
+  expect(
+    loadProfile(fixture({ chatSupport, plugins }).file).config.chatSupport
+      ?.mode,
+  ).toBe('slack');
+  expect(() =>
+    loadProfile(
+      fixture({ chatSupport, plugins: ['@kieksme/csp-plugin-teams'] }).file,
+    ),
+  ).toThrow('matching support plugin');
+  expect(() =>
+    loadProfile(
+      fixture({
+        chatSupport,
+        plugins: [...plugins, '@kieksme/csp-plugin-teams'],
+      }).file,
+    ),
+  ).toThrow('matching support plugin');
+  expect(() =>
+    loadProfile(fixture({ chatSupport: { mode: 'slack' }, plugins }).file),
+  ).toThrow('requires tenantId');
+});
