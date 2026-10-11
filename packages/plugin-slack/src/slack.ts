@@ -140,15 +140,18 @@ const apiResult = z.object({
     .optional(),
   ts: z.string().optional(),
   user: z
-    .object({
-      id: z.string(),
-      team_id: z.string(),
-      deleted: z.boolean(),
-      is_bot: z.boolean(),
-      is_app_user: z.boolean(),
-      real_name: z.string().nullish(),
-      profile: z.object({ real_name: z.string().nullish() }).optional(),
-    })
+    .union([
+      z.string(),
+      z.object({
+        id: z.string(),
+        team_id: z.string(),
+        deleted: z.boolean(),
+        is_bot: z.boolean(),
+        is_app_user: z.boolean(),
+        real_name: z.string().nullish(),
+        profile: z.object({ real_name: z.string().nullish() }).optional(),
+      }),
+    ])
     .optional(),
   members: z.array(z.string()).optional(),
   response_metadata: z
@@ -200,6 +203,7 @@ export function supportAuthorizer(
     const { user } = await api('users.info', { user: id });
     if (
       !user ||
+      typeof user === 'string' ||
       user.id !== id ||
       user.team_id !== config.CSP_SLACK_TEAM_ID ||
       user.deleted ||

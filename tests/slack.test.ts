@@ -132,7 +132,7 @@ async function fixture(runtime = false) {
         return new Response('{}', { status: 503 });
       const result: Record<string, unknown> =
         method === 'auth.test'
-          ? { team_id: 'T111' }
+          ? { team_id: 'T111', user: 'support' }
           : method === 'conversations.info'
             ? { channel: { id: 'C111', is_member: true } }
             : method === 'users.info'

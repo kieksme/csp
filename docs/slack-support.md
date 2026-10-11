@@ -93,4 +93,4 @@ Die API vergibt automatisch ein signiertes Besuchertoken mit 24 Stunden Laufzeit
 
 Session-Erstellung: fünf je IP und Stunde; schreibende Gesprächsanfragen: 30 je IP und Minute, zusätzlich bestehende Nachrichten- und Generierungsgrenzen. Hinter einem Proxy `CSP_TRUST_PROXY` nur mit bereinigten Forwarded-Headern aktivieren; andernfalls teilen Besucher die Proxy-IP-Grenze. Supportpersonen brauchen weiterhin die Slack-Allowlist und aktuelle Channel-Mitgliedschaft. PostgreSQL, Runtime-Secrets und Live-Abnahme bleiben erforderlich.
 
-Slack-Leseabfragen für Identität, Channel und Mitglieder verwenden GET mit Query-Parametern; Nachrichten und Karten werden als JSON per POST gesendet. Damit bleibt die Channel-Prüfung auch mit der echten Slack-API kompatibel.
+Slack-Leseabfragen für Identität, Channel und Mitglieder verwenden GET mit Query-Parametern; Nachrichten und Karten werden als JSON per POST gesendet. Der API-Parser akzeptiert den Nutzernamen als Text aus `auth.test` und das Nutzerobjekt aus `users.info`; für Supportrechte muss ein geprüftes Nutzerobjekt vorliegen. Damit bleibt die Channel-Prüfung auch mit der echten Slack-API kompatibel.
