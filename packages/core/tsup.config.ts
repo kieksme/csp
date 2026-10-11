@@ -6,6 +6,7 @@ export default defineConfig({
     'src/build.ts',
     'src/config.ts',
     'src/profile.ts',
+    'src/support.ts',
   ],
   format: ['esm'],
   dts: true,

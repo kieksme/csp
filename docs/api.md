@@ -64,7 +64,7 @@ Ein HTTP-200-Stream kann mit `error` enden; ein Client darf HTTP 200 allein nich
 
 ## Header und Zugriffe
 
-Core setzt `Cache-Control: no-store` und `X-Content-Type-Options: nosniff`. CORS erlaubt die in `CSP_ALLOWED_ORIGINS` aufgeführten Origins, GET/POST und keine Credentials. Die Standardrouten benötigen keine Benutzeranmeldung; gespeicherte Teams-Gespräche verlangen verifizierte Entra-API-Tokens. WebMCP-Tools im Browser verwenden dieselben GET-Routen und `POST /api/v1/chat`; sie fügen keine Routen hinzu ([WebMCP](webmcp.md)). Nicht-Browser-Clients sind durch CORS nicht von öffentlichen Daten ausgeschlossen.
+Core setzt `Cache-Control: no-store` und `X-Content-Type-Options: nosniff`. CORS erlaubt die in `CSP_ALLOWED_ORIGINS` aufgeführten Origins, GET/POST und keine Credentials. Die Standardrouten benötigen keine Benutzeranmeldung; gespeicherte Teams-/Slack-Gespräche verlangen verifizierte Entra-API-Tokens. WebMCP-Tools im Browser verwenden dieselben GET-Routen und `POST /api/v1/chat`; sie fügen keine Routen hinzu ([WebMCP](webmcp.md)). Nicht-Browser-Clients sind durch CORS nicht von öffentlichen Daten ausgeschlossen.
 
 Weiter: [Konfiguration](configuration.md), [Sicherheit und Daten](security.md), [Betrieb](operations.md).
 
@@ -76,4 +76,6 @@ Absender und Quellen gehören jeweils zu einer Antwort, nicht zum gesamten Verla
 
 ## Gespeicherte Support-Gespräche
 
-Das optionale Teams-Plugin ergänzt authentifizierte Gesprächsrouten und einen wiederaufnehmbaren SSE-Strom. Im Supportmodus antwortet der Legacy-Chat-Endpunkt mit 409. Schnittstellen, Fehler und Grenzen: [Teams-Support-API](teams-support.md#api).
+Die optionalen Teams- und Slack-Plugins ergänzen authentifizierte Gesprächsrouten und einen wiederaufnehmbaren SSE-Strom. Im Supportmodus antwortet der Legacy-Chat-Endpunkt mit 409. Schnittstellen, Fehler und Grenzen: [Teams-Support-API](teams-support.md#api).
+
+Slack ergänzt `POST /api/slack/events` (JSON) und `POST /api/slack/actions` (URL-encoded `payload`). Beide prüfen den unveränderten Body mit Slack-Signatur und Zeitstempel; sie verwenden keine Portal-Tokens. Relevante Ereignisse werden vor Bestätigung dauerhaft gespeichert. [Details und Grenzen](slack-support.md).

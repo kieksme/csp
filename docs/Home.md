@@ -8,6 +8,7 @@ Das Customer Service Portal bündelt Notfallkontakt, Operations-Team, Schichtpla
 | --------------------------------------------------- | ------------------------------------------------------- |
 | Infrastruktur und Instanzstand                      | [Infrastrukturübersicht](infrastructure.md)             |
 | Acme und NetCom BW betreiben                        | [Coolify-Infrastruktur](infrastructure-coolify.md)      |
+| Slack-Support installieren                          | [Slack-Support](slack-support.md)                       |
 | Thinkport-Hosting und Teams verstehen               | [Thinkport-Infrastruktur](infrastructure-thinkport.md)  |
 | Releases, Monitoring und Restore planen             | [Lieferkette und Betrieb](infrastructure-operations.md) |
 | Projekt verstehen                                   | [Architektur und Repository](architecture.md)           |
@@ -27,7 +28,7 @@ Das Customer Service Portal bündelt Notfallkontakt, Operations-Team, Schichtpla
 
 ## Produktgrenzen
 
-Die Standard-Module sind öffentlich. Das optionale [Teams-Support-Plugin](teams-support.md) schützt gespeicherte Chat-Gespräche über Entra-Anmeldung. Teamkontakte und Alert-Beschreibungen sind öffentlich lesbar. Provider-Schlüssel verbleiben im API-Service. Der Chat beantwortet Fragen anhand der Inhalte und Live-Quellen seiner Instanz; er legt keine Tickets an und verändert keine Alerts oder Schichten. Per WebMCP lesen Browser-Agenten dieselben öffentlichen Daten (standardmäßig an, abschaltbar); auch dabei werden keine Tickets angelegt.
+Die Standard-Module sind öffentlich. Die optionalen Support-Plugins für [Teams](teams-support.md) und [Slack](slack-support.md) schützen gespeicherte Chat-Gespräche über Entra-Anmeldung. Teamkontakte und Alert-Beschreibungen sind öffentlich lesbar. Provider-Schlüssel verbleiben im API-Service. Der Chat beantwortet Fragen anhand der Inhalte und Live-Quellen seiner Instanz; er legt keine Tickets an und verändert keine Alerts oder Schichten. Per WebMCP lesen Browser-Agenten dieselben öffentlichen Daten (standardmäßig an, abschaltbar); auch dabei werden keine Tickets angelegt.
 
 `apps/demo` verwendet synthetische Daten. `apps/northstar` zeigt eine zweite Marke mit weniger Plugins. Die Kunden-Vorlage startet außerhalb des Demo-Modus und muss für ihre installierten Provider konfiguriert werden.
 

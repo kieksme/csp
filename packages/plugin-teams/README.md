@@ -7,3 +7,5 @@ Requires the chat plugin, single-tenant Entra registrations, PostgreSQL and a Te
 Local synthetic support demo works without Microsoft credentials. Live Microsoft connectivity must be verified separately before activation.
 
 Set `CSP_TEAMS_SUPPORT_AUTH=team` when support uses the team Microsoft 365 group. Membership can then be checked with team-scoped `TeamMember.Read.Group` RSC instead of tenant-wide directory read permissions. Arbitrary Entra groups retain the default `group` mode.
+
+Conversation state, Entra portal authentication and persistence are shared through the server-only `@kieksme/csp-core/support` export with the optional Slack transport. Install exactly one support transport per instance.

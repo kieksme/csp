@@ -26,7 +26,7 @@ Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicC
 | `packages/sdk`       | TypeScript-Verträge, Zod-Inhaltsschema, Plugin-Prüfung, Live-Cache, Browser-Hooks und vCards  |
 | `packages/core`      | React-Shell und Styles, öffentliche Konfiguration, Vite/PWA-Build und Fastify-Host            |
 | `packages/cli`       | Profil validieren, Kundenrepo initialisieren, entwickeln, bauen/starten und Plugins verwalten |
-| `packages/plugin-*`  | Kontakt, SIGNL4, Kuma, Inhalte und Chat als unabhängige Pakete                                |
+| `packages/plugin-*`  | Kontakt, SIGNL4, Kuma, Inhalte, Chat sowie Teams-/Slack-Support als unabhängige Pakete        |
 | `apps/demo`          | Vollständige synthetische Demo mit allen fünf Plugins                                         |
 | `apps/northstar`     | Zweite Marke mit Kontakt, Inhalten und Chat                                                   |
 | `templates/customer` | Deklaratives Kundenprofil, Inhalte und kurzer Aufruf des gemeinsamen Workflows                |
@@ -39,9 +39,9 @@ Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicC
 
 ## Paketfamilie
 
-Die neun öffentlichen Pakete heißen `@kieksme/csp-sdk`, `@kieksme/csp-core`, `@kieksme/csp-cli` und `@kieksme/csp-plugin-{contact,signl4,kuma,content,chat,teams}`. Alle erhalten dieselbe Release-Version. Private Apps und Kunden-Vorlage werden ebenfalls versioniert, aber nicht auf npm veröffentlicht.
+Die zehn öffentlichen Pakete heißen `@kieksme/csp-sdk`, `@kieksme/csp-core`, `@kieksme/csp-cli` und `@kieksme/csp-plugin-{contact,signl4,kuma,content,chat,teams,slack}`. Alle erhalten dieselbe Release-Version. Private Apps und Kunden-Vorlage werden ebenfalls versioniert, aber nicht auf npm veröffentlicht.
 
-Die Core-API trennt Exporte für `./browser`, `./server`, `./config`, `./profile` und `./build`. Plugins haben getrennte Browser- und Server-Exporte. SDK-Kompatibilität und Plugin-Abhängigkeiten werden zur Laufzeit überprüft. Kundenupdates erfolgen über Paketversionen und Lockfile mit anschließendem Build und Deployment.
+Die Core-API trennt Exporte für `./browser`, `./server`, `./config`, `./profile`, `./build` und den serverseitigen `./support`. Plugins haben getrennte Browser- und Server-Exporte. SDK-Kompatibilität und Plugin-Abhängigkeiten werden zur Laufzeit überprüft. Kundenupdates erfolgen über Paketversionen und Lockfile mit anschließendem Build und Deployment.
 
 ## Cache und Offline-Verhalten
 
@@ -51,7 +51,7 @@ Das Frontend pollt standardmäßig alle 60 Sekunden. Schichtgrenzen werden lokal
 
 Weiter: [Plugins](plugins.md), [API](api.md), [Betrieb](operations.md).
 
-Das optionale Teams-Plugin ergänzt PostgreSQL-Persistenz, Entra-Zugriffsschutz und menschliche Übernahme. Frontend und Runtime aktivieren diese Funktion explizit. Details: [Teams-Support](teams-support.md).
+Die optionalen Teams- und Slack-Plugins verwenden die gemeinsame serverseitige Gesprächslogik in `@kieksme/csp-core/support`: PostgreSQL-Persistenz, Entra-Zugriffsschutz und menschliche Übernahme. Pro Instanz ist genau ein Supporttransport zulässig. Frontend und Runtime aktivieren diese Funktion explizit. Details: [Teams-Support](teams-support.md) und [Slack-Support](slack-support.md).
 
 ## Infrastruktur der eingerichteten Instanzen
 

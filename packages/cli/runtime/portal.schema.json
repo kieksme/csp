@@ -308,7 +308,7 @@
       "required": ["mode"],
       "properties": {
         "mode": {
-          "enum": ["teams", "demo"]
+          "enum": ["teams", "slack", "demo"]
         },
         "tenantId": {
           "type": "string",
@@ -333,7 +333,7 @@
           "if": {
             "properties": {
               "mode": {
-                "const": "teams"
+                "enum": ["teams", "slack"]
               }
             }
           },

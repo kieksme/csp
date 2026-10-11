@@ -201,8 +201,8 @@ export function SupportChat(ctx: BrowserContext) {
     <div className="chat-panel support-chat text-ink bg-card border border-line p-6 rounded-card compact:p-4">
       <p className="text-[0.75rem] text-ink mb-3">
         {demo
-          ? 'Synthetische Support-Demo. Keine Übertragung an Teams.'
-          : 'Ihre Nachrichten und die Antworten werden an den Thinkport-Support in Microsoft Teams weitergegeben.'}
+          ? 'Synthetische Support-Demo. Keine Übertragung an einen Support-Channel.'
+          : `Ihre Nachrichten und die Antworten werden an den Support in ${ctx.config.chatSupport?.mode === 'slack' ? 'Slack' : 'Microsoft Teams'} weitergegeben.`}
       </p>
       <p role="status" className="text-[0.8125rem] mb-3">
         {current?.status === 'support'

@@ -73,7 +73,7 @@ export const profileSchema = z
       .optional(),
     chatSupport: z
       .object({
-        mode: z.enum(['teams', 'demo']),
+        mode: z.enum(['teams', 'slack', 'demo']),
         auth: z.enum(['msal', 'session']).optional(),
         tenantId: z.string().uuid().optional(),
         clientId: z.string().uuid().optional(),
@@ -81,10 +81,10 @@ export const profileSchema = z
       })
       .strict()
       .superRefine((c, ctx) => {
-        if (c.mode === 'teams' && (!c.tenantId || !c.clientId || !c.scope))
+        if (c.mode !== 'demo' && (!c.tenantId || !c.clientId || !c.scope))
           ctx.addIssue({
             code: 'custom',
-            message: 'Teams chat requires tenantId, clientId and API scope',
+            message: 'Support chat requires tenantId, clientId and API scope',
           });
       })
       .optional(),
@@ -203,8 +203,21 @@ export function loadProfile(file: string, env: Env = {}, production = false) {
     config.logo = asset(p.branding.logoFile);
   config.theme = p.theme;
   config.chatSupport = p.chatSupport;
-  if (p.chatSupport && !p.plugins.includes('@kieksme/csp-plugin-teams'))
-    throw new Error('chatSupport requires the Teams plugin');
+  if (p.chatSupport) {
+    const transports = p.plugins.filter((plugin) =>
+      ['@kieksme/csp-plugin-teams', '@kieksme/csp-plugin-slack'].includes(
+        plugin,
+      ),
+    );
+    if (
+      transports.length !== 1 ||
+      (p.chatSupport.mode !== 'demo' &&
+        transports[0] !== `@kieksme/csp-plugin-${p.chatSupport.mode}`)
+    )
+      throw new Error(
+        'chatSupport requires exactly one matching support plugin',
+      );
+  }
   if (p.chatSupport?.mode === 'demo' && !config.demo)
     throw new Error('Support demo requires demo=true');
   config.staticDemo = p.public?.staticDemo;
