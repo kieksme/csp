@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/kieksme/csp/compare/v0.9.0...v0.10.0) (2026-10-11)
+
+
+### Features
+
+* **slack:** support anonymous portal conversations ([#35](https://github.com/kieksme/csp/issues/35)) ([622a150](https://github.com/kieksme/csp/commit/622a150915e57b25e41ea6568a8acf2d56415ec9))
+
 ## [0.9.0](https://github.com/kieksme/csp/compare/v0.8.0...v0.9.0) (2026-10-11)
 
 
