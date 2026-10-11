@@ -13,6 +13,7 @@ export async function supportSession(ctx: BrowserContext): Promise<Session> {
       login: async () => {},
       name: 'Portal-Nutzer Demo',
     };
+  if (c.auth === 'anonymous') return anonymousSession(ctx);
   if (c.auth === 'session') return cookieSession(ctx);
   const { PublicClientApplication } = await import('@azure/msal-browser');
   const client = new PublicClientApplication({
@@ -71,6 +72,77 @@ function cookieSession(ctx: BrowserContext): Session {
       return '';
     },
     async login() {
+      window.location.reload();
+    },
+  };
+  return current;
+}
+
+function anonymousSession(ctx: BrowserContext): Session {
+  const key = `csp-support:${ctx.config.apiUrl}`;
+  let saved: { token: string; expiresAt: number; name: string } | undefined;
+  try {
+    const value = JSON.parse(window.sessionStorage.getItem(key) ?? 'null');
+    if (
+      typeof value?.token === 'string' &&
+      typeof value?.expiresAt === 'number' &&
+      value.expiresAt > Date.now() &&
+      typeof value?.name === 'string'
+    )
+      saved = value;
+  } catch {
+    /* Storage may be unavailable; use this page's memory. */
+  }
+  let pending: Promise<string> | undefined;
+  const current: Session = {
+    name: saved?.name ?? 'Besucher',
+    async token() {
+      if (saved) {
+        if (saved.expiresAt <= Date.now())
+          throw new Error(
+            'Chat-Sitzung abgelaufen. Bitte verbinden Sie den Chat neu.',
+          );
+        return saved.token;
+      }
+      if (pending) return pending;
+      pending = (async () => {
+        const response = await (ctx.request ?? fetch)(
+          ctx.config.apiUrl + '/api/v1/conversations/session',
+          {
+            method: 'POST',
+            credentials: 'omit',
+            cache: 'no-store',
+          },
+        );
+        if (!response.ok)
+          throw new Error(
+            'Chat derzeit nicht verfügbar. Bitte versuchen Sie es später erneut.',
+          );
+        const value = await response.json();
+        if (
+          typeof value.token !== 'string' ||
+          typeof value.expiresAt !== 'number' ||
+          value.expiresAt <= Date.now() ||
+          typeof value.name !== 'string'
+        )
+          throw new Error('Chat derzeit nicht verfügbar.');
+        saved = value;
+        current.name = value.name;
+        try {
+          window.sessionStorage.setItem(key, JSON.stringify(value));
+        } catch {}
+        return value.token;
+      })();
+      try {
+        return await pending;
+      } finally {
+        pending = undefined;
+      }
+    },
+    async login() {
+      try {
+        window.sessionStorage.removeItem(key);
+      } catch {}
       window.location.reload();
     },
   };

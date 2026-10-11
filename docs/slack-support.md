@@ -4,13 +4,13 @@
 
 ## Ablauf
 
-Pro Portal-Gespräch entsteht ein Channel-Thread mit verifiziertem Portal-Namen, optionalem Microsoft-Benutzernamen und Gesprächs-ID. Nutzerfragen und abgeschlossene KI-Antworten erscheinen im Thread. **Übernehmen** reserviert das Gespräch atomar für eine berechtigte Person, stoppt die laufende KI-Ausgabe und zeigt den aus Slack abgerufenen Namen im Portal.
+Pro Portal-Gespräch entsteht ein Channel-Thread mit Gesprächs-ID sowie einem verifizierten Portal-Namen oder einem pseudonymen Besuchernamen. Nutzerfragen und abgeschlossene KI-Antworten erscheinen im Thread. **Übernehmen** reserviert das Gespräch atomar für eine berechtigte Person, stoppt die laufende KI-Ausgabe und zeigt den aus Slack abgerufenen Namen im Portal.
 
 **Jede neue Textantwort der zuständigen Person in diesem Thread wird eine Kundenantwort.** Andere Personen dürfen dort intern diskutieren; die zuständige Person muss dafür einen anderen Ort verwenden. Antworten von vor der Übernahme, Bot-Nachrichten, Bearbeitungen, Löschungen und Anhänge werden nicht synchronisiert. **An Bot zurückgeben** erlaubt KI-Antworten auf die nächste Portal-Frage; **Abschließen** beendet das Gespräch. Nur die zuständige Person darf zurückgeben oder abschließen. Es gibt keinen automatischen Wechsel.
 
 ```mermaid
 flowchart LR
-  Portal[Portal mit Entra-Anmeldung] -->|API-Token und Nachrichten| API[CSP API: Chat und Slack-Plugin]
+  Portal[Portal: Entra oder Besuchersitzung] -->|API-Token und Nachrichten| API[CSP API: Chat und Slack-Plugin]
   API <-->|Verlauf und Zustand| DB[(PostgreSQL)]
   DB --> Outbox[Geordnete Outbox]
   Outbox -->|Slack Web API| Thread[Support-Channel: ein Thread je Chat]
@@ -30,7 +30,7 @@ pnpm dlx @kieksme/csp-cli plugin add @kieksme/csp-plugin-slack
 
 Das Chat-Plugin muss installiert sein. `chatSupport` erfordert genau einen Supporttransport; Teams und Slack können nicht gemeinsam denselben Gesprächsbestand verwalten. Bestehende Teams-Gespräche werden nicht automatisch nach Slack migriert. Beim Wechsel eine eigene neue Datenbank verwenden und alte Gespräche über die bisherige Instanz abschließen.
 
-1. Die [Entra-Konfiguration](teams-support.md#installation-und-entra) für die Single-Tenant-API und Portal-SPA übernehmen: delegiertes `Chat.Access`, API-Audience als App-GUID, SPA-Redirect-URI und PKCE. Diese Anmeldung identifiziert Portal-Nutzer; Slack-Supportrechte werden separat geprüft.
+1. Für verifizierte Portal-Nutzer die [Entra-Konfiguration](teams-support.md#installation-und-entra) für die Single-Tenant-API und Portal-SPA übernehmen: delegiertes `Chat.Access`, API-Audience als App-GUID, SPA-Redirect-URI und PKCE. Diese Anmeldung identifiziert Portal-Nutzer; Slack-Supportrechte werden separat geprüft. Für offene Webseiten stattdessen [anonyme Besuchersitzungen](#offene-webseite-ohne-login) konfigurieren; Entra-Apps und -IDs entfallen.
 2. Unter [Slack Apps](https://api.slack.com/apps) eine App aus `packages/plugin-slack/slack-app/manifest.example.json` erstellen. Beide `REPLACE_WITH_API_HOST`-Platzhalter durch den öffentlich erreichbaren HTTPS-API-Host ersetzen. App und Bot heißen **Support**. Installation gegebenenfalls durch den Workspace-Administrator freigeben lassen.
 3. Bot-Token (`xoxb-…`) und Signing Secret ausschließlich am API-Host hinterlegen; App-ID (`A…`), Workspace-ID (`T…`), Channel-ID (`C…`/`G…`) und erlaubte Support-Nutzer-IDs (`U…`/`W…`, kommasepariert) konfigurieren. Die API-Runtime-Vorlage steht in `templates/customer/.env.slack.example`.
 4. Die App in den Workspace installieren und den Bot in den dedizierten Channel einladen. Ein privater Channel begrenzt die Leserschaft. Öffentliche oder private interne Channels werden unterstützt; Slack Connect, Direktnachrichten und mehrere Workspaces sind ausgeschlossen. Die Runtime prüft beim Start Token-Workspace, Channel-ID, Bot-Mitgliedschaft und Channel-Zustand.
@@ -84,3 +84,11 @@ In einer ausschließlich mit Chat und Slack registrierten Demo-Instanz `public.d
 Automatisierte Prüfungen: `pnpm check`, `pnpm test:packages` und `pnpm test:browser`. Die Paketprüfung installiert gepacktes Slack in einer frischen Kundeninstanz und prüft Übernahme, Antwort, Rückgabe und Abschluss. Mit `CSP_TEST_DATABASE_URL` prüft die Testsuite außerdem Neustart- und Bereinigungsverhalten mit PostgreSQL.
 
 Vor dem Live-Einsatz: echter Portal-Login, Thread-Erstellung, Nutzerfrage und KI-Antwort, Übernahme während KI-Streaming, Antwort derselben Person im Portal, interne Antwort einer anderen Person, verweigerte Übernahme ohne Berechtigung, Bot-Rückgabe und Abschluss prüfen. Zusätzlich Neustart während Supportmodus, doppelte Slack-Events und vorübergehenden Slack-Ausfall prüfen. Diese Live-Abnahme steht noch aus.
+
+## Offene Webseite ohne Login
+
+Slack unterstützt `chatSupport: { "mode": "slack", "auth": "anonymous" }` ohne Entra-IDs. API-Runtime: `CSP_SLACK_AUTH=anonymous`, `CSP_CHAT_SESSION_SECRET` als zufälliger 32-Byte-Schlüssel (64 Hexzeichen, `openssl rand -hex 32`). Den Schlüssel nur im Secret-Store speichern. Entra bleibt der Standard; Teams benötigt weiterhin den verifizierten Portal-Login.
+
+Die API vergibt automatisch ein signiertes Besuchertoken mit 24 Stunden Laufzeit. Es liegt in `sessionStorage` und erlaubt ausschließlich Zugriff auf die eigenen Chats. Der pseudonyme Besuchername ist keine verifizierte Identität. Nach Ablauf oder Schließen des Tabs sind frühere Chats ohne Token nicht erreichbar; „Chat neu verbinden“ startet eine neue Sitzung. Gespeicherte Nachrichten unterliegen weiterhin der Retention.
+
+Session-Erstellung: fünf je IP und Stunde; schreibende Gesprächsanfragen: 30 je IP und Minute, zusätzlich bestehende Nachrichten- und Generierungsgrenzen. Hinter einem Proxy `CSP_TRUST_PROXY` nur mit bereinigten Forwarded-Headern aktivieren; andernfalls teilen Besucher die Proxy-IP-Grenze. Supportpersonen brauchen weiterhin die Slack-Allowlist und aktuelle Channel-Mitgliedschaft. PostgreSQL, Runtime-Secrets und Live-Abnahme bleiben erforderlich.

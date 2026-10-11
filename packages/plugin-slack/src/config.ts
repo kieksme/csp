@@ -6,6 +6,11 @@ export const configSchema = z
     CSP_SLACK_ENABLED: z.enum(['true', 'false']).default('false'),
     CSP_SLACK_DEMO: z.enum(['true', 'false']).default('false'),
     CSP_DEMO: z.string().optional(),
+    CSP_SLACK_AUTH: z.enum(['entra', 'anonymous']).default('entra'),
+    CSP_CHAT_SESSION_SECRET: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/i)
+      .optional(),
     CSP_CHAT_DATABASE_URL: z.string().url().optional(),
     CSP_CHAT_RETENTION_DAYS: z.coerce
       .number()
@@ -49,9 +54,6 @@ export const configSchema = z
     if (c.CSP_SLACK_ENABLED !== 'true') return;
     for (const key of [
       'CSP_CHAT_DATABASE_URL',
-      'CSP_ENTRA_TENANT_ID',
-      'CSP_ENTRA_API_AUDIENCE',
-      'CSP_ENTRA_PORTAL_CLIENT_ID',
       'CSP_SLACK_BOT_TOKEN',
       'CSP_SLACK_SIGNING_SECRET',
       'CSP_SLACK_TEAM_ID',
@@ -66,6 +68,19 @@ export const configSchema = z
           message: 'Required for Slack support',
         });
     }
+    for (const key of c.CSP_SLACK_AUTH === 'anonymous'
+      ? (['CSP_CHAT_SESSION_SECRET'] as const)
+      : ([
+          'CSP_ENTRA_TENANT_ID',
+          'CSP_ENTRA_API_AUDIENCE',
+          'CSP_ENTRA_PORTAL_CLIENT_ID',
+        ] as const))
+      if (!c[key])
+        ctx.addIssue({
+          code: 'custom',
+          path: [key],
+          message: 'Required for Slack authentication',
+        });
     if (!/^postgres(?:ql)?:\/\//.test(c.CSP_CHAT_DATABASE_URL ?? ''))
       ctx.addIssue({
         code: 'custom',

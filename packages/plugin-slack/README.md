@@ -1,6 +1,6 @@
 # CSP Slack plugin
 
-Optional Slack support for authenticated portal conversations: one channel thread per chat, explicit human takeover, assigned-person replies, bot return and close. Requires the CSP chat plugin, Entra portal identity and PostgreSQL. Slack support authorization uses an explicit user allowlist plus current channel membership.
+Optional Slack support for authenticated or anonymous portal conversations: one channel thread per chat, explicit human takeover, assigned-person replies, bot return and close. Requires the CSP chat plugin, PostgreSQL and either Entra portal identity or an anonymous browser session. For an open website set `chatSupport.auth: "anonymous"`, `CSP_SLACK_AUTH=anonymous` and a random 32-byte `CSP_CHAT_SESSION_SECRET` (64 hex characters); no Entra IDs are required. Slack support authorization uses an explicit user allowlist plus current channel membership.
 
 In a standalone customer repository, after package publication:
 

@@ -124,7 +124,7 @@ export interface ThemeTokens {
 }
 export interface ChatSupportConfig {
   mode: 'teams' | 'slack' | 'demo';
-  auth?: 'msal' | 'session';
+  auth?: 'msal' | 'session' | 'anonymous';
   tenantId?: string;
   clientId?: string;
   scope?: string;

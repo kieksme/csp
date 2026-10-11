@@ -74,14 +74,23 @@ export const profileSchema = z
     chatSupport: z
       .object({
         mode: z.enum(['teams', 'slack', 'demo']),
-        auth: z.enum(['msal', 'session']).optional(),
+        auth: z.enum(['msal', 'session', 'anonymous']).optional(),
         tenantId: z.string().uuid().optional(),
         clientId: z.string().uuid().optional(),
         scope: z.string().min(1).optional(),
       })
       .strict()
       .superRefine((c, ctx) => {
-        if (c.mode !== 'demo' && (!c.tenantId || !c.clientId || !c.scope))
+        if (c.auth === 'anonymous' && c.mode !== 'slack')
+          ctx.addIssue({
+            code: 'custom',
+            message: 'Anonymous support requires Slack',
+          });
+        if (
+          c.mode !== 'demo' &&
+          c.auth !== 'anonymous' &&
+          (!c.tenantId || !c.clientId || !c.scope)
+        )
           ctx.addIssue({
             code: 'custom',
             message: 'Support chat requires tenantId, clientId and API scope',

@@ -29,6 +29,7 @@ export function SupportChat(ctx: BrowserContext) {
   const seq = useRef(0),
     requestRef =
       useRef<(path: string, init?: RequestInit) => Promise<Response>>(null);
+  const anonymous = ctx.config.chatSupport?.auth === 'anonymous';
   const demo = ctx.config.chatSupport?.mode === 'demo';
   useEffect(() => {
     let alive = true;
@@ -210,7 +211,11 @@ export function SupportChat(ctx: BrowserContext) {
           : current?.status === 'closed'
             ? 'Gespräch abgeschlossen'
             : 'Digitaler Assistent'}
-        {auth && ready && !demo ? ` · Angemeldet als ${auth.name}` : ''}
+        {auth && ready && !demo
+          ? anonymous
+            ? ` · ${auth.name}`
+            : ` · Angemeldet als ${auth.name}`
+          : ''}
       </p>
       <div
         className="chat-history grid gap-3 max-h-[400px] overflow-auto mb-4"
@@ -264,13 +269,19 @@ export function SupportChat(ctx: BrowserContext) {
             void auth
               ?.login()
               .catch(() =>
-                setError('Microsoft-Anmeldung konnte nicht gestartet werden.'),
+                setError(
+                  anonymous
+                    ? 'Chat konnte nicht neu verbunden werden.'
+                    : 'Microsoft-Anmeldung konnte nicht gestartet werden.',
+                ),
               )
           }
         >
-          {ctx.config.chatSupport?.auth === 'session'
-            ? 'Portal-Anmeldung erneuern'
-            : 'Mit Microsoft anmelden'}
+          {anonymous
+            ? 'Chat neu verbinden'
+            : ctx.config.chatSupport?.auth === 'session'
+              ? 'Portal-Anmeldung erneuern'
+              : 'Mit Microsoft anmelden'}
         </button>
       )}
       {ready && (
@@ -361,13 +372,19 @@ export function SupportChat(ctx: BrowserContext) {
             void auth
               .login()
               .catch(() =>
-                setError('Microsoft-Anmeldung konnte nicht gestartet werden.'),
+                setError(
+                  anonymous
+                    ? 'Chat konnte nicht neu verbunden werden.'
+                    : 'Microsoft-Anmeldung konnte nicht gestartet werden.',
+                ),
               )
           }
         >
-          {ctx.config.chatSupport?.auth === 'session'
-            ? 'Portal-Anmeldung erneuern'
-            : 'Microsoft-Anmeldung erneuern'}
+          {anonymous
+            ? 'Chat neu verbinden'
+            : ctx.config.chatSupport?.auth === 'session'
+              ? 'Portal-Anmeldung erneuern'
+              : 'Microsoft-Anmeldung erneuern'}
         </button>
       )}
       {error && (
