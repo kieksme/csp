@@ -515,6 +515,21 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
 
+  packages/plugin-telegram:
+    dependencies:
+      '@kieksme/csp-core':
+        specifier: workspace:^
+        version: link:../core
+      '@kieksme/csp-sdk':
+        specifier: workspace:^
+        version: link:../sdk
+      fastify:
+        specifier: ^5.6.1
+        version: 5.12.5
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
   packages/sdk:
     dependencies:
       fastify:

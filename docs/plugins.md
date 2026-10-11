@@ -10,9 +10,9 @@
 | `@kieksme/csp-plugin-content` | `content` | Prozesse, Ticketlinks/-vorlagen, FAQ und Chat-Quellen      | `CSP_CONTENT_PATH`                          |
 | `@kieksme/csp-plugin-chat`    | `chat`    | Gestreamte Antworten aus statischen und Live-Quellen       | Provider, Modell und gegebenenfalls API-Key |
 
-Die Plugins `contact`, `signl4`, `kuma`, `content` und `chat` stellen zusätzlich WebMCP-Tools für Browser-Agenten bereit: `signl4_*` (Dienst, Schichtplan, Team, vCard, Alerts), `kuma_get_status`, `contact_get_hotline`, `content_*` (FAQ, Prozesse, Ticketvorlagen) und `chat_ask`; die Teams- und Slack-Plugins stellen keine Tools bereit. Die Liste mit Parametern steht unter [WebMCP](webmcp.md). Mit dem Hinzufügen oder Entfernen eines Plugins ändern sich die Tools automatisch; `public.webmcp: false` schaltet sie ab.
+Die Plugins `contact`, `signl4`, `kuma`, `content` und `chat` stellen zusätzlich WebMCP-Tools für Browser-Agenten bereit: `signl4_*` (Dienst, Schichtplan, Team, vCard, Alerts), `kuma_get_status`, `contact_get_hotline`, `content_*` (FAQ, Prozesse, Ticketvorlagen) und `chat_ask`; die Teams-, Slack- und Telegram-Plugins stellen keine Tools bereit. Die Liste mit Parametern steht unter [WebMCP](webmcp.md). Mit dem Hinzufügen oder Entfernen eines Plugins ändern sich die Tools automatisch; `public.webmcp: false` schaltet sie ab.
 
-`apps/demo` registriert alle fünf Plugins. `apps/northstar` und `templates/customer` registrieren Kontakt, Inhalte und Chat. Teams und Slack benötigen `chat`; die übrigen mitgelieferten Plugins haben keine verpflichtenden Plugin-Abhängigkeiten; der Chat verwendet die Wissensquellen der tatsächlich installierten Plugins.
+`apps/demo` registriert alle fünf Plugins. `apps/northstar` und `templates/customer` registrieren Kontakt, Inhalte und Chat. Teams, Slack und Telegram benötigen `chat`; die übrigen mitgelieferten Plugins haben keine verpflichtenden Plugin-Abhängigkeiten; der Chat verwendet die Wissensquellen der tatsächlich installierten Plugins.
 
 ## CLI verwenden
 
@@ -46,3 +46,7 @@ Weiter: [Plugin-SDK](plugin-sdk.md), [Konfiguration](configuration.md), [API](ap
 ## Slack-Support
 
 `@kieksme/csp-plugin-slack` benötigt `chat`, hat keine eigene Browser-Sektion und nutzt dieselben authentifizierten Gesprächsrouten wie Teams. Zusätzlich registriert es signierte Slack-Events und Button-Aktionen. `chatSupport.mode: "slack"` aktiviert die gemeinsame Support-UI; pro Instanz ist genau ein Supporttransport zulässig. [Installation, Manifest, Berechtigungen und Demo](slack-support.md).
+
+## Telegram-Support
+
+`@kieksme/csp-plugin-telegram` benötigt `chat` und nutzt die gemeinsame Support-UI ohne zusätzliche Browser-Sektion. `chatSupport.mode: "telegram"` wählt diesen Transport; anonyme Besuchersitzungen und Entra sind verfügbar. Ein Thema je Gespräch in einer Forum-Supergruppe, Secret-geschützte Webhooks, dauerhafte Inbox und aktuelle Mitgliedschaftsprüfung. [Einrichtung und Architektur](telegram-support.md).

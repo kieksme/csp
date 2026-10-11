@@ -203,7 +203,7 @@ export function SupportChat(ctx: BrowserContext) {
       <p className="text-[0.75rem] text-ink mb-3">
         {demo
           ? 'Synthetische Support-Demo. Keine Übertragung an einen Support-Channel.'
-          : `Ihre Nachrichten und die Antworten werden an den Support in ${ctx.config.chatSupport?.mode === 'slack' ? 'Slack' : 'Microsoft Teams'} weitergegeben.`}
+          : `Ihre Nachrichten und die Antworten werden an den Support in ${ctx.config.chatSupport?.mode === 'slack' ? 'Slack' : ctx.config.chatSupport?.mode === 'telegram' ? 'Telegram' : 'Microsoft Teams'} weitergegeben.`}
       </p>
       <p role="status" className="text-[0.8125rem] mb-3">
         {current?.status === 'support'

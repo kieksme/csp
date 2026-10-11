@@ -196,3 +196,23 @@ it('allows anonymous Slack without Entra IDs but rejects anonymous Teams', () =>
     ),
   ).toThrow('Anonymous support requires Slack');
 });
+
+it('allows anonymous Telegram profiles and rejects multiple support transports', () => {
+  const { file } = fixture({
+    plugins: ['@kieksme/csp-plugin-chat', '@kieksme/csp-plugin-telegram'],
+    chatSupport: { mode: 'telegram', auth: 'anonymous' },
+  });
+  expect(loadProfile(file).config.chatSupport).toEqual({
+    mode: 'telegram',
+    auth: 'anonymous',
+  });
+  const mixed = fixture({
+    plugins: [
+      '@kieksme/csp-plugin-chat',
+      '@kieksme/csp-plugin-telegram',
+      '@kieksme/csp-plugin-slack',
+    ],
+    chatSupport: { mode: 'telegram', auth: 'anonymous' },
+  });
+  expect(() => loadProfile(mixed.file)).toThrow('exactly one matching');
+});

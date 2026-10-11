@@ -1,0 +1,53 @@
+{
+  "name": "@kieksme/csp-plugin-telegram",
+  "version": "0.10.1",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsup src/browser.tsx src/server.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom"
+  },
+  "dependencies": {
+    "@kieksme/csp-sdk": "workspace:^",
+    "@kieksme/csp-core": "workspace:^",
+    "zod": "^3.25.76",
+    "fastify": "^5.6.1"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "cspPlugin": {
+    "id": "telegram",
+    "sdkVersion": "^0.10.1",
+    "browser": "./browser",
+    "server": "./server",
+    "requires": [
+      "chat"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kieksme/csp.git",
+    "directory": "packages/plugin-telegram"
+  },
+  "bugs": {
+    "url": "https://github.com/kieksme/csp/issues"
+  }
+}

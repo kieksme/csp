@@ -73,7 +73,7 @@ export const profileSchema = z
       .optional(),
     chatSupport: z
       .object({
-        mode: z.enum(['teams', 'slack', 'demo']),
+        mode: z.enum(['teams', 'slack', 'telegram', 'demo']),
         auth: z.enum(['msal', 'session', 'anonymous']).optional(),
         tenantId: z.string().uuid().optional(),
         clientId: z.string().uuid().optional(),
@@ -81,10 +81,10 @@ export const profileSchema = z
       })
       .strict()
       .superRefine((c, ctx) => {
-        if (c.auth === 'anonymous' && c.mode !== 'slack')
+        if (c.auth === 'anonymous' && !['slack', 'telegram'].includes(c.mode))
           ctx.addIssue({
             code: 'custom',
-            message: 'Anonymous support requires Slack',
+            message: 'Anonymous support requires Slack or Telegram',
           });
         if (
           c.mode !== 'demo' &&
@@ -214,9 +214,11 @@ export function loadProfile(file: string, env: Env = {}, production = false) {
   config.chatSupport = p.chatSupport;
   if (p.chatSupport) {
     const transports = p.plugins.filter((plugin) =>
-      ['@kieksme/csp-plugin-teams', '@kieksme/csp-plugin-slack'].includes(
-        plugin,
-      ),
+      [
+        '@kieksme/csp-plugin-teams',
+        '@kieksme/csp-plugin-slack',
+        '@kieksme/csp-plugin-telegram',
+      ].includes(plugin),
     );
     if (
       transports.length !== 1 ||

@@ -1,0 +1,67 @@
+import type { ServerPlugin } from '@kieksme/csp-sdk';
+import {
+  MemoryStore,
+  PostgresStore,
+  portalAuthenticator,
+  setupAnonymousSessions,
+  setupConversations,
+} from '@kieksme/csp-core/support';
+import { cspPlugin } from '../package.json';
+import { configSchema } from './config.js';
+import { createTelegramBridge } from './telegram.js';
+export { configSchema } from './config.js';
+export default {
+  id: 'telegram',
+  sdkVersion: cspPlugin.sdkVersion,
+  requires: ['chat'],
+  configSchema,
+  async setup(ctx) {
+    const c = configSchema.parse(ctx.env),
+      demo = c.CSP_TELEGRAM_DEMO === 'true';
+    if (c.CSP_TELEGRAM_ENABLED !== 'true' && !demo) {
+      if (ctx.config.chatSupport)
+        throw new Error(
+          'Profile requires support, but runtime support is disabled',
+        );
+      return;
+    }
+    if (ctx.config.chatSupport?.mode !== (demo ? 'demo' : 'telegram'))
+      throw new Error('Frontend and runtime support modes differ');
+    const anonymous = c.CSP_TELEGRAM_AUTH === 'anonymous';
+    if (!demo && anonymous !== (ctx.config.chatSupport.auth === 'anonymous'))
+      throw new Error('Frontend and runtime authentication modes differ');
+    if (
+      !demo &&
+      !anonymous &&
+      (ctx.config.chatSupport.tenantId !== c.CSP_ENTRA_TENANT_ID ||
+        ctx.config.chatSupport.clientId !== c.CSP_ENTRA_PORTAL_CLIENT_ID ||
+        ctx.config.chatSupport.scope !==
+          `api://${c.CSP_ENTRA_API_AUDIENCE}/${c.CSP_ENTRA_API_SCOPE}`)
+    )
+      throw new Error('Entra frontend and API configuration differ');
+    const store = demo
+      ? new MemoryStore()
+      : new PostgresStore(c.CSP_CHAT_DATABASE_URL!);
+    const authenticate = demo
+      ? async () => ({
+          tenantId: 'demo',
+          userId: 'demo-user',
+          name: 'Portal-Nutzer Demo',
+        })
+      : anonymous
+        ? setupAnonymousSessions(ctx, c.CSP_CHAT_SESSION_SECRET!)
+        : portalAuthenticator(
+            c.CSP_ENTRA_TENANT_ID!,
+            c.CSP_ENTRA_API_AUDIENCE!,
+            c.CSP_ENTRA_API_SCOPE,
+          );
+    try {
+      await setupConversations(ctx, store, authenticate, demo, (onTake) =>
+        createTelegramBridge(ctx.app, store, c, ctx.fetch, onTake),
+      );
+    } catch (e) {
+      await store.close();
+      throw e;
+    }
+  },
+} satisfies ServerPlugin;

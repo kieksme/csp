@@ -35,7 +35,12 @@ export interface Conversation {
   events: Event[];
   updatedAt: number;
   generation?: string;
-  thread?: { conversationId: string; rootId: string; serviceUrl?: string };
+  thread?: {
+    conversationId: string;
+    rootId: string;
+    serviceUrl?: string;
+    lastUpdateAt?: number;
+  };
   seen: string[];
 }
 export interface Delivery {
