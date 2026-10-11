@@ -455,6 +455,13 @@ it('acknowledges Telegram text above the portal limit without blocking subsequen
   expect(
     (await f.store.get(f.c.id))?.messages.some((m) => m.kind === 'support'),
   ).toBe(false);
+  expect(
+    f.calls.some(
+      (c) =>
+        c.method === 'sendMessage' &&
+        String(c.body.text).includes('nicht weitergeleitet'),
+    ),
+  ).toBe(true);
   await f.send(f.message('Eine gültige Antwort'));
   expect((await f.store.get(f.c.id))?.messages.at(-1)?.content).toBe(
     'Eine gültige Antwort',

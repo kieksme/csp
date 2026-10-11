@@ -300,6 +300,13 @@ export async function createTelegramBridge(
     } catch (error) {
       if (!(error instanceof ChatError)) throw error;
       await answer(job, error.message);
+      if (!job.callbackId && job.text)
+        await api('sendMessage', {
+          chat_id: config.CSP_TELEGRAM_CHAT_ID,
+          message_thread_id: Number(job.rootId),
+          text: `Support-Antwort nicht weitergeleitet: ${error.message}`,
+          link_preview_options: { is_disabled: true },
+        }).catch(() => {});
     }
   };
   const worker = async () => {

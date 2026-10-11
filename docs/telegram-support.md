@@ -6,7 +6,7 @@
 
 **Übernehmen** reserviert den Chat atomar für eine freigegebene Supportperson und unterbricht laufende KI-Ausgabe. Das Portal zeigt den aktuellen Telegram-Profilnamen der Person. Jede neue Textnachricht dieser Person im zugeordneten Thema wird eine Portal-Antwort. Für interne Diskussionen muss die zuständige Person ein anderes Thema verwenden. Andere Personen können im Thema diskutieren, ihre Nachrichten gehen nicht an den Besucher.
 
-**An Bot zurückgeben** erlaubt KI-Antworten auf die nächste Portal-Frage. **Abschließen** beendet das Gespräch. Beide Aktionen darf ausschließlich die zuständige Supportperson ausführen; es gibt keinen automatischen Wechsel. Bot-Nachrichten, weitergeleitete Nachrichten, anonyme Administrator-Nachrichten, Bearbeitungen, Medien und unbekannte Themen werden ignoriert. Supporttexte dürfen 1–4000 Zeichen enthalten. Längere KI-Antworten werden als mehrere einfache Textnachrichten ohne Markdown/HTML und ohne Linkvorschau gesendet.
+**An Bot zurückgeben** erlaubt KI-Antworten auf die nächste Portal-Frage. **Abschließen** beendet das Gespräch. Beide Aktionen darf ausschließlich die zuständige Supportperson ausführen; es gibt keinen automatischen Wechsel. Bot-Nachrichten, weitergeleitete Nachrichten, anonyme Administrator-Nachrichten, Bearbeitungen, Medien und unbekannte Themen werden ignoriert. Supporttexte dürfen 1–4000 Zeichen enthalten. Überlange Supporttexte werden nicht weitergeleitet; der Bot versucht, einen Hinweis im Thema zu senden. Längere KI-Antworten werden als mehrere einfache Textnachrichten ohne Markdown/HTML und ohne Linkvorschau gesendet.
 
 ```mermaid
 flowchart LR
