@@ -217,11 +217,17 @@ export function VoiceInput({
   }
   if (!enabled) return null;
   return (
-    <div className="chat-voice" data-recording={state === 'recording'}>
+    <div
+      className="chat-voice"
+      data-state={state}
+      data-recording={state === 'recording'}
+    >
       {state === 'idle' ? (
         <button
           type="button"
-          className="chat-voice-button"
+          className="chat-voice-button chat-microphone"
+          aria-label="Nachricht diktieren"
+          title="Nachricht diktieren"
           disabled={disabled}
           onClick={() => void start()}
         >
@@ -230,7 +236,6 @@ export function VoiceInput({
             viewBox="0 0 24 24"
             width="16"
             height="16"
-            className="inline mr-2"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -238,7 +243,6 @@ export function VoiceInput({
             <rect x="9" y="2" width="6" height="12" rx="3" />
             <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8" />
           </svg>
-          Nachricht diktieren
         </button>
       ) : (
         <>

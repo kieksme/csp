@@ -6,7 +6,7 @@ Das Chat-Plugin stellt dieselbe Eingabe und denselben Verlauf für den KI-Chat u
 
 Beide Chat-Modi verwenden einen gemeinsamen Kopf mit Service-Chat, Gesprächsstatus und Hinweisen zur Weiterleitung. Eigene Nachrichten stehen rechts auf einer abgesetzten Fläche; Assistent und Support antworten links mit sichtbarem Absender. Übernommene Support-Antworten haben zusätzlich eine farbige Seitenmarkierung. Statusänderungen bleiben als Text erkennbar.
 
-Eingabe, Senden, Tastenkürzel und optionale Spracheingabe bilden einen zusammenhängenden Bereich. Persönlicher Support und „Problem gelöst“ bleiben als separate Aktionen erreichbar. Die Gestaltung folgt den Kundenfarben und unterstützt helle sowie dunkle Darstellung und schmale Bildschirme.
+Eingabe, Senden, Tastenkürzel und optionale Spracheingabe bilden einen zusammenhängenden Bereich. Der Mikrofon-Button zeigt nur das Symbol; der Hinweis zur Texterkennung steht daneben. Auf schmalen Bildschirmen bleibt seine Touchfläche 44 × 44 px groß. Persönlicher Support und „Problem gelöst“ bleiben als separate Aktionen erreichbar. Die Gestaltung folgt den Kundenfarben und unterstützt helle sowie dunkle Darstellung und schmale Bildschirme.
 
 ## Eingabe und Verlauf
 
@@ -16,7 +16,7 @@ Der Verlauf ist per Tab-Taste erreichbar und lässt sich mit den Pfeiltasten scr
 
 ## Diktieren
 
-Bei einem echten OpenAI-Provider und aktivierter Transkription erscheint **Nachricht diktieren**, sofern der Browser Mikrofonzugriff und eine unterstützte MediaRecorder-Aufnahme anbietet. Erst der Klick startet die Mikrofonfreigabe. Aufnahme stoppen lädt die Aufnahme zur Texterkennung über die API an OpenAI; Abbrechen verwirft sie. Nach spätestens 60 Sekunden stoppt die Aufnahme automatisch. Mikrofonspuren werden bei Stop, Abbruch, Gesprächsabschluss und Verlassen der Komponente freigegeben.
+Bei einem echten OpenAI-Provider und aktivierter Transkription erscheint ein kompakter Mikrofon-Button mit Tooltip und zugänglichem Namen **Nachricht diktieren**, sofern der Browser Mikrofonzugriff und eine unterstützte MediaRecorder-Aufnahme anbietet. Erst der Klick startet die Mikrofonfreigabe. Aufnahme stoppen lädt die Aufnahme zur Texterkennung über die API an OpenAI; Abbrechen verwirft sie. Nach spätestens 60 Sekunden stoppt die Aufnahme automatisch. Mikrofonspuren werden bei Stop, Abbruch, Gesprächsabschluss und Verlassen der Komponente freigegeben.
 
 Das Transkript ergänzt den aktuellen Entwurf. Es erzeugt weder eine Gesprächsnachricht noch eine KI-Anfrage: Der Benutzer prüft, bearbeitet und sendet selbst. Mikrofon-, Upload- und Providerfehler erhalten den bisherigen Entwurf. Ein Transkript, das den Entwurf über 4000 Zeichen verlängern würde, wird mit einem Hinweis abgelehnt. Es gibt keine Audioantwort und keine dauerhafte Speicherung der Audiodatei im Portal.
 

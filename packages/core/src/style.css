@@ -381,7 +381,7 @@ section .faq-controls button:hover {
   justify-content: center;
   align-items: center;
   min-height: 44px;
-  padding: 0 20px;
+  padding: 0 16px;
   flex: 0 0 auto;
   border: 0;
   border-radius: 8px;
@@ -457,8 +457,8 @@ section .faq-controls button:hover {
 }
 .chat-panel .chat-action {
   min-height: 44px;
-  margin: 16px 8px 0 0;
-  padding: 10px 14px;
+  margin: 10px 6px 0 0;
+  padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
   font-size: 0.75rem;
@@ -518,4 +518,33 @@ section .faq-controls button:hover {
 .chat-panel .chat-history:focus-visible {
   outline: 2px solid var(--muted);
   outline-offset: 2px;
+}
+
+.chat-voice[data-state='idle'] {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+.chat-panel .chat-microphone {
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+}
+.chat-voice[data-state='idle'] .chat-voice-notice {
+  margin: 0;
+}
+.chat-voice[data-state='idle'] [role='alert'] {
+  grid-column: 1 / -1;
+}
+@media (max-width: 450px) {
+  .chat-voice[data-state='idle'] {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+  .chat-panel .chat-microphone {
+    width: 44px;
+    min-height: 44px;
+  }
 }
