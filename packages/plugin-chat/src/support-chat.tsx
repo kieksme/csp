@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import type { BrowserContext, ChatResponder } from '@kieksme/csp-sdk';
 import { answerParts } from './answer.js';
 import { supportSession } from './support-session.js';
+import {
+  NewMessages,
+  Shortcut,
+  sendShortcut,
+  useChatScroll,
+} from './chat-controls.js';
+import { VoiceInput } from './voice-input.js';
 type Session = Awaited<ReturnType<typeof supportSession>>;
 interface Message {
   id: string;
@@ -14,7 +21,8 @@ interface Message {
 }
 interface Conversation {
   id: string;
-  status: 'bot' | 'support' | 'closed';
+  status: 'bot' | 'waiting' | 'support' | 'closed';
+  supportRequest?: { notification: 'pending' | 'sent' | 'failed' };
   support?: { id: string; name: string };
   resolution?: { by: 'visitor' | 'support'; name: string; at: number };
   messages: Message[];
@@ -27,6 +35,15 @@ export function SupportChat(ctx: BrowserContext) {
     [busy, setBusy] = useState(false),
     [ready, setReady] = useState(false),
     [auth, setAuth] = useState<Session | null>(null);
+  const [voiceBusy, setVoiceBusy] = useState(false);
+  const scroll = useChatScroll(current?.messages, current?.id);
+  const sending = useRef(false);
+  const blocked =
+    busy ||
+    voiceBusy ||
+    !ready ||
+    current?.status === 'closed' ||
+    !!current?.messages.some((m) => !m.complete);
   const seq = useRef(0),
     requestRef =
       useRef<(path: string, init?: RequestInit) => Promise<Response>>(null);
@@ -155,6 +172,7 @@ export function SupportChat(ctx: BrowserContext) {
     const c: Conversation = await (
       await requestRef.current!('', { method: 'POST' })
     ).json();
+    scroll.follow();
     seq.current = c.seq;
     setCurrent(c);
     return c;
@@ -163,7 +181,9 @@ export function SupportChat(ctx: BrowserContext) {
   const pending = useRef<{ id: string; content: string } | null>(null);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim() || busy || !ready) return;
+    if (!input.trim() || blocked || sending.current) return;
+    sending.current = true;
+    scroll.follow();
     setBusy(true);
     setError('');
     try {
@@ -179,10 +199,44 @@ export function SupportChat(ctx: BrowserContext) {
       const refreshed: Conversation = await (
         await requestRef.current!(`/${c.id}`)
       ).json();
-      setCurrent(refreshed);
+      applySnapshot(refreshed);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Nachricht nicht gesendet.');
     } finally {
+      sending.current = false;
+      setBusy(false);
+    }
+  }
+  function applySnapshot(result: Conversation) {
+    setCurrent((previous) =>
+      previous?.id === result.id && previous.seq > result.seq
+        ? previous
+        : result,
+    );
+  }
+  async function requestHuman() {
+    if (busy || !ready || sending.current) return;
+    sending.current = true;
+    setBusy(true);
+    setError('');
+    try {
+      const c = current ?? (await newConversation());
+      const result: Conversation = await (
+        await requestRef.current!(`/${c.id}/request-support`, {
+          method: 'POST',
+          body: '{}',
+        })
+      ).json();
+      applySnapshot(result);
+      scroll.follow();
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Support konnte nicht angefragt werden.',
+      );
+    } finally {
+      sending.current = false;
       setBusy(false);
     }
   }
@@ -197,7 +251,7 @@ export function SupportChat(ctx: BrowserContext) {
           body: '{}',
         })
       ).json();
-      setCurrent(result);
+      applySnapshot(result);
       pending.current = null;
       setInput('');
     } catch (e) {
@@ -207,6 +261,7 @@ export function SupportChat(ctx: BrowserContext) {
           : 'Problem konnte nicht als gelöst markiert werden.',
       );
     } finally {
+      sending.current = false;
       setBusy(false);
     }
   }
@@ -233,11 +288,17 @@ export function SupportChat(ctx: BrowserContext) {
       <p role="status" className="text-[0.8125rem] mb-3">
         {current?.status === 'support'
           ? `${current.support?.name} · Support`
-          : current?.status === 'closed'
-            ? current.resolution
-              ? 'Problem gelöst'
-              : 'Gespräch abgeschlossen'
-            : 'Digitaler Assistent'}
+          : current?.status === 'waiting'
+            ? current.supportRequest?.notification === 'sent'
+              ? 'Support-Team informiert · KI pausiert'
+              : current.supportRequest?.notification === 'failed'
+                ? 'Zustellung verzögert · erneuter Versuch läuft · KI pausiert'
+                : 'Persönlicher Support angefragt · KI pausiert'
+            : current?.status === 'closed'
+              ? current.resolution
+                ? 'Problem gelöst'
+                : 'Gespräch abgeschlossen'
+              : 'Digitaler Assistent'}
         {auth && ready && !demo
           ? anonymous
             ? ` · ${auth.name}`
@@ -245,7 +306,9 @@ export function SupportChat(ctx: BrowserContext) {
           : ''}
       </p>
       <div
-        className="chat-history grid gap-3 max-h-[400px] overflow-auto mb-4"
+        ref={scroll.history}
+        onScroll={scroll.onScroll}
+        className="chat-history grid gap-3 max-h-[min(400px,45dvh)] overflow-auto overscroll-contain mb-4"
         aria-live="polite"
         aria-label="Gesprächsverlauf"
       >
@@ -287,6 +350,7 @@ export function SupportChat(ctx: BrowserContext) {
           </div>
         ))}
       </div>
+      <NewMessages visible={scroll.unread} follow={scroll.follow} />
       {!ready && (
         <button
           type="button"
@@ -312,33 +376,52 @@ export function SupportChat(ctx: BrowserContext) {
         </button>
       )}
       {ready && (
-        <form onSubmit={submit} className="chat-form flex gap-2.5 items-end">
-          <label htmlFor="support-chat-input" className="sr-only">
-            Ihre Nachricht
-          </label>
-          <textarea
-            id="support-chat-input"
+        <div>
+          <form onSubmit={submit} className="chat-form flex gap-2.5 items-end">
+            <label htmlFor="support-chat-input" className="sr-only">
+              Ihre Nachricht
+            </label>
+            <textarea
+              id="support-chat-input"
+              value={input}
+              rows={2}
+              maxLength={4000}
+              disabled={current?.status === 'closed'}
+              className="flex-1 min-w-0 max-h-[180px] overflow-auto resize-none border border-line rounded-card bg-card p-3"
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => sendShortcut(e, blocked || !input.trim())}
+              aria-keyshortcuts="Control+Enter Meta+Enter"
+              aria-describedby="support-chat-shortcut"
+              placeholder="Wie können wir Ihnen helfen?"
+            />
+            <button
+              type="submit"
+              className="bg-accent text-accent-ink rounded-card p-3"
+              disabled={blocked || !input.trim()}
+            >
+              Senden
+            </button>
+          </form>
+          <Shortcut id="support-chat-shortcut" />
+          <VoiceInput
+            ctx={ctx}
             value={input}
-            rows={2}
-            maxLength={4000}
+            setValue={setInput}
             disabled={current?.status === 'closed'}
-            className="flex-1 min-w-0 border border-line rounded-card bg-card p-3"
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Wie können wir Ihnen helfen?"
+            token={auth?.token}
+            onBusy={setVoiceBusy}
           />
-          <button
-            type="submit"
-            className="bg-accent text-accent-ink rounded-card p-3"
-            disabled={
-              busy ||
-              !input.trim() ||
-              current?.status === 'closed' ||
-              !!current?.messages.some((m) => !m.complete)
-            }
-          >
-            Senden
-          </button>
-        </form>
+        </div>
+      )}
+      {ready && (!current || current.status === 'bot') && (
+        <button
+          type="button"
+          className="border border-line rounded-card px-4 py-2 mt-3"
+          disabled={busy}
+          onClick={() => void requestHuman()}
+        >
+          Ich möchte mit einer echten Person sprechen
+        </button>
       )}
       {ready &&
         current &&
@@ -369,7 +452,7 @@ export function SupportChat(ctx: BrowserContext) {
           className="flex flex-wrap gap-3 mt-3 text-[0.75rem]"
           aria-label="Support-Demo-Steuerung"
         >
-          {current.status === 'bot' ? (
+          {current.status === 'bot' || current.status === 'waiting' ? (
             <button
               type="button"
               className="underline"

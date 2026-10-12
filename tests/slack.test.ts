@@ -8,6 +8,7 @@ import {
   conversation,
   append,
   delivery,
+  requestSupport,
   setupConversations,
   type Conversation,
 } from '../packages/core/src/support.js';
@@ -673,4 +674,56 @@ it('resolves from Slack without takeover and prevents another supporter resolvin
   expect(
     c.messages.filter((m) => m.content.includes('als gelöst')),
   ).toHaveLength(1);
+});
+
+it('quotes visitor messages without interpreting mentions, and accepts takeover only from its recorded notification', async () => {
+  const f = await fixture();
+  const c = (await f.store.get(f.c.id))!;
+  const visitor = {
+    id: randomUUID(),
+    kind: 'user' as const,
+    content: 'Hallo <@U222> *meine Email*\nZweite Zeile',
+    complete: true,
+  };
+  await f.bridge.send(delivery(c, 'message', visitor), c);
+  const posted = f.calls.findLast(
+    (call) => call.method === 'chat.postMessage',
+  )!.body;
+  expect(posted.blocks[0].text.text).toContain('Besucher ·');
+  expect(posted.blocks[1].elements[0].type).toBe('rich_text_quote');
+  expect(posted.blocks[1].elements[0].elements[0]).toEqual({
+    type: 'text',
+    text: visitor.content,
+  });
+  await f.store.change(c.id, (current, queue) =>
+    requestSupport(current, ['U111', 'U999'], queue),
+  );
+  const job = f.store.jobs.find((job) => job.kind === 'request')!;
+  const original = vi.mocked(f.fetcher).getMockImplementation()!;
+  vi.mocked(f.fetcher).mockImplementation(async (input, options) =>
+    String(input).endsWith('/chat.postMessage')
+      ? (f.calls.push({
+          method: 'chat.postMessage',
+          body: JSON.parse(String(options?.body)),
+        }),
+        new Response(
+          JSON.stringify({ ok: true, channel: 'C111', ts: '101.000002' }),
+        ))
+      : original(input, options),
+  );
+  await f.bridge.send(job, (await f.store.get(c.id))!);
+  const notification = f.calls.findLast(
+    (call) => call.method === 'chat.postMessage',
+  )!.body;
+  expect(notification.text).toContain('<@U111>');
+  expect(notification.text).not.toContain('<@U999>');
+  expect(notification.blocks[1].elements[0].text.text).toBe('Übernehmen');
+  const after = (await f.store.get(c.id))!;
+  const forged = click(after);
+  forged.container.message_ts = '999.000001';
+  expect((await f.sendClick(forged)).statusCode).toBe(404);
+  const valid = click(after);
+  valid.container.message_ts = after.supportRequest!.messageId!;
+  expect((await f.sendClick(valid)).statusCode).toBe(200);
+  expect((await f.store.get(c.id))?.status).toBe('support');
 });

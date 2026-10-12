@@ -137,8 +137,10 @@ function chunks(text: string, limit: number) {
 }
 export function card(c: Conversation) {
   const status =
-    c.status === 'bot'
-      ? 'Digitaler Assistent'
+    c.status === 'bot' || c.status === 'waiting'
+      ? c.status === 'waiting'
+        ? 'Persönlicher Support angefragt · KI pausiert'
+        : 'Digitaler Assistent'
       : c.status === 'closed'
         ? c.resolution
           ? 'Problem gelöst'
@@ -151,7 +153,7 @@ export function card(c: Conversation) {
         c.status === 'closed'
           ? []
           : [
-              (c.status === 'bot'
+              (c.status === 'bot' || c.status === 'waiting'
                 ? [
                     ['take', 'Übernehmen'],
                     ['resolve', 'Problem gelöst'],
@@ -294,7 +296,8 @@ export async function createTelegramBridge(
               'Gesprächslimit erreicht. Bitte abschließen.',
             );
           const transition =
-            (job.action === 'take' && c.status === 'bot') ||
+            (job.action === 'take' &&
+              (c.status === 'bot' || c.status === 'waiting')) ||
             (job.action === 'resolve' && c.status !== 'closed');
           action(c, job.action, person, queue);
           c.supportActionAt = job.timestamp;
@@ -378,7 +381,8 @@ export async function createTelegramBridge(
         if (
           !match ||
           match[2] !== c.id ||
-          String(m.message_id) !== c.thread?.serviceUrl ||
+          (String(m.message_id) !== c.thread?.serviceUrl &&
+            String(m.message_id) !== c.supportRequest?.messageId) ||
           m.from?.id !== bot.id
         )
           return { ok: true };
@@ -428,7 +432,48 @@ export async function createTelegramBridge(
         chat_id: config.CSP_TELEGRAM_CHAT_ID,
         message_thread_id: Number(c.thread.rootId),
       };
-      if (job.kind === 'create' || job.kind === 'card') {
+      if (job.kind === 'request') {
+        if (
+          c.status !== 'waiting' ||
+          c.supportRequest?.id !== job.id ||
+          c.supportRequest.messageId
+        )
+          return;
+        const targets: { id: string; name: string }[] = [];
+        for (const id of job.targets ?? []) {
+          const person = await authorize(id);
+          if (person) targets.push({ id, name: person.name });
+        }
+        const names = targets.map((p) => p.name).join(', ');
+        const text =
+          names +
+          (names ? ': ' : '') +
+          'Persönlicher Support angefragt. Bitte übernehmen.';
+        let offset = 0;
+        const entities = targets.map((p) => {
+          const entity = {
+            type: 'text_mention',
+            offset,
+            length: p.name.length,
+            user: { id: Number(p.id) },
+          };
+          offset += p.name.length + 2;
+          return entity;
+        });
+        const result = z.object({ message_id: integer.positive() }).parse(
+          await api('sendMessage', {
+            ...base,
+            text,
+            entities,
+            reply_markup: card(c).reply_markup,
+            link_preview_options: { is_disabled: true },
+          }),
+        );
+        await store.change(c.id, (current) => {
+          if (current.supportRequest?.id === job.id)
+            current.supportRequest.messageId = String(result.message_id);
+        });
+      } else if (job.kind === 'create' || job.kind === 'card') {
         if (c.thread.serviceUrl) {
           await api('editMessageText', {
             chat_id: base.chat_id,

@@ -40,14 +40,16 @@ export function card(c: Conversation) {
               ? c.resolution
                 ? 'Problem gelöst.'
                 : 'Gespräch abgeschlossen.'
-              : 'Digitaler Assistent aktiv. Erst übernehmen, dann Kundenantworten schreiben.',
+              : c.status === 'waiting'
+                ? 'Persönlicher Support angefragt. KI pausiert. Bitte übernehmen.'
+                : 'Digitaler Assistent aktiv. Erst übernehmen, dann Kundenantworten schreiben.',
         wrap: true,
       },
     ],
     actions:
       c.status === 'closed'
         ? []
-        : (c.status === 'bot'
+        : (c.status === 'bot' || c.status === 'waiting'
             ? [
                 ['take', 'Übernehmen'],
                 ['resolve', 'Problem gelöst'],
@@ -137,7 +139,7 @@ export async function createTeamsBridge(
       !c?.thread ||
       c.thread.conversationId !== base ||
       !root ||
-      c.thread.rootId !== root
+      (c.thread.rootId !== root && c.supportRequest?.messageId !== root)
     )
       return;
     if (
@@ -227,7 +229,47 @@ export async function createTeamsBridge(
         )
           throw new Error('Unexpected Teams service URL');
         const api = teams.api.fromServiceUrl({ serviceUrl: url.href });
-        if (job.kind === 'card') {
+        if (job.kind === 'request') {
+          if (
+            c.status !== 'waiting' ||
+            c.supportRequest?.id !== job.id ||
+            c.supportRequest.messageId
+          )
+            return;
+          const targets: string[] = [];
+          for (const id of job.targets ?? [])
+            if (await authorize(id)) targets.push(id);
+          const result = await api.conversations
+            .activities(
+              toThreadedConversationId(
+                c.thread.conversationId,
+                c.thread.rootId,
+              ),
+            )
+            .create({
+              type: 'message',
+              text:
+                targets.map((_, i) => `<at>Support ${i + 1}</at>`).join(' ') +
+                ' Persönlicher Support angefragt. Bitte übernehmen.',
+              entities: targets.map((id, i) => ({
+                type: 'mention',
+                mentioned: { id, role: 'user', name: `Support ${i + 1}` },
+                text: `<at>Support ${i + 1}</at>`,
+              })),
+              attachments: [
+                {
+                  contentType: 'application/vnd.microsoft.card.adaptive',
+                  content: card(c),
+                },
+              ],
+            });
+          if (!result.id)
+            throw new Error('Missing Teams notification identifier');
+          await store.change(c.id, (current) => {
+            if (current.supportRequest?.id === job.id)
+              current.supportRequest.messageId = result.id;
+          });
+        } else if (job.kind === 'card') {
           await api.conversations
             .activities(c.thread.conversationId)
             .update(c.thread.rootId, {
@@ -240,12 +282,6 @@ export async function createTeamsBridge(
               ],
             });
         } else if (job.message) {
-          const label =
-            job.message.kind === 'user'
-              ? c.owner.name
-              : job.message.kind === 'bot'
-                ? `${job.message.responder?.name ?? 'Service-Team'} · Digitaler Assistent`
-                : 'Portal';
           await api.conversations
             .activities(
               toThreadedConversationId(
@@ -253,16 +289,42 @@ export async function createTeamsBridge(
                 c.thread.rootId,
               ),
             )
-            .create({
-              type: 'message',
-              textFormat: 'plain',
-              text: `${label}:\n${job.message.content}`,
-            });
+            .create(channelMessage(c, job.message));
         }
       }
     },
     async close() {
       await teams.stop();
     },
+  };
+}
+
+export function escapeHtml(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('\"', '&quot;');
+}
+
+export function channelMessage(
+  c: Conversation,
+  message: NonNullable<Delivery['message']>,
+) {
+  const label =
+    message.kind === 'user'
+      ? 'Besucher · ' + c.owner.name
+      : message.kind === 'bot'
+        ? `${message.responder?.name ?? 'Service-Team'} · Digitaler Assistent`
+        : message.kind === 'support'
+          ? 'Support · ' + (message.name ?? 'Support')
+          : 'Gespräch';
+  return {
+    type: 'message' as const,
+    textFormat: message.kind === 'user' ? ('xml' as const) : ('plain' as const),
+    text:
+      message.kind === 'user'
+        ? `<b>${escapeHtml(label)}</b><br/><i>${escapeHtml(message.content).replaceAll('\n', '<br/>')}</i>`
+        : `${label}:\n${message.content}`,
   };
 }

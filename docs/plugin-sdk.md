@@ -121,7 +121,7 @@ Das Chat-Plugin zeigt im Header das Eingabefeld und den Sitzungsverlauf. Es kenn
 
 ### Chat-Eingabe
 
-Im Chat-Textfeld sendet `⌘ + Enter` auf macOS bzw. `Strg + Enter` auf anderen Systemen die Nachricht über denselben Ablauf wie die Senden-Schaltfläche. `Enter` allein fügt einen Zeilenumbruch ein. Der dezente Hinweis zeigt das passende Tastenkürzel des Systems und steht unten rechts innerhalb des Textfelds und ist als Eingabebeschreibung zugänglich. Leere Nachrichten und Tastenkürzel während einer laufenden Antwort werden nicht gesendet.
+Im Chat-Textfeld sendet `⌘ + Enter` auf macOS bzw. `Strg + Enter` auf anderen Systemen die Nachricht über denselben Ablauf wie die Senden-Schaltfläche. `Enter` allein fügt einen Zeilenumbruch ein. Der dezente Hinweis zeigt das passende Tastenkürzel des Systems und steht unter dem Textfeld und ist als Eingabebeschreibung zugänglich. Leere Nachrichten und Tastenkürzel während einer laufenden Antwort werden nicht gesendet.
 
 Das Eingabefeld beginnt mit einer Textzeile und wächst automatisch bei Zeilenumbrüchen oder umgebrochenem Text. Nach dem Kürzen oder Absenden schrumpft es wieder; Breitenänderungen werden ebenfalls berücksichtigt.
 
@@ -162,3 +162,7 @@ Statusauskünfte beziehen sich ausschließlich auf einen zum Problem passenden M
 ## Chat-Engine und Support-Plugin
 
 `ServerContext.chat` ist optional und wird vom Chat-Plugin als `ChatEngine` mit `stream(messages, signal)` bereitgestellt. Ereignisse: `responder`, `sources`, `delta`, `done`. Der Core initialisiert `requires` vor dem abhängigen Plugin und lehnt zyklische Abhängigkeiten ab. `PublicConfig.chatSupport` wählt die gespeicherte Support-UI; `ChatResponder` beschreibt weiter nur KI-Absender. Menschliche Absender werden durch Support-Nachrichten getrennt gekennzeichnet. Siehe [Teams-Support](teams-support.md).
+
+### Chat-Verlauf, Diktieren und Übergabe
+
+KI- und Support-Chat verwenden denselben Tastatur- und Scrollvertrag. Das Eingabefeld bleibt außerhalb des begrenzten Verlaufs; beim Lesen älterer Nachrichten folgt der Verlauf nicht ungefragt neuen Antworten. OpenAI-Spracheingabe ergänzt einen bearbeitbaren Entwurf. Support-Transport und SIGNL4 können über die optionalen serverseitigen `ServerContext.authenticateChat` und `ServerContext.onDuty` die vorhandene Authentifizierung sowie ausschließlich echte, frische Dienstidentitäten bereitstellen. `onDuty` liefert Dienstplan-IDs, keine Plattform-Accounts oder öffentliche Tokens. [Chat-Vertrag und API](chat.md).

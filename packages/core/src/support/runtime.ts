@@ -5,11 +5,13 @@ import type { Store } from './store.js';
 import {
   action,
   resolveConversation,
+  requestSupport,
   append,
   conversation,
   delivery,
   emit,
   interrupt,
+  status,
   owned,
   supportReply,
   ChatError,
@@ -40,6 +42,7 @@ function view(c: Conversation) {
     status: c.status,
     support: c.support,
     resolution: c.resolution,
+    supportRequest: c.supportRequest,
     messages: c.messages,
     seq: c.events.at(-1)?.seq ?? 0,
     updatedAt: c.updatedAt,
@@ -53,6 +56,7 @@ export async function setupConversations(
   createBridge: (onTake: (id: string) => void) => Promise<SupportBridge>,
 ) {
   if (!ctx.chat) throw new Error('Support requires the chat engine');
+  ctx.authenticateChat = authenticate;
   await store.init();
   const retentionDays = z.coerce
     .number()
@@ -255,6 +259,31 @@ export async function setupConversations(
     }
     return reply.code(202).send({ accepted: true });
   });
+  const dutyMap = parseDutyMap(ctx.env.CSP_SUPPORT_DUTY_USER_MAP);
+  const fallback = (ctx.env.CSP_SUPPORT_FALLBACK_USER_IDS ?? '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean);
+  if (
+    fallback.length > 20 ||
+    fallback.some((id) => !/^[a-zA-Z0-9_-]{1,100}$/.test(id))
+  )
+    throw new Error('Invalid support fallback accounts');
+  ctx.app.post('/api/v1/conversations/:id/request-support', async (req) => {
+    const { id } = validate(idSchema, req.params),
+      owner = await auth(req.headers);
+    validate(z.object({}).strict(), req.body ?? {});
+    const existing = owned(await store.get(id), owner);
+    if (existing.status === 'bot') {
+      await store.change(id, (c, queue) => {
+        owned(c, owner);
+        requestSupport(c, [], queue);
+      });
+    } else if (existing.status === 'closed')
+      throw new ChatError(409, 'Gespräch bereits abgeschlossen');
+    controllers.get(id)?.abort();
+    return view(owned(await store.get(id), owner));
+  });
   ctx.app.post('/api/v1/conversations/:id/resolve', async (req) => {
     const { id } = validate(idSchema, req.params),
       owner = await auth(req.headers);
@@ -366,20 +395,46 @@ export async function setupConversations(
   const bridge = demo
     ? undefined
     : await createBridge((id) => controllers.get(id)?.abort());
+  async function notification(job: Delivery, state: 'sent' | 'failed') {
+    await store.change(job.conversationId, (c) => {
+      if (
+        c.supportRequest?.id !== job.id ||
+        c.supportRequest.notification === state
+      )
+        return;
+      c.supportRequest.notification = state;
+      status(c);
+    });
+  }
   let working = false;
   const worker = async () => {
     if (working || closing) return;
     working = true;
     try {
-      await store.drain(
-        bridge?.send ??
-          (async (job, c) => {
-            if (job.kind === 'create')
-              await store.change(c.id, (current) => {
-                current.thread = { conversationId: 'demo', rootId: c.id };
-              });
-          }),
-      );
+      await store.drain(async (job, c) => {
+        try {
+          if (bridge)
+            await bridge.send(
+              job.kind === 'request'
+                ? {
+                    ...job,
+                    targets: await dutyTargets(ctx.onDuty, dutyMap, fallback),
+                  }
+                : job,
+              c,
+            );
+          else if (job.kind === 'create')
+            await store.change(c.id, (current) => {
+              current.thread = { conversationId: 'demo', rootId: c.id };
+            });
+          if (job.kind === 'request') await notification(job, 'sent');
+        } catch (error) {
+          if (job.kind === 'request') await notification(job, 'failed');
+          else if (c.supportRequest?.notification === 'pending')
+            await notification({ ...job, id: c.supportRequest.id }, 'failed');
+          throw error;
+        }
+      });
     } catch {
       /* Retried next tick. No message contents or credentials in logs. */
     } finally {
@@ -407,4 +462,36 @@ export async function setupConversations(
     await bridge?.close();
     await store.close();
   });
+}
+
+export function parseDutyMap(raw?: string): Record<string, string> {
+  if (!raw) return {};
+  let value: unknown;
+  try {
+    value = JSON.parse(raw);
+  } catch {
+    throw new Error('Invalid CSP_SUPPORT_DUTY_USER_MAP JSON');
+  }
+  return z
+    .record(
+      z.string().min(1).max(100),
+      z.string().regex(/^[a-zA-Z0-9_-]{1,100}$/),
+    )
+    .refine((v) => Object.keys(v).length <= 100)
+    .parse(value);
+}
+export async function dutyTargets(
+  resolver: ServerContext['onDuty'],
+  map: Record<string, string>,
+  fallback: string[],
+) {
+  const ids = resolver ? await resolver().catch(() => []) : [];
+  const targets = [
+    ...new Set(
+      ids
+        .map((id) => (Object.hasOwn(map, id) ? map[id] : undefined))
+        .filter((id): id is string => Boolean(id)),
+    ),
+  ].slice(0, 20);
+  return targets.length ? targets : [...new Set(fallback)];
 }

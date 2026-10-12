@@ -28,12 +28,19 @@ export interface Event {
         status: Conversation['status'];
         support?: SupportPerson;
         resolution?: Conversation['resolution'];
+        supportRequest?: Conversation['supportRequest'];
       };
 }
 export interface Conversation {
   id: string;
   owner: Identity;
-  status: 'bot' | 'support' | 'closed';
+  status: 'bot' | 'waiting' | 'support' | 'closed';
+  supportRequest?: {
+    id: string;
+    at: number;
+    notification: 'pending' | 'sent' | 'failed';
+    messageId?: string;
+  };
   support?: SupportPerson;
   resolution?: { by: 'visitor' | 'support'; name: string; at: number };
   supportSince?: number;
@@ -54,7 +61,8 @@ export interface Delivery {
   id: string;
   conversationId: string;
   message?: Message;
-  kind: 'create' | 'message' | 'card';
+  kind: 'create' | 'message' | 'card' | 'request';
+  targets?: string[];
 }
 export class ChatError extends Error {
   constructor(
@@ -93,6 +101,7 @@ export function status(c: Conversation) {
     status: c.status,
     support: c.support,
     resolution: c.resolution,
+    supportRequest: c.supportRequest,
   });
 }
 export function append(c: Conversation, message: Message) {
@@ -120,6 +129,29 @@ export function interrupt(c: Conversation, queue: Delivery[]) {
     queue.push(delivery(c, 'message', message));
   }
   delete c.generation;
+}
+export function requestSupport(
+  c: Conversation,
+  targets: string[],
+  queue: Delivery[],
+) {
+  if (c.status === 'closed')
+    throw new ChatError(409, 'Gespräch bereits abgeschlossen');
+  if (c.status !== 'bot') return;
+  interrupt(c, queue);
+  c.status = 'waiting';
+  const job = delivery(c, 'request');
+  job.targets = targets;
+  c.supportRequest = { id: job.id, at: Date.now(), notification: 'pending' };
+  status(c);
+  append(c, {
+    id: randomUUID(),
+    kind: 'system',
+    complete: true,
+    content:
+      'Sie haben persönlichen Support angefragt. Der digitale Assistent pausiert. Sie können weitere Informationen schreiben.',
+  });
+  queue.push(job, delivery(c, 'card'));
 }
 export function resolveConversation(
   c: Conversation,

@@ -37,3 +37,5 @@ Die Dokumentation wird im Produktrepo unter `docs/` gepflegt. Das Wiki zeigt die
 Quellcode: [kieksme/csp](https://github.com/kieksme/csp). Lizenz: [MIT](https://github.com/kieksme/csp/blob/main/LICENSE).
 
 - [Telegram-Support und Übernahme](telegram-support.md)
+
+- [Chat, Spracheingabe und persönlicher Support](chat.md)
