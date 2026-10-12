@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.3](https://github.com/kieksme/csp/compare/v0.13.2...v0.13.3) (2026-10-12)
+
+
+### Bug Fixes
+
+* **chat:** compact composer and align input controls ([#61](https://github.com/kieksme/csp/issues/61)) ([f5649d2](https://github.com/kieksme/csp/commit/f5649d2e38e7f24602aa38e21b13064fc75445be))
+
 ## [0.13.2](https://github.com/kieksme/csp/compare/v0.13.1...v0.13.2) (2026-10-12)
 
 
