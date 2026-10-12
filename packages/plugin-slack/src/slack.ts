@@ -582,7 +582,7 @@ export async function createSlackBridge(
           });
       } else if (job.message) {
         const m = job.message,
-          text = `${m.kind === 'user' ? visitorLabel(c.owner.name) : m.kind === 'bot' ? 'Digitaler Assistent' : (m.name ?? 'Support')}\n${m.content}`;
+          text = `${m.kind === 'user' ? visitorLabel(c.owner.name) : m.kind === 'bot' ? '🤖' : (m.name ?? 'Support')}\n${m.content}`;
         await api('chat.postMessage', {
           channel: c.thread.conversationId,
           thread_ts: c.thread.rootId,

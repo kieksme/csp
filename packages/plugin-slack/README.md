@@ -13,3 +13,5 @@ Set `chatSupport.mode` to `slack`, configure the API-only values in `templates/c
 [Complete setup, permissions, limits and live acceptance](../../docs/slack-support.md). The Slack workspace integration is **not yet live-tested**. Synthetic demo and automated tests do not establish real workspace connectivity.
 
 Visitor text appears as a labelled rich-text quote; it never creates mentions or markup. Explicit human requests pause the bot, notify mapped duty/fallback accounts after fresh authorization, and expose takeover in the thread. See [shared chat behaviour](../../docs/chat.md).
+
+Assistant replies in the support channel use only **🤖** as their sender marker. Visitor quotes and human support names remain distinct; the portal keeps its explicit digital-assistant label.

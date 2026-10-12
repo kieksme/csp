@@ -331,7 +331,7 @@ export function channelMessage(
     message.kind === 'user'
       ? visitorLabel(c.owner.name)
       : message.kind === 'bot'
-        ? `${message.responder?.name ?? 'Service-Team'} · Digitaler Assistent`
+        ? '🤖'
         : message.kind === 'support'
           ? 'Support · ' + (message.name ?? 'Support')
           : 'Gespräch';
@@ -341,6 +341,6 @@ export function channelMessage(
     text:
       message.kind === 'user'
         ? `<b>${escapeHtml(label)}</b><br/><i>${escapeHtml(message.content).replaceAll('\n', '<br/>')}</i>`
-        : `${label}:\n${message.content}`,
+        : `${label}${message.kind === 'bot' ? '' : ':'}\n${message.content}`,
   };
 }

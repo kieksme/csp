@@ -13,3 +13,5 @@ Conversation state, Entra portal authentication and persistence are shared throu
 The app is named **Support**. `teams-app/color.png` (192×192) and `outline.png` (32×32, white on transparent) provide the shared headset assistant avatar; editable SVG sources are included. Include the PNGs at the root of the Teams installation ZIP. Existing Developer Portal apps need both icons updated and saved; organization approval/installation remains a separate step. The Slack variant is `packages/plugin-slack/slack-app/avatar.png` (512×512).
 
 Visitor text is labelled and italicized with escaped markup. Explicit human requests pause the bot and notify configured duty/fallback accounts. See [shared chat behaviour](../../docs/chat.md); actual Teams installation and delivery require separate live acceptance.
+
+Assistant replies in the support channel use only **🤖** as their sender marker. Visitor quotes and human support names remain distinct; the portal keeps its explicit digital-assistant label.
