@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/kieksme/csp/compare/v0.12.0...v0.12.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* **support:** refresh request notifications after takeover and closure ([#53](https://github.com/kieksme/csp/issues/53)) ([8fba2d0](https://github.com/kieksme/csp/commit/8fba2d0a827f936fe3f8e8ce81e865cd989fa987))
+
 ## [0.12.0](https://github.com/kieksme/csp/compare/v0.11.0...v0.12.0) (2026-10-12)
 
 
