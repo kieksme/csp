@@ -94,3 +94,13 @@ Die API vergibt automatisch ein signiertes Besuchertoken mit 24 Stunden Laufzeit
 Session-Erstellung: fünf je IP und Stunde; schreibende Gesprächsanfragen: 30 je IP und Minute, zusätzlich bestehende Nachrichten- und Generierungsgrenzen. Hinter einem Proxy `CSP_TRUST_PROXY` nur mit bereinigten Forwarded-Headern aktivieren; andernfalls teilen Besucher die Proxy-IP-Grenze. Supportpersonen brauchen weiterhin die Slack-Allowlist und aktuelle Channel-Mitgliedschaft. PostgreSQL, Runtime-Secrets und Live-Abnahme bleiben erforderlich.
 
 Slack-Leseabfragen für Identität, Channel und Mitglieder verwenden GET mit Query-Parametern; Nachrichten und Karten werden als JSON per POST gesendet. Der API-Parser akzeptiert den Nutzernamen als Text aus `auth.test` und das Nutzerobjekt aus `users.info`; für Supportrechte muss ein geprüftes Nutzerobjekt vorliegen. Damit bleibt die Channel-Prüfung auch mit der echten Slack-API kompatibel.
+
+## Problem als gelöst markieren
+
+Der Gesprächseigentümer kann im Portal **Problem gelöst** wählen, im Bot- oder Supportmodus und auch während einer KI-Antwort. Das beendet das Gespräch, unterbricht laufende Generierung und speichert Zeitpunkt sowie Ursprung der Lösung. Eine Systemnachricht und aktualisierte Statuskarte erscheinen im Support-Kanal; der Verlauf bleibt unter der bestehenden Retention erhalten. Weitere Nachrichten erfordern einen neuen Chat. Wiederholte Markierungen erzeugen keine zusätzlichen Lösungsmeldungen.
+
+Auch die Support-Karte bietet **Problem gelöst**, ohne vorherige Übernahme im Botmodus. Supportrechte werden weiterhin geprüft; bei einem übernommenen Gespräch darf ausschließlich die zuständige Supportperson lösen. **Abschließen** bleibt als gesonderte Aktion verfügbar und behauptet keine Lösung. Bereits abgeschlossene ältere Gespräche werden nicht rückwirkend als gelöst bewertet.
+
+## Support-Avatar
+
+`packages/plugin-slack/slack-app/avatar.png` enthält das gemeinsame Support-Avatar (512×512). In der bestehenden Slack-App unter Basic Information → Display Information als App-Icon hochladen und speichern. Die Teams-Variante liegt im Teams-App-Paket. Eine Paketänderung allein aktualisiert keine bestehende Slack-App.

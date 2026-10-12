@@ -16,6 +16,7 @@ interface Conversation {
   id: string;
   status: 'bot' | 'support' | 'closed';
   support?: { id: string; name: string };
+  resolution?: { by: 'visitor' | 'support'; name: string; at: number };
   messages: Message[];
   seq: number;
 }
@@ -185,6 +186,30 @@ export function SupportChat(ctx: BrowserContext) {
       setBusy(false);
     }
   }
+  async function resolve() {
+    if (!current || busy) return;
+    setBusy(true);
+    setError('');
+    try {
+      const result: Conversation = await (
+        await requestRef.current!(`/${current.id}/resolve`, {
+          method: 'POST',
+          body: '{}',
+        })
+      ).json();
+      setCurrent(result);
+      pending.current = null;
+      setInput('');
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : 'Problem konnte nicht als gelöst markiert werden.',
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
   async function simulate(action: string) {
     if (!current) return;
     try {
@@ -209,7 +234,9 @@ export function SupportChat(ctx: BrowserContext) {
         {current?.status === 'support'
           ? `${current.support?.name} · Support`
           : current?.status === 'closed'
-            ? 'Gespräch abgeschlossen'
+            ? current.resolution
+              ? 'Problem gelöst'
+              : 'Gespräch abgeschlossen'
             : 'Digitaler Assistent'}
         {auth && ready && !demo
           ? anonymous
@@ -313,6 +340,19 @@ export function SupportChat(ctx: BrowserContext) {
           </button>
         </form>
       )}
+      {ready &&
+        current &&
+        current.status !== 'closed' &&
+        current.messages.some((m) => m.kind === 'user') && (
+          <button
+            type="button"
+            className="border border-line rounded-card px-4 py-2 mt-3"
+            disabled={busy}
+            onClick={() => void resolve()}
+          >
+            Problem gelöst
+          </button>
+        )}
       {ready && current?.status === 'closed' && (
         <button
           type="button"

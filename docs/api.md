@@ -83,3 +83,7 @@ Slack ergänzt `POST /api/slack/events` (JSON) und `POST /api/slack/actions` (UR
 ## Telegram-Webhook
 
 Das aktivierte Telegram-Plugin registriert `POST /api/telegram/webhook` (maximal 128 KiB). Erforderlicher Header: `X-Telegram-Bot-Api-Secret-Token`. Fehlendes/falsches Secret: 401; fehlerhaftes Update: 400; unbekannte Gruppe, Thema oder Nachrichtentyp: 200 ohne Verarbeitung. Zugeordnete Textnachrichten und Button-Aktionen werden vor HTTP-200 dauerhaft gespeichert; bei Datenbankfehlern 5xx für Telegram-Retry. Keine Inhalte oder Bot-Tokens loggen. Gesprächs- und Besuchersitzungsrouten entsprechen Slack. [Betrieb und Einrichtung](telegram-support.md).
+
+### Problem gelöst
+
+`POST /api/v1/conversations/:id/resolve` mit leerem JSON-Objekt und bestehender Portal-Authentifizierung markiert nur das eigene Gespräch als gelöst. Fehlende Authentifizierung: 401; fremde/unbekannte Gesprächs-ID: 404; zusätzliche Body-Felder: 400; bereits ohne Lösung abgeschlossenes Gespräch: 409. Wiederholungen eines gelösten Gesprächs sind idempotent (200). Antwort und SSE-Status enthalten `resolution: { by: "visitor" | "support", name, at }`, wobei `at` Unix-Millisekunden bezeichnet. Der gemeinsame Status ist danach `closed`; der Grund unterscheidet eine Lösung von normalem Abschluss. KI-Generierung wird beendet, Lösungsmeldung und Kanal-Karte werden über die Outbox zugestellt.

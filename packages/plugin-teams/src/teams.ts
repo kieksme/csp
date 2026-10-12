@@ -37,7 +37,9 @@ export function card(c: Conversation) {
           c.status === 'support'
             ? `${c.support?.name} betreut dieses Gespräch. Deine Antworten gehen jetzt direkt an den Nutzer. Nachrichten anderer Personen bleiben intern.`
             : c.status === 'closed'
-              ? 'Gespräch abgeschlossen.'
+              ? c.resolution
+                ? 'Problem gelöst.'
+                : 'Gespräch abgeschlossen.'
               : 'Digitaler Assistent aktiv. Erst übernehmen, dann Kundenantworten schreiben.',
         wrap: true,
       },
@@ -46,10 +48,14 @@ export function card(c: Conversation) {
       c.status === 'closed'
         ? []
         : (c.status === 'bot'
-            ? [['take', 'Übernehmen']]
+            ? [
+                ['take', 'Übernehmen'],
+                ['resolve', 'Problem gelöst'],
+              ]
             : [
                 ['release', 'Bot freigeben'],
                 ['close', 'Abschließen'],
+                ['resolve', 'Problem gelöst'],
               ]
           ).map(([action, title]) => ({
             type: 'Action.Submit',
@@ -59,7 +65,7 @@ export function card(c: Conversation) {
   };
 }
 const actionSchema = z.object({
-  action: z.enum(['take', 'release', 'close']),
+  action: z.enum(['take', 'release', 'close', 'resolve']),
   conversationId: z.string().uuid(),
 });
 export async function createTeamsBridge(
@@ -154,7 +160,9 @@ export async function createTeamsBridge(
         if (parsed.success) {
           action(current, parsed.data.action, person, queue);
           current.seen.push(eventId);
-          return parsed.data.action === 'take';
+          return (
+            parsed.data.action === 'take' || parsed.data.action === 'resolve'
+          );
         } else {
           // Ignore attachments and edits (message.update has a separate SDK route).
           if (activity.attachments?.length) return;

@@ -185,3 +185,21 @@ it('isolates email monitor facts from unrelated portal and cloud availability', 
     relevantStatus(unrelated, 'Das Kundenportal ist langsam')?.monitors,
   ).toEqual([unrelated.monitors[0]]);
 });
+it('prioritizes clarifying vague requests and reserves ticket links for escalation or explicit requests', () => {
+  const prompt = servicePrompt(
+    'Acme',
+    '+49000',
+    chatContext([], now, 'Hallo, meine Email'),
+    tickets,
+  );
+  expect(prompt).toContain(
+    'Bei der ersten Problemanfrage nicht sofort auf ein Ticket verweisen',
+  );
+  expect(prompt).toContain('Was funktioniert bei Ihrer E-Mail gerade nicht');
+  expect(prompt).toContain('bereits genannte Angaben nicht erneut abzufragen');
+  expect(prompt).toContain('direkte Hilfe nicht ausreicht');
+  expect(prompt).not.toContain(
+    'Rückfragen erst als Hinweise für dieses Ticket',
+  );
+  expect(prompt).toContain('[ticket:0]');
+});

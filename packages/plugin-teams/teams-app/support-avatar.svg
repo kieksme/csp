@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-labelledby="title desc">
+  <title id="title">Support</title>
+  <desc id="desc">Freundlicher digitaler Support-Assistent mit Headset auf indigo-blauem Hintergrund.</desc>
+  <rect width="192" height="192" rx="42" fill="#3730a3"/>
+  <path d="M48 97V88a48 48 0 0 1 96 0v9" fill="none" stroke="#a5f3fc" stroke-width="12" stroke-linecap="round"/>
+  <rect x="54" y="68" width="84" height="76" rx="27" fill="#fff"/>
+  <rect x="39" y="93" width="17" height="30" rx="8" fill="#22d3ee"/>
+  <rect x="136" y="93" width="17" height="30" rx="8" fill="#22d3ee"/>
+  <circle cx="78" cy="97" r="6" fill="#3730a3"/>
+  <circle cx="114" cy="97" r="6" fill="#3730a3"/>
+  <path d="M80 116q16 13 32 0" fill="none" stroke="#3730a3" stroke-width="6" stroke-linecap="round"/>
+  <path d="M144 119v6q0 18-23 18h-10" fill="none" stroke="#22d3ee" stroke-width="8" stroke-linecap="round"/>
+  <rect x="99" y="137" width="20" height="12" rx="6" fill="#22d3ee"/>
+</svg>

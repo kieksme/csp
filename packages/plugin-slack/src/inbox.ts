@@ -5,7 +5,7 @@ export interface Incoming {
   rootId: string;
   user: string;
   timestamp: number;
-  action?: 'take' | 'release' | 'close';
+  action?: 'take' | 'release' | 'close' | 'resolve';
   text?: string;
 }
 export interface Inbox {

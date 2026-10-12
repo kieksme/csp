@@ -70,7 +70,7 @@ const actionSchema = z.object({
   actions: z.tuple([
     z.object({
       type: z.literal('button'),
-      action_id: z.enum(['take', 'release', 'close']),
+      action_id: z.enum(['take', 'release', 'close', 'resolve']),
       value: z.string().uuid(),
       action_ts: timestamp,
     }),
@@ -82,7 +82,9 @@ export function card(c: Conversation) {
     c.status === 'bot'
       ? 'Digitaler Assistent'
       : c.status === 'closed'
-        ? 'Abgeschlossen'
+        ? c.resolution
+          ? 'Problem gelöst'
+          : 'Abgeschlossen'
         : `Support: ${c.support?.name}`;
   return [
     { type: 'header', text: plain('Portal-Support') },
@@ -98,10 +100,14 @@ export function card(c: Conversation) {
           {
             type: 'actions',
             elements: (c.status === 'bot'
-              ? [['take', 'Übernehmen']]
+              ? [
+                  ['take', 'Übernehmen'],
+                  ['resolve', 'Problem gelöst'],
+                ]
               : [
                   ['release', 'An Bot zurückgeben'],
                   ['close', 'Abschließen'],
+                  ['resolve', 'Problem gelöst'],
                 ]
             ).map(([id, label]) => ({
               type: 'button',
@@ -288,15 +294,21 @@ export async function createSlackBridge(
           return false;
         if (job.action) {
           if (job.timestamp <= (c.supportActionAt ?? 0)) return false;
-          if (job.action !== 'close' && c.messages.length >= 500)
+          if (
+            !['close', 'resolve'].includes(job.action) &&
+            c.messages.length >= 500
+          )
             throw new ChatError(
               409,
               'Gesprächslimit erreicht. Bitte abschließen und einen neuen Chat starten.',
             );
-          const transition = job.action === 'take' && c.status === 'bot';
+          const transition =
+            (job.action === 'take' && c.status === 'bot') ||
+            (job.action === 'resolve' && c.status !== 'closed');
           action(c, job.action, person, queue);
           c.supportActionAt = job.timestamp;
-          if (transition) c.supportSince = job.timestamp;
+          if (job.action === 'take' && transition)
+            c.supportSince = job.timestamp;
           c.seen.push(job.id);
           return transition;
         }

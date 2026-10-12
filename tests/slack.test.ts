@@ -658,3 +658,19 @@ it('sends Slack read arguments in the query and preserves JSON message blocks', 
     body,
   );
 });
+it('resolves from Slack without takeover and prevents another supporter resolving an assigned chat', async () => {
+  const f = await fixture();
+  await f.sendClick(click(f.c, 'take', 'U111', ts(100)));
+  await f.sendClick(click(f.c, 'resolve', 'U222', ts(200)));
+  expect((await f.store.get(f.c.id))?.status).toBe('support');
+  await f.sendClick(click(f.c, 'release', 'U111', ts(300)));
+  const resolved = click(f.c, 'resolve', 'U222', ts(400));
+  await f.sendClick(resolved);
+  await f.sendClick(resolved);
+  const c = (await f.store.get(f.c.id))!;
+  expect(c.status).toBe('closed');
+  expect(c.resolution).toMatchObject({ by: 'support', name: 'Andere Person' });
+  expect(
+    c.messages.filter((m) => m.content.includes('als gelöst')),
+  ).toHaveLength(1);
+});
