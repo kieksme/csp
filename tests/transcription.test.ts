@@ -192,3 +192,58 @@ it('disables transcription for demo/non-OpenAI providers and returns safe errors
   expect(failure.statusCode).toBe(503);
   expect(failure.body).not.toContain('secret');
 });
+
+it('reserves upload/provider capacity and releases it after successful and malformed requests', async () => {
+  const { app, fetcher } = await fixture(false, { CSP_CHAT_CONCURRENCY: '1' });
+  let finish!: (value: Response) => void;
+  vi.mocked(fetcher).mockImplementationOnce(
+    () =>
+      new Promise<Response>((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const first = app.inject({
+    method: 'POST',
+    url,
+    payload: audio,
+    headers: { 'content-type': 'audio/webm' },
+  });
+  void first.then(() => {});
+  await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+  expect(
+    (
+      await app.inject({
+        method: 'POST',
+        url,
+        payload: audio,
+        headers: { 'content-type': 'audio/webm' },
+      })
+    ).statusCode,
+  ).toBe(429);
+  finish(
+    new Response(JSON.stringify({ text: 'Erste Aufnahme' }), {
+      headers: { 'Content-Type': 'application/json' },
+    }),
+  );
+  expect((await first).statusCode).toBe(200);
+  expect(
+    (
+      await app.inject({
+        method: 'POST',
+        url,
+        payload: Buffer.from('invalid'),
+        headers: { 'content-type': 'audio/webm' },
+      })
+    ).statusCode,
+  ).toBe(400);
+  expect(
+    (
+      await app.inject({
+        method: 'POST',
+        url,
+        payload: audio,
+        headers: { 'content-type': 'audio/webm' },
+      })
+    ).statusCode,
+  ).toBe(200);
+});

@@ -58,11 +58,17 @@ export function setupTranscription(
     : undefined;
   const windows = new Map<string, { count: number; until: number }>();
   let active = 0;
+  const reservations = new WeakSet<object>();
+  const release = (req: object) => {
+    if (reservations.delete(req)) active--;
+  };
   const controllers = new Set<AbortController>();
   ctx.app.addHook('preClose', async () => {
     for (const controller of controllers) controller.abort();
   });
   ctx.app.register(async (scope) => {
+    scope.addHook('onResponse', async (req) => release(req));
+    scope.addHook('onRequestAbort', async (req) => release(req));
     scope.addContentTypeParser(
       Object.keys(formats),
       { parseAs: 'buffer', bodyLimit: limit },
@@ -105,6 +111,8 @@ export function setupTranscription(
               .code(429)
               .header('Retry-After', '60')
               .send({ error: 'Bitte warten Sie eine Minute.' });
+          active++;
+          reservations.add(req);
           for (const key of keys) {
             const value = windows.get(key) ?? { count: 0, until: now + 60000 };
             value.count++;
@@ -123,12 +131,6 @@ export function setupTranscription(
           !validAudio(bytes, format)
         )
           return reply.code(400).send({ error: 'Ungültige Audioaufnahme.' });
-        if (active >= config.CSP_CHAT_CONCURRENCY)
-          return reply
-            .code(429)
-            .header('Retry-After', '60')
-            .send({ error: 'Bitte versuchen Sie es gleich erneut.' });
-        active++;
         const controller = new AbortController();
         controllers.add(controller);
         const timeout = setTimeout(
@@ -165,7 +167,6 @@ export function setupTranscription(
           clearTimeout(timeout);
           reply.raw.off('close', cancel);
           controllers.delete(controller);
-          active--;
         }
       },
     );

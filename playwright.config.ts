@@ -29,7 +29,7 @@ export default defineConfig({
     },
     {
       command:
-        'CSP_DEMO=true CSP_TEAMS_DEMO=true CSP_TEAMS_ENABLED=false CSP_HOST=127.0.0.1 CSP_PORT=3017 CSP_CONTACT_PHONE=+49000 CSP_ALLOWED_ORIGINS=http://127.0.0.1:4176 pnpm --filter csp-demo start:api',
+        'CSP_CHAT_RATE_LIMIT=100 CSP_DEMO=true CSP_TEAMS_DEMO=true CSP_TEAMS_ENABLED=false CSP_HOST=127.0.0.1 CSP_PORT=3017 CSP_CONTACT_PHONE=+49000 CSP_ALLOWED_ORIGINS=http://127.0.0.1:4176 pnpm --filter csp-demo start:api',
       url: 'http://127.0.0.1:3017/health',
       reuseExistingServer: false,
     },
