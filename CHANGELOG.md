@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/kieksme/csp/compare/v0.11.0...v0.12.0) (2026-10-12)
+
+
+### Features
+
+* **chat:** add dictation, scrolling and human support requests ([#51](https://github.com/kieksme/csp/issues/51)) ([3ae98fa](https://github.com/kieksme/csp/commit/3ae98fa10e1553869c5377c536b02633f60afd4f))
+
 ## [0.11.0](https://github.com/kieksme/csp/compare/v0.10.1...v0.11.0) (2026-10-12)
 
 
