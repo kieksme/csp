@@ -265,3 +265,18 @@ export function owned(
     throw new ChatError(404, 'Gespräch nicht gefunden');
   return c;
 }
+
+export function requestNotice(c: Conversation) {
+  return c.status === 'support'
+    ? `Persönlicher Support übernommen · ${c.support?.name ?? 'Support'}.`
+    : c.status === 'closed'
+      ? c.resolution
+        ? 'Problem gelöst.'
+        : 'Gespräch abgeschlossen.'
+      : c.status === 'bot'
+        ? 'Das Gespräch wurde an den digitalen Assistenten zurückgegeben.'
+        : 'Persönlicher Support angefragt. Bitte übernehmen.';
+}
+export function visitorLabel(name: string) {
+  return /^Besucher [a-f0-9]{8}$/.test(name) ? name : 'Besucher · ' + name;
+}

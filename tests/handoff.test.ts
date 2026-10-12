@@ -13,6 +13,8 @@ import {
   action,
   dutyTargets,
   parseDutyMap,
+  requestNotice,
+  visitorLabel,
   type Delivery,
 } from '../packages/core/src/support.js';
 import chat from '../packages/plugin-chat/src/server.js';
@@ -246,3 +248,18 @@ it.skipIf(!process.env.CSP_TEST_DATABASE_URL)(
     }
   },
 );
+
+it('renders current notification states and avoids duplicate anonymous visitor labels', () => {
+  const c = conversation(owner),
+    queue: Delivery[] = [];
+  requestSupport(c, [], queue);
+  expect(requestNotice(c)).toContain('Bitte übernehmen');
+  action(c, 'take', { id: 'a', name: 'André' }, queue);
+  expect(requestNotice(c)).toContain('übernommen · André');
+  action(c, 'release', { id: 'a', name: 'André' }, queue);
+  expect(requestNotice(c)).toContain('zurückgegeben');
+  action(c, 'resolve', { id: 'a', name: 'André' }, queue);
+  expect(requestNotice(c)).toBe('Problem gelöst.');
+  expect(visitorLabel('Besucher 1234abcd')).toBe('Besucher 1234abcd');
+  expect(visitorLabel('Ada')).toBe('Besucher · Ada');
+});

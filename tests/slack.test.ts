@@ -726,4 +726,15 @@ it('quotes visitor messages without interpreting mentions, and accepts takeover 
   valid.container.message_ts = after.supportRequest!.messageId!;
   expect((await f.sendClick(valid)).statusCode).toBe(200);
   expect((await f.store.get(c.id))?.status).toBe('support');
+  const assigned = (await f.store.get(c.id))!;
+  await f.bridge.send(delivery(assigned, 'card'), assigned);
+  const updated = f.calls.findLast(
+    (call) =>
+      call.method === 'chat.update' &&
+      call.body.ts === assigned.supportRequest!.messageId,
+  )!.body;
+  expect(updated.text).toContain('übernommen');
+  expect(
+    updated.blocks.some((block: { type: string }) => block.type === 'actions'),
+  ).toBe(false);
 });

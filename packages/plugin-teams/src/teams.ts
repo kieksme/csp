@@ -9,6 +9,8 @@ import {
   ChatError,
   action,
   supportReply,
+  requestNotice,
+  visitorLabel,
   type Conversation,
   type Delivery,
 } from './conversations.js';
@@ -281,6 +283,20 @@ export async function createTeamsBridge(
                 },
               ],
             });
+          if (c.supportRequest?.messageId && c.status !== 'waiting')
+            await api.conversations
+              .activities(c.thread.conversationId)
+              .update(c.supportRequest.messageId, {
+                type: 'message',
+                textFormat: 'plain',
+                text: requestNotice(c),
+                attachments: [
+                  {
+                    contentType: 'application/vnd.microsoft.card.adaptive',
+                    content: { ...card(c), actions: [] },
+                  },
+                ],
+              });
         } else if (job.message) {
           await api.conversations
             .activities(
@@ -313,7 +329,7 @@ export function channelMessage(
 ) {
   const label =
     message.kind === 'user'
-      ? 'Besucher · ' + c.owner.name
+      ? visitorLabel(c.owner.name)
       : message.kind === 'bot'
         ? `${message.responder?.name ?? 'Service-Team'} · Digitaler Assistent`
         : message.kind === 'support'
