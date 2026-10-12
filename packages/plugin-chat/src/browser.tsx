@@ -10,6 +10,8 @@ import type {
 import { answerParts, sourceHref } from './answer.js';
 import { SupportChat } from './support-chat.js';
 import {
+  ChatHeading,
+  ChatWelcome,
   NewMessages,
   Shortcut,
   sendShortcut,
@@ -189,31 +191,29 @@ function LegacyChat(ctx: BrowserContext) {
         </div>
       )}
       <div className="chat-panel text-ink compact:p-4 bg-card border border-line p-6 rounded-card">
+        <ChatHeading
+          headingLevel={ctx.surface === 'hero' ? 2 : 3}
+          state={resolved ? 'closed' : 'bot'}
+          status={resolved ? 'Problem gelöst' : 'Digitaler Assistent'}
+          notice="Ihre Frage wird automatisch beantwortet. Persönlichen Kontakt finden Sie über die Hotline."
+        />
+        {!messages.length && <ChatWelcome />}
         <div
           ref={scroll.history}
           onScroll={scroll.onScroll}
+          tabIndex={0}
+          role="log"
           className="chat-history empty:hidden grid gap-3.75 max-h-[min(400px,45dvh)] overflow-auto overscroll-contain mb-4"
           aria-label="Gesprächsverlauf"
           aria-live="polite"
           aria-busy={busy}
         >
-          {!messages.length && ctx.surface !== 'hero' && (
-            <p className="message assistant text-[0.8125rem] leading-[1.8] whitespace-pre-wrap [overflow-wrap:anywhere] [&.user]:bg-soft [&.user]:pt-3 [&.user]:pb-3 [&.user]:pl-4 [&.user]:pr-4 [&.user]:rounded-card [&.assistant]:[border-left:2px_solid_var(--accent)] [&.assistant]:pt-[0] [&.assistant]:pb-[0] [&.assistant]:pl-4 [&.assistant]:pr-4">
-              Wie kann ich Ihnen helfen?
-            </p>
-          )}
           {messages.map((m, i) => (
-            <div
-              key={i}
-              className={
-                'message text-[0.8125rem] leading-[1.8] whitespace-pre-wrap [overflow-wrap:anywhere] [&.user]:bg-soft [&.user]:pt-3 [&.user]:pb-3 [&.user]:pl-4 [&.user]:pr-4 [&.user]:rounded-card [&.assistant]:[border-left:2px_solid_var(--accent)] [&.assistant]:pt-[0] [&.assistant]:pb-[0] [&.assistant]:pl-4 [&.assistant]:pr-4 ' +
-                m.role
-              }
-            >
+            <div key={i} className={'message ' + m.role}>
               {m.role === 'user' ? (
-                <span className="sr-only">Sie: </span>
+                <span className="chat-author">Sie</span>
               ) : (
-                <span className="block text-[0.6875rem] text-muted mb-1">
+                <span className="chat-author">
                   {m.responder?.role === 'on-duty' && m.responder.name
                     ? `Digitaler Assistent von ${m.responder.name}`
                     : 'Digitaler Assistent des Service-Teams'}
@@ -252,59 +252,56 @@ function LegacyChat(ctx: BrowserContext) {
           ))}
         </div>
         <NewMessages visible={scroll.unread} follow={scroll.follow} />
-        <form
-          className="chat-form flex gap-2.5 items-end [&_textarea]:resize-none [&_textarea]:min-h-[50px] [&_textarea]:[flex:1] [&_textarea]:min-w-0 [&_button]:bg-accent [&_button]:text-accent-ink [&_button]:[border:0] [&_button]:w-[50px] [&_button]:h-[50px] [&_button]:rounded-card [&_button]:text-[1.25rem] [&_button:disabled]:opacity-[0.5]"
-          onSubmit={submit}
-        >
-          <label className="sr-only" htmlFor="chat-input">
-            Ihre Frage
-          </label>
-          <div className="relative flex-1 min-w-0">
-            <textarea
-              id="chat-input"
-              ref={inputField}
-              rows={1}
-              autoFocus
-              className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block max-h-[180px] overflow-auto"
-              value={input}
-              disabled={resolved}
-              maxLength={4000}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) =>
-                sendShortcut(e, busy || voiceBusy || resolved || !input.trim())
-              }
-              aria-keyshortcuts="Control+Enter Meta+Enter"
-              aria-describedby="chat-shortcut"
-              placeholder="Ihre Frage an unser Team …"
-              required
-            />
-            <Shortcut id="chat-shortcut" />
-          </div>
-          <button
-            type="submit"
-            disabled={busy || voiceBusy || resolved || !input.trim()}
-            aria-label="Frage senden"
-          >
-            ↑
-          </button>
-        </form>
-        <VoiceInput
-          ctx={ctx}
-          value={input}
-          setValue={setInput}
-          disabled={resolved}
-          onBusy={setVoiceBusy}
-        />
-        {ctx.surface === 'hero' && (
-          <p className="data-state font-mono text-[0.625rem] text-muted mt-3 mb-0">
-            Digitaler Assistent · Ihre Frage wird automatisch beantwortet. Für
-            persönlichen Kontakt nutzen Sie die Hotline.
-          </p>
-        )}
+        <div className="chat-composer">
+          <form className="chat-form flex gap-2.5 items-end" onSubmit={submit}>
+            <label className="sr-only" htmlFor="chat-input">
+              Ihre Frage
+            </label>
+            <div className="relative flex-1 min-w-0">
+              <textarea
+                id="chat-input"
+                ref={inputField}
+                rows={1}
+                autoFocus
+                className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block max-h-[180px] overflow-auto"
+                value={input}
+                disabled={resolved}
+                maxLength={4000}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) =>
+                  sendShortcut(
+                    e,
+                    busy || voiceBusy || resolved || !input.trim(),
+                  )
+                }
+                aria-keyshortcuts="Control+Enter Meta+Enter"
+                aria-describedby="chat-shortcut"
+                placeholder="Ihre Frage an unser Team …"
+                required
+              />
+              <Shortcut id="chat-shortcut" />
+            </div>
+            <button
+              type="submit"
+              disabled={busy || voiceBusy || resolved || !input.trim()}
+              className="chat-send"
+              aria-label="Frage senden"
+            >
+              Senden
+            </button>
+          </form>
+          <VoiceInput
+            ctx={ctx}
+            value={input}
+            setValue={setInput}
+            disabled={resolved}
+            onBusy={setVoiceBusy}
+          />
+        </div>
         {messages.length > 0 && !resolved && (
           <button
             type="button"
-            className="border border-line rounded-card px-4 py-2 mt-3"
+            className="chat-action"
             onClick={() => {
               abort.current?.abort();
               setResolved(true);
@@ -328,7 +325,6 @@ function LegacyChat(ctx: BrowserContext) {
         )}
         {resolved && (
           <div className="mt-3">
-            <p role="status">Problem gelöst</p>
             <button
               type="button"
               className="underline mt-2"

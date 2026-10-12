@@ -217,11 +217,11 @@ export function VoiceInput({
   }
   if (!enabled) return null;
   return (
-    <div className="mt-3 text-[0.8125rem]">
+    <div className="chat-voice" data-recording={state === 'recording'}>
       {state === 'idle' ? (
         <button
           type="button"
-          className="border border-line rounded-card px-3 py-2"
+          className="chat-voice-button"
           disabled={disabled}
           onClick={() => void start()}
         >
@@ -242,7 +242,7 @@ export function VoiceInput({
         </button>
       ) : (
         <>
-          <span role="status">
+          <span role="status" className="chat-voice-status">
             {state === 'recording'
               ? '● Aufnahme läuft · maximal 60 Sekunden'
               : state === 'starting'
@@ -252,7 +252,7 @@ export function VoiceInput({
           {state === 'recording' && (
             <button
               type="button"
-              className="border border-line rounded-card px-3 py-2 ml-2"
+              className="chat-voice-button"
               onClick={() => recorder.current?.stop()}
             >
               Aufnahme stoppen
@@ -260,7 +260,7 @@ export function VoiceInput({
           )}
           <button
             type="button"
-            className="underline ml-2"
+            className="chat-voice-cancel"
             onClick={() => {
               operation.current++;
               cancelled.current = true;
@@ -275,7 +275,7 @@ export function VoiceInput({
           </button>
         </>
       )}
-      <p className="text-[0.6875rem] text-muted mt-2">
+      <p className="chat-voice-notice">
         Die Aufnahme wird zur Texterkennung an OpenAI gesendet. Prüfen Sie den
         Text vor dem Senden.
       </p>

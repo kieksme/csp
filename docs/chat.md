@@ -2,11 +2,17 @@
 
 Das Chat-Plugin stellt dieselbe Eingabe und denselben Verlauf für den KI-Chat und für Gespräche mit einem Support-Transport bereit. Acme bleibt eine offene Webseite mit anonymer Gesprächssitzung.
 
+## Gestaltung
+
+Beide Chat-Modi verwenden einen gemeinsamen Kopf mit Service-Chat, Gesprächsstatus und Hinweisen zur Weiterleitung. Eigene Nachrichten stehen rechts auf einer abgesetzten Fläche; Assistent und Support antworten links mit sichtbarem Absender. Übernommene Support-Antworten haben zusätzlich eine farbige Seitenmarkierung. Statusänderungen bleiben als Text erkennbar.
+
+Eingabe, Senden, Tastenkürzel und optionale Spracheingabe bilden einen zusammenhängenden Bereich. Persönlicher Support und „Problem gelöst“ bleiben als separate Aktionen erreichbar. Die Gestaltung folgt den Kundenfarben und unterstützt helle sowie dunkle Darstellung und schmale Bildschirme.
+
 ## Eingabe und Verlauf
 
 `⌘ Enter` auf macOS beziehungsweise `Strg Enter` auf Windows/Linux sendet über denselben Ablauf wie der Senden-Button. Der Hinweis steht sichtbar unter dem Eingabefeld und ist als Eingabebeschreibung zugänglich. `Enter` allein fügt einen Zeilenumbruch ein. Leere Eingaben, wiederholte Tastendrücke, IME-Komposition und bereits laufende Sendevorgänge lösen keine weitere Nachricht aus.
 
-Der Verlauf ist maximal 400 px beziehungsweise 45 Prozent der dynamischen Bildschirmhöhe hoch. Das Eingabefeld bleibt außerhalb des scrollbaren Verlaufs und ist auf 180 px begrenzt. Am Ende folgt der Verlauf neuen Nachrichten und gestreamten Antworten. Wer mehr als 80 px hochscrollt, behält seine Leseposition; **Neue Nachrichten ↓** führt wieder ans Ende. Eigene gesendete Nachrichten und ein neuer oder wiederhergestellter Chat führen ans Ende.
+Der Verlauf ist per Tab-Taste erreichbar und lässt sich mit den Pfeiltasten scrollen. Der Verlauf ist maximal 400 px beziehungsweise 45 Prozent der dynamischen Bildschirmhöhe hoch. Das Eingabefeld bleibt außerhalb des scrollbaren Verlaufs und ist auf 180 px begrenzt. Am Ende folgt der Verlauf neuen Nachrichten und gestreamten Antworten. Wer mehr als 80 px hochscrollt, behält seine Leseposition; **Neue Nachrichten ↓** führt wieder ans Ende. Eigene gesendete Nachrichten und ein neuer oder wiederhergestellter Chat führen ans Ende.
 
 ## Diktieren
 
