@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/kieksme/csp/compare/v0.10.1...v0.11.0) (2026-10-12)
+
+
+### Features
+
+* **support:** add problem resolution, clarification and bot avatars ([#50](https://github.com/kieksme/csp/issues/50)) ([5941337](https://github.com/kieksme/csp/commit/59413370e0fb8a7a4da1df2aa8f376c58172f561))
+* **telegram:** add persistent portal support transport ([#39](https://github.com/kieksme/csp/issues/39)) ([d89a483](https://github.com/kieksme/csp/commit/d89a483c1b30f18e736bbed31bc4dcf62c135125))
+
 ## [0.10.1](https://github.com/kieksme/csp/compare/v0.10.0...v0.10.1) (2026-10-11)
 
 
