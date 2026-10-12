@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-kuma",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -36,7 +36,7 @@
   },
   "cspPlugin": {
     "id": "kuma",
-    "sdkVersion": "^0.10.1",
+    "sdkVersion": "^0.11.0",
     "browser": "./browser",
     "server": "./server"
   },
