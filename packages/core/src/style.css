@@ -359,8 +359,8 @@ section .faq-controls button:hover {
   width: 100%;
   min-width: 0;
   flex: 1;
-  min-height: 56px;
-  padding: 8px 4px;
+  min-height: 36px;
+  padding: 4px 6px;
   border: 0;
   border-radius: 4px;
   background: transparent;
@@ -374,8 +374,7 @@ section .faq-controls button:hover {
   opacity: 1;
 }
 .chat-panel .chat-form textarea:focus-visible {
-  outline: 2px solid var(--muted);
-  outline-offset: 0;
+  outline: none;
 }
 .chat-panel .chat-send {
   display: inline-flex;
@@ -542,8 +541,8 @@ section .faq-controls button:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-wrap: nowrap;
+  gap: 6px;
 }
 .chat-compose-toolbar .chat-shortcut {
   margin: 0;
@@ -552,12 +551,56 @@ section .faq-controls button:hover {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-wrap: nowrap;
+  gap: 6px;
   max-width: 100%;
   margin-inline-start: auto;
 }
 .chat-compose-actions .chat-voice-button,
 .chat-compose-actions .chat-voice-cancel {
   margin: 0;
+}
+
+/* Keep the shortcut inside the field without covering editable text. */
+.chat-compose-field {
+  position: relative;
+  min-width: 0;
+  padding-bottom: 18px;
+  border-radius: 6px;
+  background: var(--soft);
+}
+.chat-compose-field:focus-within {
+  outline: 2px solid var(--muted);
+  outline-offset: 0;
+}
+.chat-compose-field .chat-shortcut {
+  position: absolute;
+  right: 6px;
+  bottom: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.chat-panel .chat-composer {
+  padding: 8px;
+}
+.chat-panel .chat-form {
+  gap: 4px;
+}
+.chat-compose-actions .chat-send,
+.chat-compose-actions .chat-voice-button,
+.chat-compose-actions .chat-voice-cancel {
+  box-sizing: border-box;
+  height: 44px;
+  min-height: 44px;
+  padding-block: 0;
+}
+.chat-compose-actions .chat-voice-button,
+.chat-compose-actions .chat-voice-cancel {
+  width: 44px;
+  padding-inline: 0;
+  justify-content: center;
+}
+.chat-composer .chat-voice {
+  margin-top: 6px;
+  padding-top: 6px;
 }

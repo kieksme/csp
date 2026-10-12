@@ -208,10 +208,33 @@ test('dictates into an editable draft, never automatically sends, and keeps the 
   expect(
     Math.abs(micBox!.y + micBox!.height / 2 - sendBox!.y - sendBox!.height / 2),
   ).toBeLessThanOrEqual(1);
+  expect(micBox!.height).toBe(sendBox!.height);
+  const fieldBox = await page.locator('.chat-compose-field').boundingBox();
+  const hintBox = await page.locator('#chat-shortcut').boundingBox();
+  const inputBox = await input.boundingBox();
+  expect(hintBox!.x + hintBox!.width).toBeLessThanOrEqual(
+    fieldBox!.x + fieldBox!.width,
+  );
+  expect(
+    Math.abs(hintBox!.x + hintBox!.width - fieldBox!.x - fieldBox!.width),
+  ).toBeLessThanOrEqual(8);
+  expect(hintBox!.y).toBeGreaterThanOrEqual(inputBox!.y + inputBox!.height);
+  expect(hintBox!.y + hintBox!.height).toBeLessThanOrEqual(
+    fieldBox!.y + fieldBox!.height,
+  );
   await page.getByRole('button', { name: 'Nachricht diktieren' }).click();
   await expect(
     page.getByRole('status').filter({ hasText: 'Aufnahme läuft' }),
   ).toBeVisible();
+  const recordingButtons = await Promise.all(
+    ['Aufnahme stoppen', 'Abbrechen', 'Frage senden'].map((name) =>
+      page.getByRole('button', { name, exact: true }).boundingBox(),
+    ),
+  );
+  for (const button of recordingButtons) {
+    expect(button!.height).toBe(44);
+    expect(button!.y).toBe(recordingButtons[0]!.y);
+  }
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

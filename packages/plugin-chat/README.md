@@ -8,7 +8,7 @@ For local provider testing, set `CSP_DEMO=true` and `CSP_CHAT_DEMO=false`: porta
 
 Langsame lokale Modelle können mit der Runtime-Variable `CSP_CHAT_TIMEOUT_MS` mehr Antwortzeit erhalten (Standard `60000`, Bereich `1000`–`300000` ms).
 
-Send a message with Cmd + Enter on macOS, Ctrl + Enter on other systems, or the send button. The hint displays the system-specific shortcut. Plain Enter inserts a line break. A subtle shortcut hint appears below the text field; blank messages and shortcuts during an active reply do not send.
+Send a message with Cmd + Enter on macOS, Ctrl + Enter on other systems, or the send button. The hint displays the system-specific shortcut. Plain Enter inserts a line break. A subtle shortcut hint appears inside the text field at the bottom right; blank messages and shortcuts during an active reply do not send.
 
 The input starts with one text row and automatically grows with wrapped text or line breaks. It shrinks when text is removed or sent and adjusts when its width changes.
 
@@ -34,4 +34,4 @@ Long histories follow new messages while the visitor reads at the bottom; scroll
 
 Both chat modes share a service-chat header and composer. Visitor messages align to the right, assistant and human replies to the left with visible sender labels. Customer theme colours, dark mode and mobile layouts apply throughout. See [chat design](../../docs/chat.md#gestaltung).
 
-Dictation uses an icon-only microphone button with the accessible name and tooltip “Nachricht diktieren”. The microphone sits directly beside Send in the composer toolbar. Its privacy notice stays visible underneath, and mobile touch targets remain 44 × 44 px.
+Dictation uses an icon-only microphone button with the accessible name and tooltip “Nachricht diktieren”. The microphone sits directly beside Send in the composer toolbar. All composer buttons stay in one row and share a 44 px height. Stop and cancel use accessible icons during recording. The shortcut sits inside the field at the bottom right, with space reserved below editable text. Its privacy notice stays visible underneath.

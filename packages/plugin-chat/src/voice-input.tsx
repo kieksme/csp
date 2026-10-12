@@ -247,14 +247,26 @@ export function VoiceInput({
           <button
             type="button"
             className="chat-voice-button"
+            aria-label="Aufnahme stoppen"
+            title="Aufnahme stoppen"
             onClick={() => recorder.current?.stop()}
           >
-            Aufnahme stoppen
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="currentColor"
+            >
+              <rect x="5" y="5" width="14" height="14" rx="2" />
+            </svg>
           </button>
         )}
         <button
           type="button"
           className="chat-voice-cancel"
+          aria-label="Abbrechen"
+          title="Abbrechen"
           onClick={() => {
             operation.current++;
             cancelled.current = true;
@@ -265,7 +277,17 @@ export function VoiceInput({
             idle();
           }}
         >
-          Abbrechen
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="m6 6 12 12M18 6 6 18" />
+          </svg>
         </button>
       </>
     );

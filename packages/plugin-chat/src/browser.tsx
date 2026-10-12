@@ -269,30 +269,32 @@ function LegacyChat(ctx: BrowserContext) {
                   <label className="sr-only" htmlFor="chat-input">
                     Ihre Frage
                   </label>
-                  <textarea
-                    id="chat-input"
-                    ref={inputField}
-                    rows={1}
-                    autoFocus
-                    className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block max-h-[180px] overflow-auto"
-                    value={input}
-                    disabled={resolved}
-                    maxLength={4000}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) =>
-                      sendShortcut(
-                        e,
-                        busy || voiceBusy || resolved || !input.trim(),
-                      )
-                    }
-                    aria-keyshortcuts="Control+Enter Meta+Enter"
-                    aria-describedby="chat-shortcut"
-                    placeholder="Ihre Frage an unser Team …"
-                    required
-                  />
+                  <div className="chat-compose-field">
+                    <textarea
+                      id="chat-input"
+                      ref={inputField}
+                      rows={1}
+                      autoFocus
+                      className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block max-h-[180px] overflow-auto"
+                      value={input}
+                      disabled={resolved}
+                      maxLength={4000}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) =>
+                        sendShortcut(
+                          e,
+                          busy || voiceBusy || resolved || !input.trim(),
+                        )
+                      }
+                      aria-keyshortcuts="Control+Enter Meta+Enter"
+                      aria-describedby="chat-shortcut"
+                      placeholder="Ihre Frage an unser Team …"
+                      required
+                    />
 
-                  <div className="chat-compose-toolbar">
                     <Shortcut id="chat-shortcut" />
+                  </div>
+                  <div className="chat-compose-toolbar">
                     <div className="chat-compose-actions">
                       {controls}
                       <button
