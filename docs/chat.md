@@ -6,7 +6,7 @@ Das Chat-Plugin stellt dieselbe Eingabe und denselben Verlauf für den KI-Chat u
 
 Beide Chat-Modi verwenden einen gemeinsamen Kopf mit Service-Chat, Gesprächsstatus und Hinweisen zur Weiterleitung. Eigene Nachrichten stehen rechts auf einer abgesetzten Fläche; Assistent und Support antworten links mit sichtbarem Absender. Übernommene Support-Antworten haben zusätzlich eine farbige Seitenmarkierung. Statusänderungen bleiben als Text erkennbar.
 
-Eingabe, Senden, Tastenkürzel und optionale Spracheingabe bilden einen zusammenhängenden Bereich. Der Mikrofon-Button zeigt nur das Symbol; der Hinweis zur Texterkennung steht daneben. Auf schmalen Bildschirmen bleibt seine Touchfläche 44 × 44 px groß. Persönlicher Support und „Problem gelöst“ bleiben als separate Aktionen erreichbar. Die Gestaltung folgt den Kundenfarben und unterstützt helle sowie dunkle Darstellung und schmale Bildschirme.
+Eingabe, Senden, Tastenkürzel und optionale Spracheingabe bilden einen zusammenhängenden Bereich. Der Mikrofon-Button zeigt nur das Symbol und steht direkt links neben **Senden** in der Bedienleiste unter dem Textfeld. Der Hinweis zur Texterkennung steht dezent darunter. Auf schmalen Bildschirmen bleibt seine Touchfläche 44 × 44 px groß. Persönlicher Support und „Problem gelöst“ bleiben als separate Aktionen erreichbar. Die Gestaltung folgt den Kundenfarben und unterstützt helle sowie dunkle Darstellung und schmale Bildschirme.
 
 ## Eingabe und Verlauf
 

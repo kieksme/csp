@@ -388,32 +388,6 @@ export function SupportChat(ctx: BrowserContext) {
       )}
       {ready && (
         <div className="chat-composer">
-          <form onSubmit={submit} className="chat-form flex gap-2.5 items-end">
-            <label htmlFor="support-chat-input" className="sr-only">
-              Ihre Nachricht
-            </label>
-            <textarea
-              id="support-chat-input"
-              value={input}
-              rows={2}
-              maxLength={4000}
-              disabled={current?.status === 'closed'}
-              className="flex-1 min-w-0 max-h-[180px] overflow-auto resize-none border border-line rounded-card bg-card p-3"
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => sendShortcut(e, blocked || !input.trim())}
-              aria-keyshortcuts="Control+Enter Meta+Enter"
-              aria-describedby="support-chat-shortcut"
-              placeholder="Wie können wir Ihnen helfen?"
-            />
-            <button
-              type="submit"
-              className="chat-send"
-              disabled={blocked || !input.trim()}
-            >
-              Senden
-            </button>
-          </form>
-          <Shortcut id="support-chat-shortcut" />
           <VoiceInput
             ctx={ctx}
             value={input}
@@ -421,7 +395,48 @@ export function SupportChat(ctx: BrowserContext) {
             disabled={current?.status === 'closed'}
             token={auth?.token}
             onBusy={setVoiceBusy}
-          />
+          >
+            {(controls, details) => (
+              <>
+                <form
+                  onSubmit={submit}
+                  className="chat-form flex gap-2.5 items-end"
+                >
+                  <label htmlFor="support-chat-input" className="sr-only">
+                    Ihre Nachricht
+                  </label>
+                  <textarea
+                    id="support-chat-input"
+                    value={input}
+                    rows={2}
+                    maxLength={4000}
+                    disabled={current?.status === 'closed'}
+                    className="flex-1 min-w-0 max-h-[180px] overflow-auto resize-none border border-line rounded-card bg-card p-3"
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => sendShortcut(e, blocked || !input.trim())}
+                    aria-keyshortcuts="Control+Enter Meta+Enter"
+                    aria-describedby="support-chat-shortcut"
+                    placeholder="Wie können wir Ihnen helfen?"
+                  />
+                  <div className="chat-compose-toolbar">
+                    <Shortcut id="support-chat-shortcut" />
+                    <div className="chat-compose-actions">
+                      {controls}
+                      <button
+                        type="submit"
+                        className="chat-send"
+                        disabled={blocked || !input.trim()}
+                      >
+                        Senden
+                      </button>
+                    </div>
+                  </div>
+                </form>
+
+                {details}
+              </>
+            )}
+          </VoiceInput>
         </div>
       )}
       {ready && (!current || current.status === 'bot') && (
