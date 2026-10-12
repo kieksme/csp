@@ -695,6 +695,33 @@ it('quotes visitor messages without interpreting mentions, and accepts takeover 
     type: 'text',
     text: visitor.content,
   });
+  await f.bridge.send(
+    delivery(c, 'message', {
+      ...visitor,
+      id: randomUUID(),
+      kind: 'bot',
+      content: 'Wie kann ich helfen?',
+    }),
+    c,
+  );
+  const botReply = f.calls.findLast(
+    (call) => call.method === 'chat.postMessage',
+  )!.body;
+  expect(botReply.text).toBe('🤖\nWie kann ich helfen?');
+  expect(botReply.blocks[0].text.text).toBe('🤖\nWie kann ich helfen?');
+  await f.bridge.send(
+    delivery(c, 'message', {
+      ...visitor,
+      id: randomUUID(),
+      kind: 'support',
+      name: 'André',
+      content: 'Ich übernehme.',
+    }),
+    c,
+  );
+  expect(
+    f.calls.findLast((call) => call.method === 'chat.postMessage')!.body.text,
+  ).toBe('André\nIch übernehme.');
   await f.store.change(c.id, (current, queue) =>
     requestSupport(current, ['U111', 'U999'], queue),
   );

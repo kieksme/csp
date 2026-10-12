@@ -666,8 +666,8 @@ it('distinguishes visitor, assistant and human messages without interpreting vis
     textFormat: 'xml',
     text: '<b>Besucher · Ada &lt;at&gt;everyone&lt;/at&gt;</b><br/><i>Hallo &lt;b&gt;Email&lt;/b&gt;<br/>Zweite Zeile</i>',
   });
-  expect(channelMessage(c, { ...input, kind: 'bot' }).text).toContain(
-    'Digitaler Assistent',
+  expect(channelMessage(c, { ...input, kind: 'bot' }).text).toBe(
+    `🤖\n${input.content}`,
   );
   expect(
     channelMessage(c, { ...input, kind: 'support', name: 'Lena' }).text,
