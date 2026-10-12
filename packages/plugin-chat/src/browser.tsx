@@ -31,6 +31,7 @@ function Chat(ctx: BrowserContext) {
 function LegacyChat(ctx: BrowserContext) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [resolved, setResolved] = useState(false);
   const inputField = useRef<HTMLTextAreaElement>(null);
   useLayoutEffect(() => resizeInput(inputField.current), [input]);
   useEffect(() => {
@@ -54,7 +55,7 @@ function LegacyChat(ctx: BrowserContext) {
   useEffect(() => () => abort.current?.abort(), []);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim() || busy) return;
+    if (!input.trim() || busy || resolved) return;
     const history = [
       ...messages.map(({ role, content }) => ({ role, content })),
       { role: 'user' as const, content: input.trim() },
@@ -98,6 +99,7 @@ function LegacyChat(ctx: BrowserContext) {
       try {
         while (true) {
           const { done, value } = await reader.read();
+          if (controller.signal.aborted) break;
           buffer += decoder.decode(value, { stream: !done });
           let boundary: number;
           while ((boundary = buffer.indexOf('\n\n')) >= 0) {
@@ -249,6 +251,7 @@ function LegacyChat(ctx: BrowserContext) {
               autoFocus
               className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block overflow-hidden"
               value={input}
+              disabled={resolved}
               maxLength={4000}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -277,7 +280,7 @@ function LegacyChat(ctx: BrowserContext) {
           </div>
           <button
             type="submit"
-            disabled={busy || !input.trim()}
+            disabled={busy || resolved || !input.trim()}
             aria-label="Frage senden"
           >
             ↑
@@ -288,6 +291,49 @@ function LegacyChat(ctx: BrowserContext) {
             Digitaler Assistent · Ihre Frage wird automatisch beantwortet. Für
             persönlichen Kontakt nutzen Sie die Hotline.
           </p>
+        )}
+        {messages.length > 0 && !resolved && (
+          <button
+            type="button"
+            className="border border-line rounded-card px-4 py-2 mt-3"
+            onClick={() => {
+              abort.current?.abort();
+              setResolved(true);
+              setError('');
+              setInput('');
+              setMessages((previous) =>
+                previous.map((m) =>
+                  m.complete === false
+                    ? {
+                        ...m,
+                        complete: true,
+                        content: m.content + '\n(Antwort unterbrochen)',
+                      }
+                    : m,
+                ),
+              );
+            }}
+          >
+            Problem gelöst
+          </button>
+        )}
+        {resolved && (
+          <div className="mt-3">
+            <p role="status">Problem gelöst</p>
+            <button
+              type="button"
+              className="underline mt-2"
+              disabled={busy}
+              onClick={() => {
+                setMessages([]);
+                setResolved(false);
+                setInput('');
+                setError('');
+              }}
+            >
+              Neuen Chat starten
+            </button>
+          </div>
         )}
         {error && (
           <p

@@ -92,3 +92,59 @@ test('takes over a persisted chat, replies as Lena, releases and closes it', asy
   ).toBe(true);
   expect(errors).toEqual([]);
 });
+test('visitor and support can mark a problem solved, preserving resolution after refresh', async ({
+  page,
+}, info) => {
+  await page.goto('http://127.0.0.1:4176');
+  const newChat = page.getByRole('button', {
+    name: 'Neuen Chat starten',
+    exact: true,
+  });
+  if (await newChat.isVisible()) await newChat.click();
+  await page
+    .locator('#support-chat-input')
+    .fill('Mein Problem ist jetzt geklärt.');
+  await page.getByRole('button', { name: 'Senden', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: 'Problem gelöst', exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole('button', { name: 'Problem gelöst', exact: true })
+    .click();
+  await expect(
+    page.getByRole('status').filter({ hasText: 'Problem gelöst' }),
+  ).toBeVisible();
+  await expect(page.locator('#support-chat-input')).toBeDisabled();
+  await page.reload();
+  await expect(page.locator('.chat-history')).toContainText(
+    'Der Besucher hat das Problem als gelöst markiert',
+  );
+  await expect(
+    page.getByRole('button', { name: 'Problem gelöst', exact: true }),
+  ).toHaveCount(0);
+  await page.screenshot({
+    path: `test-results/problem-resolved-${info.project.name}.png`,
+    fullPage: true,
+  });
+  await page
+    .getByRole('button', { name: 'Neuen Chat starten', exact: true })
+    .click();
+  await expect(page.locator('#support-chat-input')).toBeEnabled();
+  await page
+    .locator('#support-chat-input')
+    .fill('Die Supportperson kann auch lösen.');
+  await page.getByRole('button', { name: 'Senden', exact: true }).click();
+  const list = await (
+    await page.request.get('http://127.0.0.1:3017/api/v1/conversations')
+  ).json();
+  await page.request.post(
+    `http://127.0.0.1:3017/api/v1/conversations/${list[0].id}/demo`,
+    { data: { action: 'resolve' } },
+  );
+  await expect(
+    page.getByRole('status').filter({ hasText: 'Problem gelöst' }),
+  ).toBeVisible();
+  await expect(page.locator('.chat-history')).toContainText(
+    'Lena Demo vom Support hat das Problem als gelöst markiert',
+  );
+});

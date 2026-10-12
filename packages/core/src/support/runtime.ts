@@ -4,6 +4,7 @@ import type { ServerContext, ChatEvent } from '@kieksme/csp-sdk';
 import type { Store } from './store.js';
 import {
   action,
+  resolveConversation,
   append,
   conversation,
   delivery,
@@ -38,6 +39,7 @@ function view(c: Conversation) {
     id: c.id,
     status: c.status,
     support: c.support,
+    resolution: c.resolution,
     messages: c.messages,
     seq: c.events.at(-1)?.seq ?? 0,
     updatedAt: c.updatedAt,
@@ -253,6 +255,18 @@ export async function setupConversations(
     }
     return reply.code(202).send({ accepted: true });
   });
+  ctx.app.post('/api/v1/conversations/:id/resolve', async (req) => {
+    const { id } = validate(idSchema, req.params),
+      owner = await auth(req.headers);
+    validate(z.object({}).strict(), req.body ?? {});
+    const result = await store.change(id, (c, queue) => {
+      owned(c, owner);
+      resolveConversation(c, { by: 'visitor', name: owner.name }, queue);
+      return view(c);
+    });
+    controllers.get(id)?.abort();
+    return result;
+  });
   ctx.app.get('/api/v1/conversations/:id/events', async (req, reply) => {
     const { id } = validate(idSchema, req.params);
     const owner = await auth(req.headers);
@@ -326,7 +340,7 @@ export async function setupConversations(
         owner = await auth(req.headers);
       const body = z
         .object({
-          action: z.enum(['take', 'release', 'close', 'reply']),
+          action: z.enum(['take', 'release', 'close', 'resolve', 'reply']),
           content: z.string().max(4000).optional(),
         })
         .parse(req.body);
@@ -344,7 +358,8 @@ export async function setupConversations(
           );
         else action(c, body.action, person, queue);
       });
-      if (body.action === 'take') controllers.get(id)?.abort();
+      if (body.action === 'take' || body.action === 'resolve')
+        controllers.get(id)?.abort();
       return { ok: true };
     });
   }

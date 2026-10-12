@@ -9,3 +9,5 @@ Local synthetic support demo works without Microsoft credentials. Live Microsoft
 Set `CSP_TEAMS_SUPPORT_AUTH=team` when support uses the team Microsoft 365 group. Membership can then be checked with team-scoped `TeamMember.Read.Group` RSC instead of tenant-wide directory read permissions. Arbitrary Entra groups retain the default `group` mode.
 
 Conversation state, Entra portal authentication and persistence are shared through the server-only `@kieksme/csp-core/support` export with the optional Slack transport. Install exactly one support transport per instance.
+
+The app is named **Support**. `teams-app/color.png` (192×192) and `outline.png` (32×32, white on transparent) provide the shared headset assistant avatar; editable SVG sources are included. Include the PNGs at the root of the Teams installation ZIP. Existing Developer Portal apps need both icons updated and saved; organization approval/installation remains a separate step. The Slack variant is `packages/plugin-slack/slack-app/avatar.png` (512×512).

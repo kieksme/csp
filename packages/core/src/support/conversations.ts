@@ -22,13 +22,20 @@ export interface Message {
 export interface Event {
   seq: number;
   type: 'message' | 'status';
-  data: Message | { status: Conversation['status']; support?: SupportPerson };
+  data:
+    | Message
+    | {
+        status: Conversation['status'];
+        support?: SupportPerson;
+        resolution?: Conversation['resolution'];
+      };
 }
 export interface Conversation {
   id: string;
   owner: Identity;
   status: 'bot' | 'support' | 'closed';
   support?: SupportPerson;
+  resolution?: { by: 'visitor' | 'support'; name: string; at: number };
   supportSince?: number;
   supportActionAt?: number;
   messages: Message[];
@@ -82,7 +89,11 @@ export function emit(
   c.updatedAt = Date.now();
 }
 export function status(c: Conversation) {
-  emit(c, 'status', { status: c.status, support: c.support });
+  emit(c, 'status', {
+    status: c.status,
+    support: c.support,
+    resolution: c.resolution,
+  });
 }
 export function append(c: Conversation, message: Message) {
   c.messages.push(message);
@@ -110,12 +121,43 @@ export function interrupt(c: Conversation, queue: Delivery[]) {
   }
   delete c.generation;
 }
+export function resolveConversation(
+  c: Conversation,
+  actor: { by: 'visitor' | 'support'; name: string },
+  queue: Delivery[],
+) {
+  if (c.resolution) return;
+  if (c.status === 'closed')
+    throw new ChatError(409, 'Gespräch bereits abgeschlossen');
+  interrupt(c, queue);
+  c.status = 'closed';
+  delete c.support;
+  c.resolution = { ...actor, at: Date.now() };
+  status(c);
+  const message: Message = {
+    id: randomUUID(),
+    kind: 'system',
+    complete: true,
+    content: `${actor.by === 'visitor' ? 'Der Besucher' : actor.name + ' vom Support'} hat das Problem als gelöst markiert.`,
+  };
+  append(c, message);
+  queue.push(delivery(c, 'message', message), delivery(c, 'card'));
+}
 export function action(
   c: Conversation,
-  name: 'take' | 'release' | 'close',
+  name: 'take' | 'release' | 'close' | 'resolve',
   person: SupportPerson,
   queue: Delivery[],
 ) {
+  if (name === 'resolve') {
+    if (c.status === 'support' && c.support?.id !== person.id)
+      throw new ChatError(
+        403,
+        'Nur die zuständige Supportperson darf diese Aktion ausführen.',
+      );
+    resolveConversation(c, { by: 'support', name: person.name }, queue);
+    return;
+  }
   if (c.status === 'closed')
     throw new ChatError(409, 'Gespräch bereits abgeschlossen');
   if (name === 'take') {

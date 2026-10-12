@@ -78,6 +78,18 @@ it('isolates anonymous conversations and rejects forged, absent and expired sess
       })
     ).statusCode,
   ).toBe(404);
+  for (const headers of [{ authorization: `Bearer ${second.token}` }, {}]) {
+    expect(
+      (
+        await app.inject({
+          method: 'POST',
+          url: path + '/resolve',
+          headers,
+          payload: {},
+        })
+      ).statusCode,
+    ).toBe('authorization' in headers ? 404 : 401);
+  }
   expect(
     (
       await app.inject({

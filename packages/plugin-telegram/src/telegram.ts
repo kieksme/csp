@@ -140,7 +140,9 @@ export function card(c: Conversation) {
     c.status === 'bot'
       ? 'Digitaler Assistent'
       : c.status === 'closed'
-        ? 'Abgeschlossen'
+        ? c.resolution
+          ? 'Problem gelöst'
+          : 'Abgeschlossen'
         : `Support: ${c.support?.name}`;
   return {
     text: `Portal-Support\nPortal-Nutzer: ${c.owner.name}\nGespräch: ${c.id}\nStatus: ${status}`,
@@ -150,10 +152,14 @@ export function card(c: Conversation) {
           ? []
           : [
               (c.status === 'bot'
-                ? [['take', 'Übernehmen']]
+                ? [
+                    ['take', 'Übernehmen'],
+                    ['resolve', 'Problem gelöst'],
+                  ]
                 : [
                     ['release', 'An Bot zurückgeben'],
                     ['close', 'Abschließen'],
+                    ['resolve', 'Problem gelöst'],
                   ]
               ).map(([id, text]) => ({ text, callback_data: `${id}:${c.id}` })),
             ],
@@ -279,15 +285,21 @@ export async function createTelegramBridge(
         if (job.action) {
           // Telegram callbacks have no click time. update_id orders updates (not the old card date).
           if (job.timestamp <= (c.supportActionAt ?? -1)) return false;
-          if (job.action !== 'close' && c.messages.length >= 500)
+          if (
+            !['close', 'resolve'].includes(job.action) &&
+            c.messages.length >= 500
+          )
             throw new ChatError(
               409,
               'Gesprächslimit erreicht. Bitte abschließen.',
             );
-          const transition = job.action === 'take' && c.status === 'bot';
+          const transition =
+            (job.action === 'take' && c.status === 'bot') ||
+            (job.action === 'resolve' && c.status !== 'closed');
           action(c, job.action, person, queue);
           c.supportActionAt = job.timestamp;
-          if (transition) c.supportSince = job.timestamp;
+          if (job.action === 'take' && transition)
+            c.supportSince = job.timestamp;
           c.seen.push(job.id);
           return transition;
         }
@@ -358,9 +370,9 @@ export async function createTelegramBridge(
         return { ok: true };
       const c = await store.findThread(channel, String(m.message_thread_id));
       if (!c) return { ok: true };
-      let command: 'take' | 'release' | 'close' | undefined;
+      let command: 'take' | 'release' | 'close' | 'resolve' | undefined;
       if (callback) {
-        const match = /^(take|release|close):([a-f0-9-]{36})$/.exec(
+        const match = /^(take|release|close|resolve):([a-f0-9-]{36})$/.exec(
           callback.data ?? '',
         );
         if (

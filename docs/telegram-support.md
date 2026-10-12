@@ -60,3 +60,9 @@ Nach `CSP_CHAT_RETENTION_DAYS` (Standard 30) löscht die API Gespräche, Outbox 
 `CSP_DEMO=true`, `CSP_TELEGRAM_DEMO=true`, `CSP_TELEGRAM_ENABLED=false` und Profil `chatSupport.mode: "demo"` aktivieren synthetische Übernahme über die gemeinsame Demo-UI. Bot, Telegram und PostgreSQL werden dabei nicht angesprochen. Demo-Erfolg ist keine reale Telegram-Abnahme.
 
 Referenz: [Telegram Bot API](https://core.telegram.org/bots/api) zu `setWebhook`, `getChatMember`, `createForumTopic`, `sendMessage`, `editMessageText` und `answerCallbackQuery`.
+
+## Problem als gelöst markieren
+
+Der Gesprächseigentümer kann im Portal **Problem gelöst** wählen, im Bot- oder Supportmodus und auch während einer KI-Antwort. Das beendet das Gespräch, unterbricht laufende Generierung und speichert Zeitpunkt sowie Ursprung der Lösung. Eine Systemnachricht und aktualisierte Statuskarte erscheinen im Support-Kanal; der Verlauf bleibt unter der bestehenden Retention erhalten. Weitere Nachrichten erfordern einen neuen Chat. Wiederholte Markierungen erzeugen keine zusätzlichen Lösungsmeldungen.
+
+Auch die Support-Karte bietet **Problem gelöst**, ohne vorherige Übernahme im Botmodus. Supportrechte werden weiterhin geprüft; bei einem übernommenen Gespräch darf ausschließlich die zuständige Supportperson lösen. **Abschließen** bleibt als gesonderte Aktion verfügbar und behauptet keine Lösung. Bereits abgeschlossene ältere Gespräche werden nicht rückwirkend als gelöst bewertet.
