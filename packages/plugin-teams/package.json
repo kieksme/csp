@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-teams",
-  "version": "0.13.2",
+  "version": "0.13.3",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -37,7 +37,7 @@
   },
   "cspPlugin": {
     "id": "teams",
-    "sdkVersion": "^0.13.2",
+    "sdkVersion": "^0.13.3",
     "browser": "./browser",
     "server": "./server",
     "requires": [
