@@ -405,21 +405,25 @@ export function SupportChat(ctx: BrowserContext) {
                   <label htmlFor="support-chat-input" className="sr-only">
                     Ihre Nachricht
                   </label>
-                  <textarea
-                    id="support-chat-input"
-                    value={input}
-                    rows={2}
-                    maxLength={4000}
-                    disabled={current?.status === 'closed'}
-                    className="flex-1 min-w-0 max-h-[180px] overflow-auto resize-none border border-line rounded-card bg-card p-3"
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => sendShortcut(e, blocked || !input.trim())}
-                    aria-keyshortcuts="Control+Enter Meta+Enter"
-                    aria-describedby="support-chat-shortcut"
-                    placeholder="Wie können wir Ihnen helfen?"
-                  />
-                  <div className="chat-compose-toolbar">
+                  <div className="chat-compose-field">
+                    <textarea
+                      id="support-chat-input"
+                      value={input}
+                      rows={1}
+                      maxLength={4000}
+                      disabled={current?.status === 'closed'}
+                      className="flex-1 min-w-0 max-h-[180px] overflow-auto resize-none border border-line rounded-card bg-card p-3"
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) =>
+                        sendShortcut(e, blocked || !input.trim())
+                      }
+                      aria-keyshortcuts="Control+Enter Meta+Enter"
+                      aria-describedby="support-chat-shortcut"
+                      placeholder="Wie können wir Ihnen helfen?"
+                    />
                     <Shortcut id="support-chat-shortcut" />
+                  </div>
+                  <div className="chat-compose-toolbar">
                     <div className="chat-compose-actions">
                       {controls}
                       <button
