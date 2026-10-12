@@ -253,50 +253,65 @@ function LegacyChat(ctx: BrowserContext) {
         </div>
         <NewMessages visible={scroll.unread} follow={scroll.follow} />
         <div className="chat-composer">
-          <form className="chat-form flex gap-2.5 items-end" onSubmit={submit}>
-            <label className="sr-only" htmlFor="chat-input">
-              Ihre Frage
-            </label>
-            <div className="relative flex-1 min-w-0">
-              <textarea
-                id="chat-input"
-                ref={inputField}
-                rows={1}
-                autoFocus
-                className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block max-h-[180px] overflow-auto"
-                value={input}
-                disabled={resolved}
-                maxLength={4000}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) =>
-                  sendShortcut(
-                    e,
-                    busy || voiceBusy || resolved || !input.trim(),
-                  )
-                }
-                aria-keyshortcuts="Control+Enter Meta+Enter"
-                aria-describedby="chat-shortcut"
-                placeholder="Ihre Frage an unser Team …"
-                required
-              />
-              <Shortcut id="chat-shortcut" />
-            </div>
-            <button
-              type="submit"
-              disabled={busy || voiceBusy || resolved || !input.trim()}
-              className="chat-send"
-              aria-label="Frage senden"
-            >
-              Senden
-            </button>
-          </form>
           <VoiceInput
             ctx={ctx}
             value={input}
             setValue={setInput}
             disabled={resolved}
             onBusy={setVoiceBusy}
-          />
+          >
+            {(controls, details) => (
+              <>
+                <form
+                  className="chat-form flex gap-2.5 items-end"
+                  onSubmit={submit}
+                >
+                  <label className="sr-only" htmlFor="chat-input">
+                    Ihre Frage
+                  </label>
+                  <textarea
+                    id="chat-input"
+                    ref={inputField}
+                    rows={1}
+                    autoFocus
+                    className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block max-h-[180px] overflow-auto"
+                    value={input}
+                    disabled={resolved}
+                    maxLength={4000}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) =>
+                      sendShortcut(
+                        e,
+                        busy || voiceBusy || resolved || !input.trim(),
+                      )
+                    }
+                    aria-keyshortcuts="Control+Enter Meta+Enter"
+                    aria-describedby="chat-shortcut"
+                    placeholder="Ihre Frage an unser Team …"
+                    required
+                  />
+
+                  <div className="chat-compose-toolbar">
+                    <Shortcut id="chat-shortcut" />
+                    <div className="chat-compose-actions">
+                      {controls}
+                      <button
+                        type="submit"
+                        disabled={
+                          busy || voiceBusy || resolved || !input.trim()
+                        }
+                        className="chat-send"
+                        aria-label="Frage senden"
+                      >
+                        Senden
+                      </button>
+                    </div>
+                  </div>
+                </form>
+                {details}
+              </>
+            )}
+          </VoiceInput>
         </div>
         {messages.length > 0 && !resolved && (
           <button

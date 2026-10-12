@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction, ReactNode } from 'react';
 import type { BrowserContext } from '@kieksme/csp-sdk';
 interface Props {
   ctx: BrowserContext;
@@ -8,6 +8,7 @@ interface Props {
   disabled: boolean;
   token?: () => Promise<string | undefined>;
   onBusy: (busy: boolean) => void;
+  children: (controls: ReactNode, details: ReactNode) => ReactNode;
 }
 export function VoiceInput({
   ctx,
@@ -16,6 +17,7 @@ export function VoiceInput({
   disabled,
   token,
   onBusy,
+  children,
 }: Props) {
   const [enabled, setEnabled] = useState(false),
     [state, setState] = useState<
@@ -215,69 +217,72 @@ export function VoiceInput({
       }
     }
   }
-  if (!enabled) return null;
-  return (
+  if (!enabled) return children(null, null);
+  const controls =
+    state === 'idle' ? (
+      <button
+        type="button"
+        className="chat-voice-button chat-microphone"
+        aria-label="Nachricht diktieren"
+        title="Nachricht diktieren"
+        disabled={disabled}
+        onClick={() => void start()}
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <rect x="9" y="2" width="6" height="12" rx="3" />
+          <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8" />
+        </svg>
+      </button>
+    ) : (
+      <>
+        {state === 'recording' && (
+          <button
+            type="button"
+            className="chat-voice-button"
+            onClick={() => recorder.current?.stop()}
+          >
+            Aufnahme stoppen
+          </button>
+        )}
+        <button
+          type="button"
+          className="chat-voice-cancel"
+          onClick={() => {
+            operation.current++;
+            cancelled.current = true;
+            request.current?.abort();
+            if (recorder.current?.state === 'recording')
+              recorder.current.stop();
+            release();
+            idle();
+          }}
+        >
+          Abbrechen
+        </button>
+      </>
+    );
+  const details = (
     <div
       className="chat-voice"
       data-state={state}
       data-recording={state === 'recording'}
     >
-      {state === 'idle' ? (
-        <button
-          type="button"
-          className="chat-voice-button chat-microphone"
-          aria-label="Nachricht diktieren"
-          title="Nachricht diktieren"
-          disabled={disabled}
-          onClick={() => void start()}
-        >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <rect x="9" y="2" width="6" height="12" rx="3" />
-            <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8" />
-          </svg>
-        </button>
-      ) : (
-        <>
-          <span role="status" className="chat-voice-status">
-            {state === 'recording'
-              ? '● Aufnahme läuft · maximal 60 Sekunden'
-              : state === 'starting'
-                ? 'Mikrofon wird gestartet …'
-                : 'Sprache wird in Text umgewandelt …'}
-          </span>
-          {state === 'recording' && (
-            <button
-              type="button"
-              className="chat-voice-button"
-              onClick={() => recorder.current?.stop()}
-            >
-              Aufnahme stoppen
-            </button>
-          )}
-          <button
-            type="button"
-            className="chat-voice-cancel"
-            onClick={() => {
-              operation.current++;
-              cancelled.current = true;
-              request.current?.abort();
-              if (recorder.current?.state === 'recording')
-                recorder.current.stop();
-              release();
-              idle();
-            }}
-          >
-            Abbrechen
-          </button>
-        </>
+      {state !== 'idle' && (
+        <span role="status" className="chat-voice-status">
+          {state === 'recording'
+            ? '● Aufnahme läuft · maximal 60 Sekunden'
+            : state === 'starting'
+              ? 'Mikrofon wird gestartet …'
+              : 'Sprache wird in Text umgewandelt …'}
+        </span>
       )}
       <p className="chat-voice-notice">
         Die Aufnahme wird zur Texterkennung an OpenAI gesendet. Prüfen Sie den
@@ -290,4 +295,5 @@ export function VoiceInput({
       )}
     </div>
   );
+  return children(controls, details);
 }

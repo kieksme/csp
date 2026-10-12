@@ -192,10 +192,31 @@ test('dictates into an editable draft, never automatically sends, and keeps the 
   await page.goto('/');
   const input = page.locator('#chat-input');
   await input.fill('Vorhandener Entwurf');
+  const microphone = page.getByRole('button', {
+    name: 'Nachricht diktieren',
+    exact: true,
+  });
+  await expect(microphone).toBeVisible();
+  const [micBox, sendBox] = await Promise.all([
+    microphone.boundingBox(),
+    page
+      .getByRole('button', { name: 'Frage senden', exact: true })
+      .boundingBox(),
+  ]);
+  expect(micBox!.x + micBox!.width).toBeLessThanOrEqual(sendBox!.x);
+  expect(sendBox!.x - micBox!.x - micBox!.width).toBeLessThanOrEqual(16);
+  expect(
+    Math.abs(micBox!.y + micBox!.height / 2 - sendBox!.y - sendBox!.height / 2),
+  ).toBeLessThanOrEqual(1);
   await page.getByRole('button', { name: 'Nachricht diktieren' }).click();
   await expect(
     page.getByRole('status').filter({ hasText: 'Aufnahme läuft' }),
   ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
   await page.getByRole('button', { name: 'Aufnahme stoppen' }).click();
   await expect(input).toHaveValue('Vorhandener Entwurf\nDiktierter Zusatz');
   expect(sends).toBe(0);

@@ -34,4 +34,4 @@ Long histories follow new messages while the visitor reads at the bottom; scroll
 
 Both chat modes share a service-chat header and composer. Visitor messages align to the right, assistant and human replies to the left with visible sender labels. Customer theme colours, dark mode and mobile layouts apply throughout. See [chat design](../../docs/chat.md#gestaltung).
 
-Dictation uses an icon-only microphone button with the accessible name and tooltip “Nachricht diktieren”. Its privacy notice stays visible alongside the button, and mobile touch targets remain 44 × 44 px.
+Dictation uses an icon-only microphone button with the accessible name and tooltip “Nachricht diktieren”. The microphone sits directly beside Send in the composer toolbar. Its privacy notice stays visible underneath, and mobile touch targets remain 44 × 44 px.
