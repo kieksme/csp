@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/kieksme/csp/compare/v0.12.1...v0.13.0) (2026-10-12)
+
+
+### Features
+
+* **chat:** refine service chat layout and speaker hierarchy ([#55](https://github.com/kieksme/csp/issues/55)) ([d219e5f](https://github.com/kieksme/csp/commit/d219e5f390a34bdae71582f4c1875409af393b3f))
+
 ## [0.12.1](https://github.com/kieksme/csp/compare/v0.12.0...v0.12.1) (2026-10-12)
 
 
