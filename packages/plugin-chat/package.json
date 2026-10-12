@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-chat",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -38,7 +38,7 @@
   },
   "cspPlugin": {
     "id": "chat",
-    "sdkVersion": "^0.13.3",
+    "sdkVersion": "^0.13.4",
     "browser": "./browser",
     "server": "./server"
   },
