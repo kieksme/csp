@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.1](https://github.com/kieksme/csp/compare/v0.13.0...v0.13.1) (2026-10-12)
+
+
+### Bug Fixes
+
+* **chat:** compact dictation and support controls ([#57](https://github.com/kieksme/csp/issues/57)) ([4d444c5](https://github.com/kieksme/csp/commit/4d444c5e77078655f1198b1b4804536c69eb3ad7))
+
 ## [0.13.0](https://github.com/kieksme/csp/compare/v0.12.1...v0.13.0) (2026-10-12)
 
 
