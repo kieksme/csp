@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-content",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -37,7 +37,7 @@
   },
   "cspPlugin": {
     "id": "content",
-    "sdkVersion": "^0.13.3",
+    "sdkVersion": "^0.13.4",
     "browser": "./browser",
     "server": "./server"
   },

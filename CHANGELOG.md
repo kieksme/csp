@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.4](https://github.com/kieksme/csp/compare/v0.13.3...v0.13.4) (2026-10-12)
+
+
+### Bug Fixes
+
+* **support:** use robot emoji for channel assistant replies ([#63](https://github.com/kieksme/csp/issues/63)) ([5f89426](https://github.com/kieksme/csp/commit/5f89426437e8fb2b2d1cc98faa10491dfa45602e))
+
 ## [0.13.3](https://github.com/kieksme/csp/compare/v0.13.2...v0.13.3) (2026-10-12)
 
 
