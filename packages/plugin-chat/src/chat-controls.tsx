@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 export function sendShortcut(
   event: KeyboardEvent<HTMLTextAreaElement>,
   disabled: boolean,
@@ -18,7 +18,7 @@ export function Shortcut({ id }: { id: string }) {
   const [mac, setMac] = useState(false);
   useEffect(() => setMac(/Mac|iPhone|iPad/.test(navigator.platform)), []);
   return (
-    <span id={id} className="block text-[0.6875rem] text-muted mt-2">
+    <span id={id} className="chat-shortcut">
       {mac ? '⌘' : 'Strg'} Enter zum Senden
     </span>
   );
@@ -68,12 +68,58 @@ export function NewMessages({
   follow: () => void;
 }) {
   return visible ? (
-    <button
-      type="button"
-      className="border border-line rounded-card px-3 py-2 mb-3 text-[0.8125rem]"
-      onClick={follow}
-    >
+    <button type="button" className="chat-new-messages" onClick={follow}>
       Neue Nachrichten ↓
     </button>
   ) : null;
+}
+
+export function ChatHeading({
+  status,
+  state = 'bot',
+  notice,
+  headingLevel = 2,
+}: {
+  status: ReactNode;
+  state?: string;
+  notice?: string;
+  headingLevel?: 2 | 3;
+}) {
+  const Heading = headingLevel === 2 ? 'h2' : 'h3';
+  return (
+    <header className="chat-heading" data-state={state}>
+      <span className="chat-emblem" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
+          <path d="M5 10a7 7 0 0 1 14 0v6a3 3 0 0 1-3 3h-4" />
+          <rect x="3" y="10" width="4" height="7" rx="2" />
+          <rect x="17" y="10" width="4" height="7" rx="2" />
+          <path d="M10 19h3" />
+        </svg>
+      </span>
+      <div className="chat-heading-copy">
+        <Heading>Service-Chat</Heading>
+        <p className="chat-status" role="status">
+          <span className="chat-status-dot" aria-hidden="true" />
+          {status}
+        </p>
+        {notice && <p className="chat-notice">{notice}</p>}
+      </div>
+    </header>
+  );
+}
+export function ChatWelcome() {
+  return (
+    <div className="chat-welcome">
+      <p className="chat-welcome-title">Was können wir für Sie tun?</p>
+      <p>
+        Beschreiben Sie kurz Ihr Anliegen. Wir helfen Ihnen Schritt für Schritt
+        weiter.
+      </p>
+    </div>
+  );
 }

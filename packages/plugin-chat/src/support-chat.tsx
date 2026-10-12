@@ -3,6 +3,8 @@ import type { BrowserContext, ChatResponder } from '@kieksme/csp-sdk';
 import { answerParts } from './answer.js';
 import { supportSession } from './support-session.js';
 import {
+  ChatHeading,
+  ChatWelcome,
   NewMessages,
   Shortcut,
   sendShortcut,
@@ -280,34 +282,43 @@ export function SupportChat(ctx: BrowserContext) {
   }
   return (
     <div className="chat-panel support-chat text-ink bg-card border border-line p-6 rounded-card compact:p-4">
-      <p className="text-[0.75rem] text-ink mb-3">
-        {demo
-          ? 'Synthetische Support-Demo. Keine Übertragung an einen Support-Channel.'
-          : `Ihre Nachrichten und die Antworten werden an den Support in ${ctx.config.chatSupport?.mode === 'slack' ? 'Slack' : ctx.config.chatSupport?.mode === 'telegram' ? 'Telegram' : 'Microsoft Teams'} weitergegeben.`}
-      </p>
-      <p role="status" className="text-[0.8125rem] mb-3">
-        {current?.status === 'support'
-          ? `${current.support?.name} · Support`
-          : current?.status === 'waiting'
-            ? current.supportRequest?.notification === 'sent'
-              ? 'Support-Team informiert · KI pausiert'
-              : current.supportRequest?.notification === 'failed'
-                ? 'Zustellung verzögert · erneuter Versuch läuft · KI pausiert'
-                : 'Persönlicher Support angefragt · KI pausiert'
-            : current?.status === 'closed'
-              ? current.resolution
-                ? 'Problem gelöst'
-                : 'Gespräch abgeschlossen'
-              : 'Digitaler Assistent'}
-        {auth && ready && !demo
-          ? anonymous
-            ? ` · ${auth.name}`
-            : ` · Angemeldet als ${auth.name}`
-          : ''}
-      </p>
+      <ChatHeading
+        headingLevel={ctx.surface === 'hero' ? 2 : 3}
+        state={current?.status ?? 'bot'}
+        notice={
+          demo
+            ? 'Synthetische Demo · keine Weiterleitung an den Support.'
+            : `Nachrichten werden mit dem Support in ${ctx.config.chatSupport?.mode === 'slack' ? 'Slack' : ctx.config.chatSupport?.mode === 'telegram' ? 'Telegram' : 'Microsoft Teams'} geteilt.`
+        }
+        status={
+          <>
+            {current?.status === 'support'
+              ? `${current.support?.name} · Support`
+              : current?.status === 'waiting'
+                ? current.supportRequest?.notification === 'sent'
+                  ? 'Support-Team informiert · KI pausiert'
+                  : current.supportRequest?.notification === 'failed'
+                    ? 'Zustellung verzögert · erneuter Versuch läuft · KI pausiert'
+                    : 'Persönlicher Support angefragt · KI pausiert'
+                : current?.status === 'closed'
+                  ? current.resolution
+                    ? 'Problem gelöst'
+                    : 'Gespräch abgeschlossen'
+                  : 'Digitaler Assistent'}
+            {auth && ready && !demo
+              ? anonymous
+                ? ` · ${auth.name}`
+                : ` · Angemeldet als ${auth.name}`
+              : ''}
+          </>
+        }
+      />
+      {!current?.messages.length && <ChatWelcome />}
       <div
         ref={scroll.history}
         onScroll={scroll.onScroll}
+        tabIndex={0}
+        role="log"
         className="chat-history grid gap-3 max-h-[min(400px,45dvh)] overflow-auto overscroll-contain mb-4"
         aria-live="polite"
         aria-label="Gesprächsverlauf"
@@ -315,9 +326,9 @@ export function SupportChat(ctx: BrowserContext) {
         {current?.messages.map((m) => (
           <div
             key={m.id}
-            className={`message ${m.kind === 'user' ? 'user bg-soft p-3 rounded-card' : 'assistant border-l-2 border-accent pl-4'} text-[0.8125rem] whitespace-pre-wrap [overflow-wrap:anywhere]`}
+            className={`message ${m.kind === 'user' ? 'user' : m.kind === 'system' ? 'system' : m.kind === 'support' ? 'assistant human' : 'assistant'} text-[0.8125rem] whitespace-pre-wrap [overflow-wrap:anywhere]`}
           >
-            <span className="block text-[0.6875rem] text-ink mb-1">
+            <span className="chat-author">
               {m.kind === 'user'
                 ? 'Sie'
                 : m.kind === 'support'
@@ -376,7 +387,7 @@ export function SupportChat(ctx: BrowserContext) {
         </button>
       )}
       {ready && (
-        <div>
+        <div className="chat-composer">
           <form onSubmit={submit} className="chat-form flex gap-2.5 items-end">
             <label htmlFor="support-chat-input" className="sr-only">
               Ihre Nachricht
@@ -396,7 +407,7 @@ export function SupportChat(ctx: BrowserContext) {
             />
             <button
               type="submit"
-              className="bg-accent text-accent-ink rounded-card p-3"
+              className="chat-send"
               disabled={blocked || !input.trim()}
             >
               Senden
@@ -416,10 +427,13 @@ export function SupportChat(ctx: BrowserContext) {
       {ready && (!current || current.status === 'bot') && (
         <button
           type="button"
-          className="border border-line rounded-card px-4 py-2 mt-3"
+          className="chat-action chat-human-request"
           disabled={busy}
           onClick={() => void requestHuman()}
         >
+          <span aria-hidden="true" className="chat-action-icon">
+            ↗
+          </span>
           Ich möchte mit einer echten Person sprechen
         </button>
       )}
@@ -429,7 +443,7 @@ export function SupportChat(ctx: BrowserContext) {
         current.messages.some((m) => m.kind === 'user') && (
           <button
             type="button"
-            className="border border-line rounded-card px-4 py-2 mt-3"
+            className="chat-action"
             disabled={busy}
             onClick={() => void resolve()}
           >
