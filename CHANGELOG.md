@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.2](https://github.com/kieksme/csp/compare/v0.13.1...v0.13.2) (2026-10-12)
+
+
+### Bug Fixes
+
+* **chat:** place microphone beside send in composer toolbar ([#59](https://github.com/kieksme/csp/issues/59)) ([98be419](https://github.com/kieksme/csp/commit/98be4197038f8a864392101f027359c6f1082678))
+
 ## [0.13.1](https://github.com/kieksme/csp/compare/v0.13.0...v0.13.1) (2026-10-12)
 
 
