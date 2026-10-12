@@ -3,12 +3,19 @@ import { z } from 'zod';
 import type { ServerPlugin, Source } from '@kieksme/csp-sdk';
 import { createProvider, type Message } from './providers.js';
 import { chatContext, servicePrompt } from './context.js';
+import { setupTranscription } from './transcription.js';
 export const configSchema = z
   .object({
     CSP_DEMO: z.string().optional(),
     CSP_CHAT_DEMO: z.enum(['true', 'false']).optional(),
     CSP_CHAT_PROVIDER: z.enum(['openai', 'azure', 'ollama']).default('ollama'),
     CSP_CHAT_MODEL: z.string().optional(),
+    CSP_CHAT_TRANSCRIPTION_ENABLED: z.enum(['true', 'false']).default('true'),
+    CSP_CHAT_TRANSCRIPTION_MODEL: z
+      .string()
+      .min(1)
+      .max(100)
+      .default('gpt-4o-mini-transcribe'),
     CSP_CHAT_OPENAI_API_KEY: z.string().optional(),
     CSP_CHAT_OPENAI_URL: z.string().url().optional(),
     CSP_CHAT_AZURE_API_KEY: z.string().optional(),
@@ -145,6 +152,7 @@ export default {
     const c = configSchema.parse(ctx.env);
     const demo =
       c.CSP_CHAT_DEMO === 'true' || (c.CSP_CHAT_DEMO !== 'false' && ctx.demo);
+    setupTranscription(ctx, c, demo);
     const provider = demo
       ? undefined
       : createProvider(

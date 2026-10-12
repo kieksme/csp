@@ -24,7 +24,7 @@ import {
   supportAuthorizer,
 } from '../packages/plugin-teams/src/auth.js';
 import { configSchema } from '../packages/plugin-teams/src/config.js';
-import { card } from '../packages/plugin-teams/src/teams.js';
+import { card, channelMessage } from '../packages/plugin-teams/src/teams.js';
 const owner = { tenantId: 'tenant', userId: 'owner', name: 'Ada' },
   lena = { id: 'lena', name: 'Lena' },
   other = { id: 'other', name: 'Other' };
@@ -647,4 +647,29 @@ it('checks team-scoped RSC membership on every action and fails closed without t
       CSP_TEAMS_SUPPORT_GROUP_ID: randomUUID(),
     }).success,
   ).toBe(false);
+});
+
+it('distinguishes visitor, assistant and human messages without interpreting visitor markup', () => {
+  const c = conversation({
+    tenantId: 't',
+    userId: 'u',
+    name: 'Ada <at>everyone</at>',
+  });
+  const input = {
+    id: 'm',
+    kind: 'user' as const,
+    content: 'Hallo <b>Email</b>\nZweite Zeile',
+    complete: true,
+  };
+  expect(channelMessage(c, input)).toEqual({
+    type: 'message',
+    textFormat: 'xml',
+    text: '<b>Besucher · Ada &lt;at&gt;everyone&lt;/at&gt;</b><br/><i>Hallo &lt;b&gt;Email&lt;/b&gt;<br/>Zweite Zeile</i>',
+  });
+  expect(channelMessage(c, { ...input, kind: 'bot' }).text).toContain(
+    'Digitaler Assistent',
+  );
+  expect(
+    channelMessage(c, { ...input, kind: 'support', name: 'Lena' }).text,
+  ).toContain('Support · Lena');
 });

@@ -8,6 +8,7 @@ import {
   conversation,
   append,
   delivery,
+  requestSupport,
   setupConversations,
 } from '../packages/core/src/support.js';
 import chat from '../packages/plugin-chat/src/server.js';
@@ -466,4 +467,25 @@ it('acknowledges Telegram text above the portal limit without blocking subsequen
   expect((await f.store.get(f.c.id))?.messages.at(-1)?.content).toBe(
     'Eine gültige Antwort',
   );
+});
+
+it('notifies only authorized Telegram members and permits takeover from the recorded request card', async () => {
+  const f = await fixture();
+  await f.store.change(f.c.id, (c, queue) =>
+    requestSupport(c, ['111', '999999'], queue),
+  );
+  const job = f.store.jobs.find((job) => job.kind === 'request')!;
+  await f.bridge.send(job, (await f.store.get(f.c.id))!);
+  const posted = f.calls.findLast(
+    (call) => call.method === 'sendMessage',
+  )!.body;
+  expect(posted.entities).toHaveLength(1);
+  expect(posted.entities[0].user.id).toBe(111);
+  const current = (await f.store.get(f.c.id))!;
+  const click = f.click();
+  click.callback_query.message.message_id = Number(
+    current.supportRequest!.messageId,
+  );
+  await f.send(click);
+  expect((await f.store.get(f.c.id))?.status).toBe('support');
 });

@@ -195,6 +195,12 @@ export interface BrowserPlugin extends PluginMeta {
 }
 export interface ServerContext {
   chat?: ChatEngine;
+  /** Authentication supplied by the active support transport. */
+  authenticateChat?: (
+    authorization?: string,
+  ) => Promise<{ tenantId: string; userId: string }>;
+  /** Fresh, real duty identities; never supplied by demo schedules. */
+  onDuty?: () => Promise<string[]>;
   app: FastifyInstance;
   env: Env;
   config: PublicConfig;

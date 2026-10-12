@@ -276,6 +276,21 @@ export default {
         throw new Error('SIGNL4 pagination limit exceeded');
       });
     ctx.app.get('/api/v1/team', team);
+    if (!ctx.demo)
+      ctx.onDuty = async () => {
+        const plan = await schedule();
+        if (!plan.data || plan.stale) return [];
+        const now = Date.now();
+        return [
+          ...new Set(
+            plan.data.shifts
+              .filter(
+                (s) => Date.parse(s.start) <= now && now < Date.parse(s.end),
+              )
+              .map((s) => s.userId),
+          ),
+        ];
+      };
     ctx.app.get('/api/v1/schedule', schedule);
     ctx.app.get('/api/v1/alerts', alerts);
     ctx.app.get<{ Params: { id: string } }>(

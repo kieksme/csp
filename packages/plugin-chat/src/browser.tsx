@@ -9,6 +9,13 @@ import type {
 } from '@kieksme/csp-sdk';
 import { answerParts, sourceHref } from './answer.js';
 import { SupportChat } from './support-chat.js';
+import {
+  NewMessages,
+  Shortcut,
+  sendShortcut,
+  useChatScroll,
+} from './chat-controls.js';
+import { VoiceInput } from './voice-input.js';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -48,14 +55,18 @@ function LegacyChat(ctx: BrowserContext) {
     return () => observer.disconnect();
   }, []);
   const [busy, setBusy] = useState(false);
-  const [isMac, setIsMac] = useState(false);
-  useEffect(() => setIsMac(/Mac/.test(navigator.platform)), []);
+  const [voiceBusy, setVoiceBusy] = useState(false);
+  const scroll = useChatScroll(messages);
+  const sending = useRef(false);
   const [error, setError] = useState('');
   const abort = useRef<AbortController | null>(null);
   useEffect(() => () => abort.current?.abort(), []);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!input.trim() || busy || resolved) return;
+    if (!input.trim() || busy || voiceBusy || resolved || sending.current)
+      return;
+    sending.current = true;
+    scroll.follow();
     const history = [
       ...messages.map(({ role, content }) => ({ role, content })),
       { role: 'user' as const, content: input.trim() },
@@ -152,6 +163,7 @@ function LegacyChat(ctx: BrowserContext) {
         setError(err instanceof Error ? err.message : 'Chat nicht verfügbar.');
     } finally {
       setBusy(false);
+      sending.current = false;
       abort.current = null;
     }
   }
@@ -178,7 +190,10 @@ function LegacyChat(ctx: BrowserContext) {
       )}
       <div className="chat-panel text-ink compact:p-4 bg-card border border-line p-6 rounded-card">
         <div
-          className="chat-history empty:hidden grid gap-3.75 max-h-[400px] overflow-auto mb-4"
+          ref={scroll.history}
+          onScroll={scroll.onScroll}
+          className="chat-history empty:hidden grid gap-3.75 max-h-[min(400px,45dvh)] overflow-auto overscroll-contain mb-4"
+          aria-label="Gesprächsverlauf"
           aria-live="polite"
           aria-busy={busy}
         >
@@ -236,6 +251,7 @@ function LegacyChat(ctx: BrowserContext) {
             </div>
           ))}
         </div>
+        <NewMessages visible={scroll.unread} follow={scroll.follow} />
         <form
           className="chat-form flex gap-2.5 items-end [&_textarea]:resize-none [&_textarea]:min-h-[50px] [&_textarea]:[flex:1] [&_textarea]:min-w-0 [&_button]:bg-accent [&_button]:text-accent-ink [&_button]:[border:0] [&_button]:w-[50px] [&_button]:h-[50px] [&_button]:rounded-card [&_button]:text-[1.25rem] [&_button:disabled]:opacity-[0.5]"
           onSubmit={submit}
@@ -249,43 +265,36 @@ function LegacyChat(ctx: BrowserContext) {
               ref={inputField}
               rows={1}
               autoFocus
-              className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block overflow-hidden"
+              className="search bg-card border border-line rounded-card pt-3.5 pb-7 px-4.5 text-ink w-full block max-h-[180px] overflow-auto"
               value={input}
               disabled={resolved}
               maxLength={4000}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (
-                  e.key === 'Enter' &&
-                  (e.ctrlKey || e.metaKey) &&
-                  !e.nativeEvent.isComposing &&
-                  !e.repeat
-                ) {
-                  e.preventDefault();
-                  if (!busy && input.trim())
-                    e.currentTarget.form?.requestSubmit();
-                }
-              }}
+              onKeyDown={(e) =>
+                sendShortcut(e, busy || voiceBusy || resolved || !input.trim())
+              }
               aria-keyshortcuts="Control+Enter Meta+Enter"
               aria-describedby="chat-shortcut"
               placeholder="Ihre Frage an unser Team …"
               required
             />
-            <span
-              id="chat-shortcut"
-              className="absolute right-4.5 bottom-2 text-[0.625rem] text-muted pointer-events-none"
-            >
-              {isMac ? '⌘' : 'Strg'} + Enter zum Senden
-            </span>
+            <Shortcut id="chat-shortcut" />
           </div>
           <button
             type="submit"
-            disabled={busy || resolved || !input.trim()}
+            disabled={busy || voiceBusy || resolved || !input.trim()}
             aria-label="Frage senden"
           >
             ↑
           </button>
         </form>
+        <VoiceInput
+          ctx={ctx}
+          value={input}
+          setValue={setInput}
+          disabled={resolved}
+          onBusy={setVoiceBusy}
+        />
         {ctx.surface === 'hero' && (
           <p className="data-state font-mono text-[0.625rem] text-muted mt-3 mb-0">
             Digitaler Assistent · Ihre Frage wird automatisch beantwortet. Für
@@ -325,6 +334,7 @@ function LegacyChat(ctx: BrowserContext) {
               className="underline mt-2"
               disabled={busy}
               onClick={() => {
+                scroll.follow();
                 setMessages([]);
                 setResolved(false);
                 setInput('');

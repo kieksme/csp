@@ -79,8 +79,10 @@ const actionSchema = z.object({
 const plain = (text: string) => ({ type: 'plain_text', text, emoji: false });
 export function card(c: Conversation) {
   const status =
-    c.status === 'bot'
-      ? 'Digitaler Assistent'
+    c.status === 'bot' || c.status === 'waiting'
+      ? c.status === 'waiting'
+        ? 'Persönlicher Support angefragt · KI pausiert'
+        : 'Digitaler Assistent'
       : c.status === 'closed'
         ? c.resolution
           ? 'Problem gelöst'
@@ -99,7 +101,7 @@ export function card(c: Conversation) {
       : [
           {
             type: 'actions',
-            elements: (c.status === 'bot'
+            elements: (c.status === 'bot' || c.status === 'waiting'
               ? [
                   ['take', 'Übernehmen'],
                   ['resolve', 'Problem gelöst'],
@@ -303,7 +305,8 @@ export async function createSlackBridge(
               'Gesprächslimit erreicht. Bitte abschließen und einen neuen Chat starten.',
             );
           const transition =
-            (job.action === 'take' && c.status === 'bot') ||
+            (job.action === 'take' &&
+              (c.status === 'bot' || c.status === 'waiting')) ||
             (job.action === 'resolve' && c.status !== 'closed');
           action(c, job.action, person, queue);
           c.supportActionAt = job.timestamp;
@@ -422,7 +425,18 @@ export async function createSlackBridge(
           text: e.text,
         };
       }
-      const c = await store.findThread(channel, job.rootId);
+      const c = actions
+        ? await store.get(job.conversationId)
+        : await store.findThread(channel, job.rootId);
+      if (actions && c) {
+        if (
+          c.thread?.conversationId !== channel ||
+          (job.rootId !== c.thread.rootId &&
+            job.rootId !== c.supportRequest?.messageId)
+        )
+          throw new ChatError(404, 'Gespräch nicht gefunden');
+        job.rootId = c.thread.rootId;
+      }
       if (!c || (actions && job.conversationId !== c.id)) {
         if (actions) throw new ChatError(404, 'Gespräch nicht gefunden');
         return {};
@@ -506,7 +520,51 @@ export async function createSlackBridge(
       }
       if (!c.thread || c.thread.conversationId !== config.CSP_SLACK_CHANNEL_ID)
         throw new Error('Slack thread missing');
-      if (job.kind === 'card') {
+      if (job.kind === 'request') {
+        if (
+          c.status !== 'waiting' ||
+          c.supportRequest?.id !== job.id ||
+          c.supportRequest.messageId
+        )
+          return;
+        const targets: string[] = [];
+        for (const id of job.targets ?? [])
+          if (await authorize(id)) targets.push(id);
+        const text =
+          targets.map((id) => `<@${id}>`).join(' ') +
+          ' Persönlicher Support angefragt. Bitte übernehmen.';
+        const result = await api('chat.postMessage', {
+          channel: c.thread.conversationId,
+          thread_ts: c.thread.rootId,
+          text,
+          blocks: [
+            { type: 'section', text: { type: 'mrkdwn', text } },
+            {
+              type: 'actions',
+              elements: [
+                {
+                  type: 'button',
+                  text: plain('Übernehmen'),
+                  action_id: 'take',
+                  value: c.id,
+                },
+              ],
+            },
+          ],
+          client_msg_id: job.id,
+          unfurl_links: false,
+          unfurl_media: false,
+        });
+        if (
+          !timestamp.safeParse(result.ts).success ||
+          result.channel !== c.thread.conversationId
+        )
+          throw new Error('Invalid Slack notification response');
+        await store.change(c.id, (current) => {
+          if (current.supportRequest?.id === job.id)
+            current.supportRequest.messageId = result.ts;
+        });
+      } else if (job.kind === 'card') {
         await api('chat.update', {
           channel: c.thread.conversationId,
           ts: c.thread.rootId,
@@ -515,12 +573,29 @@ export async function createSlackBridge(
         });
       } else if (job.message) {
         const m = job.message,
-          text = `${m.kind === 'user' ? c.owner.name : m.kind === 'bot' ? 'Digitaler Assistent' : (m.name ?? 'Support')}\n${m.content}`;
+          text = `${m.kind === 'user' ? 'Besucher · ' + c.owner.name : m.kind === 'bot' ? 'Digitaler Assistent' : (m.name ?? 'Support')}\n${m.content}`;
         await api('chat.postMessage', {
           channel: c.thread.conversationId,
           thread_ts: c.thread.rootId,
           text: escape(text).slice(0, 39000),
-          blocks: messageBlocks(text),
+          blocks:
+            m.kind === 'user'
+              ? [
+                  {
+                    type: 'section',
+                    text: plain('Besucher · ' + c.owner.name),
+                  },
+                  ...messageBlocks(m.content).map((block) => ({
+                    type: 'rich_text',
+                    elements: [
+                      {
+                        type: 'rich_text_quote',
+                        elements: [{ type: 'text', text: block.text.text }],
+                      },
+                    ],
+                  })),
+                ]
+              : messageBlocks(text),
           client_msg_id: job.id,
           mrkdwn: false,
           parse: 'none',

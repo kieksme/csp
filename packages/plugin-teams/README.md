@@ -11,3 +11,5 @@ Set `CSP_TEAMS_SUPPORT_AUTH=team` when support uses the team Microsoft 365 group
 Conversation state, Entra portal authentication and persistence are shared through the server-only `@kieksme/csp-core/support` export with the optional Slack transport. Install exactly one support transport per instance.
 
 The app is named **Support**. `teams-app/color.png` (192×192) and `outline.png` (32×32, white on transparent) provide the shared headset assistant avatar; editable SVG sources are included. Include the PNGs at the root of the Teams installation ZIP. Existing Developer Portal apps need both icons updated and saved; organization approval/installation remains a separate step. The Slack variant is `packages/plugin-slack/slack-app/avatar.png` (512×512).
+
+Visitor text is labelled and italicized with escaped markup. Explicit human requests pause the bot and notify configured duty/fallback accounts. See [shared chat behaviour](../../docs/chat.md); actual Teams installation and delivery require separate live acceptance.

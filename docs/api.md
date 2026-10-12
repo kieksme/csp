@@ -87,3 +87,9 @@ Das aktivierte Telegram-Plugin registriert `POST /api/telegram/webhook` (maximal
 ### Problem gelöst
 
 `POST /api/v1/conversations/:id/resolve` mit leerem JSON-Objekt und bestehender Portal-Authentifizierung markiert nur das eigene Gespräch als gelöst. Fehlende Authentifizierung: 401; fremde/unbekannte Gesprächs-ID: 404; zusätzliche Body-Felder: 400; bereits ohne Lösung abgeschlossenes Gespräch: 409. Wiederholungen eines gelösten Gesprächs sind idempotent (200). Antwort und SSE-Status enthalten `resolution: { by: "visitor" | "support", name, at }`, wobei `at` Unix-Millisekunden bezeichnet. Der gemeinsame Status ist danach `closed`; der Grund unterscheidet eine Lösung von normalem Abschluss. KI-Generierung wird beendet, Lösungsmeldung und Kanal-Karte werden über die Outbox zugestellt.
+
+## Chat-Capabilities, Transkription und Supportanfrage
+
+`GET /api/v1/chat/capabilities` meldet die serverseitige Verfügbarkeit der Spracheingabe. `POST /api/v1/chat/transcriptions` nimmt eine begrenzte binäre Audioaufnahme an und liefert nur `{ text }`; die Nachricht wird nicht automatisch gesendet. Bei aktivem Support-Transport gilt dessen Authentifizierung. [Formate, Limits und Fehler](chat.md#diktieren).
+
+`POST /api/v1/conversations/:id/request-support` ist eine idempotente Eigentümeraktion mit leerem JSON-Body. Sie pausiert die KI sofort und speichert den Status `waiting` neben `bot`, `support` und `closed`. Die Gesprächsansicht und SSE-Statusereignisse enthalten optional `supportRequest` mit Anfrage-ID, Unix-Zeitpunkt in Millisekunden und Zustellung `pending`, `sent` oder `failed`; die interne Plattform-Nachrichten-ID kann zusätzlich vorhanden sein. [Übergabe, Benachrichtigung und Berechtigungen](chat.md#persönlichen-support-anfragen).

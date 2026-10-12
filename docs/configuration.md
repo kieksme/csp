@@ -301,3 +301,16 @@ Optionales `@kieksme/csp-plugin-telegram`; [Einrichtung, Rechte und Zustellung](
 | `CSP_CHAT_RETENTION_DAYS`       | Datenbank-Aufbewahrung               | Nein, `30`                                  | Ganze Zahl 1–365; Telegram-Nachrichten werden nicht gelöscht                                                          |
 
 Für `entra` sind `CSP_ENTRA_TENANT_ID`, `CSP_ENTRA_API_AUDIENCE` und `CSP_ENTRA_PORTAL_CLIENT_ID` als UUID Pflicht; `CSP_ENTRA_API_SCOPE` ist standardmäßig `Chat.Access`. Dieselben Profil-/Gateway-Regeln wie bei Teams gelten. Beispiel: `templates/customer/.env.telegram.example`. Webhook-Pfad: `/api/telegram/webhook`, Registrierung mit `max_connections=1`. Die Installation allein registriert keinen externen Webhook und aktiviert keine Live-Verbindung.
+
+## Spracheingabe und Supportanfragen
+
+Alle folgenden Werte sind ausschließlich API-Runtime-Konfiguration; sie gehören nicht in das öffentliche Kundenprofil oder den Frontend-Build.
+
+| Variable                         | Zweck, Standard und Grenzen                                                                                                                                                                                                                                                                                            |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CSP_CHAT_TRANSCRIPTION_ENABLED` | Optional `true` (Standard) oder `false`. Nur echte OpenAI-Provider mit vorhandenem `CSP_CHAT_OPENAI_API_KEY` aktivieren Spracheingabe; Demo, Azure und Ollama bleiben ohne Transkription. Bei OpenAI-kompatiblen Proxies ohne Audio-API auf `false` setzen.                                                            |
+| `CSP_CHAT_TRANSCRIPTION_MODEL`   | Optionaler Modellname, Standard `gpt-4o-mini-transcribe`, 1–100 Zeichen. Verwendet denselben API-Schlüssel und optionalen `CSP_CHAT_OPENAI_URL` wie der Chat. Das konfigurierte Modell muss die OpenAI-Dateitranskription unterstützen.                                                                                |
+| `CSP_SUPPORT_DUTY_USER_MAP`      | Optional JSON-Objekt, Standard `{}`: echte Dienstplan-ID → Account-ID des aktiven Support-Transports. Maximal 100 Zuordnungen, IDs 1–100 Zeichen; Account-IDs nur Buchstaben, Ziffern, `_`, `-`. Slack: `U…`/`W…`; Teams: Entra-Object-ID; Telegram: numerische Benutzer-ID. Supportberechtigung wird separat geprüft. |
+| `CSP_SUPPORT_FALLBACK_USER_IDS`  | Optional kommagetrennte feste Vertretungen, Standard leer. Maximal 20 Account-IDs mit obigem Format. Bei fehlender Dienstzuordnung benachrichtigen; ohne berechtigte Vertretung Channel-Anfrage ohne Erwähnung.                                                                                                        |
+
+`CSP_CHAT_RATE_LIMIT`, `CSP_CHAT_CONCURRENCY` und `CSP_CHAT_TIMEOUT_MS` begrenzen auch die Transkriptions-API, mit eigener Quote pro IP und zusätzlich authentifizierter Sitzung. Aufnahmegrenze im Browser: 60 Sekunden; API-Uploadgrenze: 10 MiB. [Bedienung, API und Zustellungszustände](chat.md).

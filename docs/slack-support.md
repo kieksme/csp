@@ -104,3 +104,7 @@ Auch die Support-Karte bietet **Problem gelöst**, ohne vorherige Übernahme im 
 ## Support-Avatar
 
 `packages/plugin-slack/slack-app/avatar.png` enthält das gemeinsame Support-Avatar (512×512). In der bestehenden Slack-App unter Basic Information → Display Information als App-Icon hochladen und speichern. Die Teams-Variante liegt im Teams-App-Paket. Eine Paketänderung allein aktualisiert keine bestehende Slack-App.
+
+## Persönlichen Support anfragen
+
+Besucher können bereits vor der ersten Nachricht eine echte Person anfragen. Der neue Zustand `waiting` pausiert die KI sofort und bleibt gespeichert. Die Outbox benachrichtigt zugeordnete echte Dienstpersonen oder feste Vertretungen; ohne gültige Zuordnung wird der Channel ohne Erwähnung informiert. Nur die tatsächliche Übernahme weist eine zuständige Person zu. Eigentümerprüfung, Wiederholungen, Zustellungsstatus, Diktieren und Bedienung sind im [gemeinsamen Chat-Vertrag](chat.md) beschrieben; Runtime-Zuordnung unter [Konfiguration](configuration.md#spracheingabe-und-supportanfragen).

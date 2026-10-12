@@ -8,7 +8,7 @@ For local provider testing, set `CSP_DEMO=true` and `CSP_CHAT_DEMO=false`: porta
 
 Langsame lokale Modelle können mit der Runtime-Variable `CSP_CHAT_TIMEOUT_MS` mehr Antwortzeit erhalten (Standard `60000`, Bereich `1000`–`300000` ms).
 
-Send a message with Cmd + Enter on macOS, Ctrl + Enter on other systems, or the send button. The hint displays the system-specific shortcut. Plain Enter inserts a line break. A subtle shortcut hint appears at the bottom right inside the text field; blank messages and shortcuts during an active reply do not send.
+Send a message with Cmd + Enter on macOS, Ctrl + Enter on other systems, or the send button. The hint displays the system-specific shortcut. Plain Enter inserts a line break. A subtle shortcut hint appears below the text field; blank messages and shortcuts during an active reply do not send.
 
 The input starts with one text row and automatically grows with wrapped text or line breaks. It shrinks when text is removed or sent and adjusts when its width changes.
 
@@ -29,3 +29,5 @@ WebMCP tool: `chat_ask` streams one answer from `POST /api/v1/chat` and returns 
 Users can mark a chat **Problem gelöst** and start a new chat afterward. With a support transport this is an authenticated, persisted owner action, interrupting generation and updating the channel card; without a transport it applies to the current browser chat only. A resolved conversation is distinct from an ordinary closure.
 
 The assistant asks one short clarifying question for vague requests (for example “Hallo, meine Email”) before offering tickets. It uses supplied help/status facts and reserves ticket links for escalation or an explicit ticket request. Model behaviour requires a real-provider acceptance test.
+
+Long histories follow new messages while the visitor reads at the bottom; scrolling up preserves the reading position and offers **Neue Nachrichten ↓**. Real OpenAI providers expose editable dictation through the server-only transcription API. With a support transport, **Ich möchte mit einer echten Person sprechen** pauses the bot immediately and queues a persistent, directed support request. See [chat behaviour and APIs](../../docs/chat.md) and [runtime options](../../docs/configuration.md#spracheingabe-und-supportanfragen).
