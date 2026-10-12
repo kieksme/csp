@@ -471,6 +471,15 @@ it('acknowledges Telegram text above the portal limit without blocking subsequen
 
 it('notifies only authorized Telegram members and permits takeover from the recorded request card', async () => {
   const f = await fixture();
+  await f.bridge.send(
+    delivery(f.c, 'message', {
+      id: randomUUID(),
+      kind: 'user',
+      content: 'Vorherige Nachricht',
+      complete: true,
+    }),
+    f.c,
+  );
   await f.store.change(f.c.id, (c, queue) =>
     requestSupport(c, ['111', '999999'], queue),
   );
@@ -488,4 +497,13 @@ it('notifies only authorized Telegram members and permits takeover from the reco
   );
   await f.send(click);
   expect((await f.store.get(f.c.id))?.status).toBe('support');
+  const assigned = (await f.store.get(f.c.id))!;
+  await f.bridge.send(delivery(assigned, 'card'), assigned);
+  const updated = f.calls.findLast(
+    (call) =>
+      call.method === 'editMessageText' &&
+      String(call.body.message_id) === assigned.supportRequest!.messageId,
+  )!.body;
+  expect(updated.text).toContain('übernommen');
+  expect(updated.reply_markup.inline_keyboard).toEqual([]);
 });

@@ -4,6 +4,8 @@ import { z } from 'zod';
 import {
   action,
   supportReply,
+  requestNotice,
+  visitorLabel,
   ChatError,
   type Conversation,
   type Delivery,
@@ -571,9 +573,16 @@ export async function createSlackBridge(
           text: escape(`Portal-Support: ${c.owner.name}`),
           blocks: card(c),
         });
+        if (c.supportRequest?.messageId && c.status !== 'waiting')
+          await api('chat.update', {
+            channel: c.thread.conversationId,
+            ts: c.supportRequest.messageId,
+            text: escape(requestNotice(c)),
+            blocks: [{ type: 'section', text: plain(requestNotice(c)) }],
+          });
       } else if (job.message) {
         const m = job.message,
-          text = `${m.kind === 'user' ? 'Besucher · ' + c.owner.name : m.kind === 'bot' ? 'Digitaler Assistent' : (m.name ?? 'Support')}\n${m.content}`;
+          text = `${m.kind === 'user' ? visitorLabel(c.owner.name) : m.kind === 'bot' ? 'Digitaler Assistent' : (m.name ?? 'Support')}\n${m.content}`;
         await api('chat.postMessage', {
           channel: c.thread.conversationId,
           thread_ts: c.thread.rootId,
@@ -583,7 +592,7 @@ export async function createSlackBridge(
               ? [
                   {
                     type: 'section',
-                    text: plain('Besucher · ' + c.owner.name),
+                    text: plain(visitorLabel(c.owner.name)),
                   },
                   ...messageBlocks(m.content).map((block) => ({
                     type: 'rich_text',

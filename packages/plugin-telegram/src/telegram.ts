@@ -4,6 +4,7 @@ import { z } from 'zod';
 import {
   action,
   supportReply,
+  requestNotice,
   ChatError,
   type Conversation,
   type Delivery,
@@ -488,6 +489,13 @@ export async function createTelegramBridge(
             current.thread!.serviceUrl = String(result.message_id);
           });
         }
+        if (c.supportRequest?.messageId && c.status !== 'waiting')
+          await api('editMessageText', {
+            chat_id: base.chat_id,
+            message_id: Number(c.supportRequest.messageId),
+            text: requestNotice(c),
+            reply_markup: { inline_keyboard: [] },
+          });
       } else if (job.message) {
         const m = job.message,
           text = `${m.kind === 'user' ? c.owner.name : m.kind === 'bot' ? 'Digitaler Assistent' : (m.name ?? 'Support')}\n${m.content}`;
