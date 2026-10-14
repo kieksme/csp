@@ -455,7 +455,7 @@ section .faq-controls button:hover {
   color: var(--muted);
   line-height: 1.7;
 }
-.chat-panel .chat-action {
+.chat-action {
   min-height: 44px;
   margin: 10px 6px 0 0;
   padding: 8px 10px;
@@ -469,10 +469,10 @@ section .faq-controls button:hover {
   text-align: left;
   transition: background-color 150ms;
 }
-.chat-panel .chat-action:hover {
+.chat-action:hover {
   background: var(--soft);
 }
-.chat-panel .chat-action-icon {
+.chat-action-icon {
   display: inline-block;
   margin-right: 8px;
   font-size: 1rem;

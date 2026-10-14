@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { BrowserContext, LiveData } from './index.js';
 export function useLive<T>(ctx: BrowserContext, path: string) {
-  const [live, setLive] = useState<LiveData<T>>({
+  const [live, setLive] = useState<LiveData<T> & { path: string }>({
+    path,
     data: null,
     updatedAt: null,
     stale: false,
@@ -18,11 +19,14 @@ export function useLive<T>(ctx: BrowserContext, path: string) {
         const result = await ctx.api<LiveData<T>>(path, {
           signal: controller.signal,
         });
-        if (mounted) setLive(result);
+        if (mounted) setLive({ ...result, path });
       } catch {
         if (mounted)
           setLive((previous) => ({
-            ...previous,
+            ...(previous.path === path
+              ? previous
+              : { data: null, updatedAt: null }),
+            path,
             stale: true,
             error: 'Verbindung unterbrochen',
           }));
@@ -39,7 +43,9 @@ export function useLive<T>(ctx: BrowserContext, path: string) {
       clearInterval(interval);
     };
   }, [path, ctx.api, ctx.config.pollMs]);
-  return { ...live, loading };
+  return live.path === path
+    ? { ...live, loading }
+    : { data: null, updatedAt: null, stale: false, loading: true };
 }
 export function DataState({
   loading,
@@ -71,3 +77,6 @@ export function DataState({
     </p>
   );
 }
+
+export { DutyHero } from './duty-hero.js';
+export { Avatar, avatarUrl } from './avatar.js';

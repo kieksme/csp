@@ -14,6 +14,8 @@ export interface ChatResponder {
   role: 'on-duty' | 'service-team';
 }
 export interface Source {
+  /** Optional provider-independent meaning for verified chat context. */
+  kind?: 'schedule' | 'status';
   id: string;
   title: string;
   text: string;
@@ -188,6 +190,10 @@ export interface PluginMeta {
   requires?: string[];
 }
 export interface BrowserPlugin extends PluginMeta {
+  /** Synthetic data only; used exclusively by the static demo transport. */
+  demoData?: (path: string) => unknown | undefined;
+  /** Synthetic knowledge for the browser-only demo chat. */
+  demoSources?: () => Source[];
   hero?: ComponentType<BrowserContext>;
   sections: Section[];
   /** Optional WebMCP tools; names must start with the plugin id. */

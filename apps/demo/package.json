@@ -9,7 +9,8 @@
     "start:api": "node dist-api/server.js",
     "dev:support": "CSP_DEMO=true CSP_TEAMS_DEMO=true vite --host 127.0.0.1",
     "dev:api:support": "CSP_DEMO=true CSP_TEAMS_DEMO=true tsx --env-file=.env.development server.ts",
-    "build:support": "CSP_DEMO=true CSP_TEAMS_DEMO=true CSP_API_URL=http://127.0.0.1:3017 vite build --outDir dist-support"
+    "build:support": "CSP_DEMO=true CSP_TEAMS_DEMO=true CSP_API_URL=http://127.0.0.1:3017 vite build --outDir dist-support",
+    "build:datadog": "CSP_DATADOG_DEMO=true vite build --outDir dist-datadog"
   },
   "dependencies": {
     "@kieksme/csp-core": "workspace:^",
@@ -22,7 +23,8 @@
     "react-dom": "^19.2.0",
     "dotenv": "^17.2.3",
     "@kieksme/csp-sdk": "workspace:^",
-    "@kieksme/csp-plugin-teams": "workspace:^"
+    "@kieksme/csp-plugin-teams": "workspace:^",
+    "@kieksme/csp-plugin-datadog": "workspace:^"
   },
   "devDependencies": {
     "vite": "^7.1.9",

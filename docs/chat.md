@@ -40,3 +40,5 @@ Echte, aktuelle SIGNL4-Schichten liefern die Dienstidentitäten. Die API ordnet 
 Slack zeigt Besuchernachrichten als [Rich-Text-Zitat](https://docs.slack.dev/reference/block-kit/blocks/rich-text-block/) unter **Besucher · Name**. Teams zeigt dieselben Inhalte [kursiv](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/format-your-bot-messages) unter einem Besucher-Label. Besuchertext wird weder als Erwähnung noch als eigenes Markup interpretiert. KI-Antworten in Slack und Teams beginnen mit **🤖**; echte Support-Antworten tragen weiterhin den Namen. Im Portal bleibt die Kennzeichnung als digitaler Assistent sichtbar.
 
 Konfiguration: [Runtime-Optionen](configuration.md#spracheingabe-und-supportanfragen). Einrichtung: [Slack](slack-support.md), [Teams](teams-support.md), [Telegram](telegram-support.md).
+
+Die Aktion „Problem gelöst“ verwendet auch außerhalb der Chat-Karte die Kartenfarben. Dadurch bleibt sie im dunklen Header nach einer Antwort kontrastreich.

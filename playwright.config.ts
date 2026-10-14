@@ -23,6 +23,12 @@ export default defineConfig({
   webServer: [
     {
       command:
+        'pnpm --filter csp-demo exec vite preview --outDir dist-datadog --host 127.0.0.1 --port 4178 --strictPort',
+      url: 'http://127.0.0.1:4178',
+      reuseExistingServer: false,
+    },
+    {
+      command:
         'pnpm --filter csp-demo exec vite preview --outDir dist-support --host 127.0.0.1 --port 4176 --strictPort',
       url: 'http://127.0.0.1:4176',
       reuseExistingServer: false,

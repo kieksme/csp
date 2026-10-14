@@ -1,6 +1,9 @@
-import type { PublicConfig } from '@kieksme/csp-sdk';
+import type { PublicConfig, BrowserPlugin } from '@kieksme/csp-sdk';
 // Explicit browser-only demo. No provider requests or production data.
-export function staticDemoRequest(config: PublicConfig): typeof fetch {
+export function staticDemoRequest(
+  config: PublicConfig,
+  plugins: BrowserPlugin[] = [],
+): typeof fetch {
   return async (input, init) => {
     if (init?.signal?.aborted) throw new DOMException('Aborted', 'AbortError');
     const url =
@@ -24,6 +27,11 @@ export function staticDemoRequest(config: PublicConfig): typeof fetch {
       { id: 'demo-sara', name: 'Sara Demo', phones: [], role: 'Support' },
       { id: 'demo-jonas', name: 'Jonas Demo', phones: [], role: 'Support' },
     ];
+    for (const plugin of plugins) {
+      const data = plugin.demoData?.(route);
+      if (data !== undefined)
+        return Response.json({ data, updatedAt, stale: false });
+    }
     let data: unknown;
     if (route === '/team') data = team;
     else if (route === '/schedule')
@@ -47,15 +55,20 @@ export function staticDemoRequest(config: PublicConfig): typeof fetch {
         url: 'https://status.example.invalid',
       };
     else if (route === '/chat') {
-      const sources = config.content.faq
-        .slice(0, 3)
-        .map((f) => ({ id: f.id, title: f.question, href: '#faq' }));
+      const extra = plugins.flatMap((plugin) => plugin.demoSources?.() ?? []);
+      const sources = [
+        ...extra,
+        ...config.content.faq
+          .slice(0, 3)
+          .map((f) => ({ id: f.id, title: f.question, href: '#faq' })),
+      ];
       const text =
         'Dies ist eine statische Demo. ' +
+        (extra.length ? extra.map((s) => s.text).join('\n\n') + '\n\n' : '') +
         (config.content.faq[0]?.answer ??
           'Für echte Auskünfte wenden Sie sich an das Service-Team.');
       return new Response(
-        `event: responder\ndata: ${JSON.stringify({ name: team[0].name, role: 'on-duty' })}\n\nevent: sources\ndata: ${JSON.stringify(sources)}\n\nevent: delta\ndata: ${JSON.stringify({ text })}\n\nevent: done\ndata: {}\n\n`,
+        `event: responder\ndata: ${JSON.stringify({ name: extra.length ? null : team[0].name, role: extra.length ? 'service-team' : 'on-duty' })}\n\nevent: sources\ndata: ${JSON.stringify(sources)}\n\nevent: delta\ndata: ${JSON.stringify({ text })}\n\nevent: done\ndata: {}\n\n`,
         { headers: { 'Content-Type': 'text/event-stream' } },
       );
     } else

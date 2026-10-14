@@ -232,6 +232,9 @@ importers:
       '@kieksme/csp-plugin-content':
         specifier: workspace:^
         version: link:../../packages/plugin-content
+      '@kieksme/csp-plugin-datadog':
+        specifier: workspace:^
+        version: link:../../packages/plugin-datadog
       '@kieksme/csp-plugin-kuma':
         specifier: workspace:^
         version: link:../../packages/plugin-kuma
@@ -454,6 +457,18 @@ importers:
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@19.3.0)(react@19.3.0)
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
+  packages/plugin-datadog:
+    dependencies:
+      '@kieksme/csp-sdk':
+        specifier: workspace:^
+        version: link:../sdk
+      react:
+        specifier: ^19.0.0
+        version: 19.3.0
       zod:
         specifier: ^3.25.76
         version: 3.25.76

@@ -6,7 +6,7 @@ it('uses the published SDK package version at runtime', () => {
   expect(SDK_VERSION).toBe(version);
 });
 
-it.each(['chat', 'contact', 'content', 'kuma', 'signl4'])(
+it.each(['chat', 'contact', 'content', 'kuma', 'signl4', 'datadog'])(
   'keeps %s plugin metadata and both entry points compatible with the release',
   async (id) => {
     const { default: pkg } = await import(
