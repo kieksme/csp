@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-slack",
-  "version": "0.13.4",
+  "version": "0.14.0",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -36,7 +36,7 @@
   },
   "cspPlugin": {
     "id": "slack",
-    "sdkVersion": "^0.13.4",
+    "sdkVersion": "^0.14.0",
     "browser": "./browser",
     "server": "./server",
     "requires": [
