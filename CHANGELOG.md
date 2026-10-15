@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/kieksme/csp/compare/v0.13.4...v0.14.0) (2026-10-15)
+
+
+### Features
+
+* **datadog:** add cases health SLOs and on-call plugin ([#65](https://github.com/kieksme/csp/issues/65)) ([7cc8977](https://github.com/kieksme/csp/commit/7cc897710c3bbdb7431d0598a0d43c908b024733))
+
 ## [0.13.4](https://github.com/kieksme/csp/compare/v0.13.3...v0.13.4) (2026-10-12)
 
 
