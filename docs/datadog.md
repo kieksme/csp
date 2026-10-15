@@ -52,7 +52,7 @@ Ungültige Ticketfilter ergeben HTTP 400. Es gibt keine schreibenden Routen oder
 
 Acme veröffentlicht eine zusätzliche, vollständig synthetische Demo unter `https://kieksme.github.io/csp-acme/datadog/`. Das bestehende Supportportal bleibt unter `/csp-acme/` erreichbar. Die Datadog-Demo benötigt keinen API-Account und keine Datadog-Schlüssel.
 
-Ein separater Acme-Testaccount wird in der Region EU1 eingerichtet. Die Registrierung ist erst abgeschlossen, wenn die Eigentümeradresse bestätigt und das Konto im Datadog-Portal sichtbar ist. Die Vorlage für die spätere Live-Anbindung benötigt die unten dokumentierten Leserechte sowie die Auswahl von Case-Projekt, Monitoren, SLOs und Schedules. Der öffentliche Demo-Build bleibt bis zur separat geprüften Live-Aktivierung synthetisch.
+Für die Acme-Einrichtung wurde ein eigenständiger EU1-Testaccount angelegt. Am 15. Oktober 2026 wurden Browser-Login, bestätigte Eigentümeradresse und Admin-Zugriff auf die vom Eigentümer benannte Organisation „kieks.me GbR“ geprüft. Die Live-Provider-Verbindung ist weiterhin **noch ungetestet und deaktiviert**. Die Vorlage für die spätere Live-Anbindung benötigt die unten dokumentierten Leserechte sowie die Auswahl von Case-Projekt, Monitoren, SLOs und Schedules. Der öffentliche Demo-Build bleibt bis zur separat geprüften Live-Aktivierung synthetisch.
 
 ## Quellen
 
