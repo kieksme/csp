@@ -4,7 +4,7 @@ Das optionale Paket `@kieksme/csp-plugin-datadog` bündelt Datadog Case Manageme
 
 ## Installation und Anzeige
 
-Nach Veröffentlichung `csp plugin add @kieksme/csp-plugin-datadog` ausführen oder das installierte Paket in die `plugins`-Liste des Kundenprofils aufnehmen. Ein eigenes Profil kann SIGNL4 und Kuma durch Datadog ersetzen. Für einen Datadog-Header SIGNL4 aus diesem Profil entfernen: CSP verwendet die erste registrierte Hero-Komponente. Es gibt keine Überschneidung der API-Routen.
+Ab CSP 0.14.0 `csp plugin add @kieksme/csp-plugin-datadog@0.14.0` ausführen oder das installierte Paket in die `plugins`-Liste des Kundenprofils aufnehmen. Ein eigenes Profil kann SIGNL4 und Kuma durch Datadog ersetzen. Für einen Datadog-Header SIGNL4 aus diesem Profil entfernen: CSP verwendet die erste registrierte Hero-Komponente. Es gibt keine Überschneidung der API-Routen.
 
 Drei Bereiche zeigen Tickets (20 pro Seite, Statusfilter), Monitorstatus und SLOs sowie aktuelle Bereitschaft und die nächsten sieben Tage. SLOs zeigen den gemessenen Wert, das für `30d` konfigurierte Ziel und das verbleibende Error Budget. SLOs ohne 30-Tage-Ziel oder mit Teilfehlern werden als nicht verfügbar angezeigt. Negative Error Budgets werden erhalten. Die Erfüllungsquote ist keine allgemeine Verfügbarkeitsgarantie.
 
@@ -47,6 +47,12 @@ Alle Routen sind GET und verwenden `LiveData<T>` (`data`, `updatedAt`, `stale`, 
 - `/api/v1/datadog/team`: nur Namen/IDs der ausgewählten Dienstpersonen für den gemeinsamen Header.
 
 Ungültige Ticketfilter ergeben HTTP 400. Es gibt keine schreibenden Routen oder schreibenden Chat-Werkzeuge.
+
+## Acme-Demo und Konto
+
+Acme veröffentlicht eine zusätzliche, vollständig synthetische Demo unter `https://kieksme.github.io/csp-acme/datadog/`. Das bestehende Supportportal bleibt unter `/csp-acme/` erreichbar. Die Datadog-Demo benötigt keinen API-Account und keine Datadog-Schlüssel.
+
+Ein separater Acme-Testaccount wird in der Region EU1 eingerichtet. Die Registrierung ist erst abgeschlossen, wenn die Eigentümeradresse bestätigt und das Konto im Datadog-Portal sichtbar ist. Die Vorlage für die spätere Live-Anbindung benötigt die unten dokumentierten Leserechte sowie die Auswahl von Case-Projekt, Monitoren, SLOs und Schedules. Der öffentliche Demo-Build bleibt bis zur separat geprüften Live-Aktivierung synthetisch.
 
 ## Quellen
 
