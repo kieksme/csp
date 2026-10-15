@@ -10,7 +10,7 @@ flowchart TB
   Tests --> Main["Produkt main"]
   Main --> RP["Release Please PR"]
   RP --> Tag["GitHub Release / unveränderlicher Tag"]
-  Tag --> Packages["Neun CSP-Pakete: npmjs und GitHub Packages"]
+  Tag --> Packages["CSP-Pakete: npmjs und GitHub Packages"]
   Tag --> Wiki["docs des Release-Tags zum GitHub-Wiki"]
   Packages --> Update["Kunden-PR: Versionen und Lockfile"]
   Update --> CI["Kunden-CI: Profile, Frontend und API-Image"]
