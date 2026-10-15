@@ -321,3 +321,15 @@ it('serves plugin-owned static demo routes, pagination and chat knowledge', asyn
       new Date(now + 7 * 86400000).toISOString(),
   ).toBe(true);
 });
+
+it('accepts blank env-template placeholders only when live requirements are not needed', () => {
+  const placeholders = Object.fromEntries(
+    Object.keys(liveEnv).map((key) => [key, '   ']),
+  );
+  expect(
+    configSchema.safeParse({ ...placeholders, CSP_DEMO: 'true' }).success,
+  ).toBe(true);
+  expect(
+    configSchema.safeParse({ ...placeholders, CSP_DEMO: 'false' }).success,
+  ).toBe(false);
+});

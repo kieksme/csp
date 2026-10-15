@@ -14,7 +14,7 @@ Cases zeigen Titel, Status, Priorität und Zuständigkeit als Datadog-Benutzer-I
 
 ## Serverkonfiguration
 
-Alle Optionen werden beim API-Start geprüft, niemals als Browser-Konfiguration ausgegeben. Die vollständige Tabelle steht in [Konfiguration](configuration.md#datadog).
+Alle Optionen werden beim API-Start geprüft, niemals als Browser-Konfiguration ausgegeben. Leere Schlüssel- und Auswahl-Platzhalter gelten als nicht gesetzt; im Demo-Modus sind sie erlaubt, außerhalb der Demo bleiben sie Pflicht. Die vollständige Tabelle steht in [Konfiguration](configuration.md#datadog).
 
 ```dotenv
 CSP_DATADOG_SITE=datadoghq.eu

@@ -28,16 +28,22 @@ const identifiers = (pattern: RegExp, limit: number) =>
         .filter(Boolean),
     )
     .pipe(z.array(z.string().regex(pattern)).min(1).max(limit));
+const optionalEnv = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess(
+    (value) =>
+      typeof value === 'string' && value.trim() === '' ? undefined : value,
+    schema.optional(),
+  );
 export const configSchema = z
   .object({
     CSP_DEMO: z.string().optional(),
     CSP_DATADOG_SITE: z.enum(sites).default('datadoghq.eu'),
-    CSP_DATADOG_API_KEY: z.string().min(1).optional(),
-    CSP_DATADOG_APP_KEY: z.string().min(1).optional(),
-    CSP_DATADOG_CASE_PROJECT_ID: z.string().uuid().optional(),
-    CSP_DATADOG_MONITOR_IDS: identifiers(/^\d+$/, 50).optional(),
-    CSP_DATADOG_SLO_IDS: identifiers(/^[a-zA-Z0-9-]+$/, 50).optional(),
-    CSP_DATADOG_SCHEDULE_IDS: identifiers(/^[a-zA-Z0-9-]+$/, 10).optional(),
+    CSP_DATADOG_API_KEY: optionalEnv(z.string().min(1)),
+    CSP_DATADOG_APP_KEY: optionalEnv(z.string().min(1)),
+    CSP_DATADOG_CASE_PROJECT_ID: optionalEnv(z.string().uuid()),
+    CSP_DATADOG_MONITOR_IDS: optionalEnv(identifiers(/^\d+$/, 50)),
+    CSP_DATADOG_SLO_IDS: optionalEnv(identifiers(/^[a-zA-Z0-9-]+$/, 50)),
+    CSP_DATADOG_SCHEDULE_IDS: optionalEnv(identifiers(/^[a-zA-Z0-9-]+$/, 10)),
   })
   .superRefine((c, ctx) => {
     if (c.CSP_DEMO !== 'true')
