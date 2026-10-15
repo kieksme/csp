@@ -72,8 +72,8 @@ export function Portal({
     };
   }, []);
   const request = useMemo(
-    () => (config.staticDemo ? staticDemoRequest(config) : fetch),
-    [config],
+    () => (config.staticDemo ? staticDemoRequest(config, plugins) : fetch),
+    [config, plugins],
   );
   const api = useMemo(
     () =>

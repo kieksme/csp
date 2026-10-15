@@ -314,3 +314,19 @@ Alle folgenden Werte sind ausschließlich API-Runtime-Konfiguration; sie gehöre
 | `CSP_SUPPORT_FALLBACK_USER_IDS`  | Optional kommagetrennte feste Vertretungen, Standard leer. Maximal 20 Account-IDs mit obigem Format. Bei fehlender Dienstzuordnung benachrichtigen; ohne berechtigte Vertretung Channel-Anfrage ohne Erwähnung.                                                                                                        |
 
 `CSP_CHAT_RATE_LIMIT`, `CSP_CHAT_CONCURRENCY` und `CSP_CHAT_TIMEOUT_MS` begrenzen auch die Transkriptions-API, mit eigener Quote pro IP und zusätzlich authentifizierter Sitzung. Aufnahmegrenze im Browser: 60 Sekunden; API-Uploadgrenze: 10 MiB. [Bedienung, API und Zustellungszustände](chat.md).
+
+## Datadog
+
+Optionales Plugin: `@kieksme/csp-plugin-datadog`. Alle nachfolgenden Optionen sind **Server-Runtime** und werden beim API-Start geprüft. Sie gehören nicht in `public`, `VITE_*` oder das Browser-Bundle. [Einrichtung und Betriebsgrenzen](datadog.md).
+
+| Option                        | Zweck                           | Pflicht/Standard         | Zulässige Werte                                                                                                                          |
+| ----------------------------- | ------------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `CSP_DATADOG_SITE`            | Datadog-Region                  | Optional; `datadoghq.eu` | `datadoghq.eu`, `datadoghq.com`, `us3.datadoghq.com`, `us5.datadoghq.com`, `ap1.datadoghq.com`, `ap2.datadoghq.com`, `uk1.datadoghq.com` |
+| `CSP_DATADOG_API_KEY`         | API-Key                         | Pflicht außerhalb Demo   | Nicht leer; Secret                                                                                                                       |
+| `CSP_DATADOG_APP_KEY`         | Application-Key mit Leserechten | Pflicht außerhalb Demo   | Nicht leer; Secret                                                                                                                       |
+| `CSP_DATADOG_CASE_PROJECT_ID` | Auswahl eines Case-Projekts     | Pflicht außerhalb Demo   | UUID                                                                                                                                     |
+| `CSP_DATADOG_MONITOR_IDS`     | Freigegebene Monitore           | Pflicht außerhalb Demo   | 1–50 numerische IDs, kommagetrennt                                                                                                       |
+| `CSP_DATADOG_SLO_IDS`         | Freigegebene SLOs               | Pflicht außerhalb Demo   | 1–50 IDs aus Buchstaben, Zahlen und Bindestrichen, kommagetrennt                                                                         |
+| `CSP_DATADOG_SCHEDULE_IDS`    | Freigegebene Bereitschaftspläne | Pflicht außerhalb Demo   | 1–10 IDs aus Buchstaben, Zahlen und Bindestrichen, kommagetrennt                                                                         |
+
+`CSP_DEMO=true` verzichtet auf alle Datadog-Zugangsdaten und liefert synthetische Daten. SLO-Fenster: fest 30 Tage. Schichtfenster: fest sieben Tage. Browser-Aktualisierung: bestehendes `public.pollMs`, standardmäßig 60 Sekunden.

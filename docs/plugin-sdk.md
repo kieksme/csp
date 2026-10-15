@@ -166,3 +166,13 @@ Statusauskünfte beziehen sich ausschließlich auf einen zum Problem passenden M
 ### Chat-Verlauf, Diktieren und Übergabe
 
 KI- und Support-Chat verwenden denselben Tastatur- und Scrollvertrag. Das Eingabefeld bleibt außerhalb des begrenzten Verlaufs; beim Lesen älterer Nachrichten folgt der Verlauf nicht ungefragt neuen Antworten. OpenAI-Spracheingabe ergänzt einen bearbeitbaren Entwurf. Support-Transport und SIGNL4 können über die optionalen serverseitigen `ServerContext.authenticateChat` und `ServerContext.onDuty` die vorhandene Authentifizierung sowie ausschließlich echte, frische Dienstidentitäten bereitstellen. `onDuty` liefert Dienstplan-IDs, keine Plattform-Accounts oder öffentliche Tokens. [Chat-Vertrag und API](chat.md).
+
+## Gemeinsamer Bereitschafts-Header und statische Plugin-Demos
+
+`@kieksme/csp-sdk/browser` exportiert `DutyHero` und `Avatar`. `DutyHero` nimmt zusätzlich zum `BrowserContext` optionale `schedulePath` und `teamPath` an (Standard `/schedule`, `/team`). Damit verwenden unterschiedliche Provider dieselbe Darstellung ohne Abhängigkeit vom SIGNL4-Paket.
+
+`BrowserPlugin.demoData?(path)` liefert ausschließlich synthetische Daten für eine unterstützte API-Route inklusive Querystring oder `undefined`, wenn die Route nicht zum Plugin gehört. Core verpackt das Ergebnis als `LiveData`. `demoSources?()` liefert synthetische `Source[]` für den festen Demo-Chat. Beide Hooks werden ausschließlich durch den statischen Demo-Transport aufgerufen; im Live-Betrieb bleibt der Server zuständig. Diese Hooks dürfen weder Secrets noch Netzwerkzugriffe enthalten.
+
+Datadog verwendet eigene `/datadog/*`-Routen. [Datadog-Anleitung](datadog.md).
+
+`Source.kind` kann optional `schedule` oder `status` sein. Der Chat verwendet damit Schicht- und Monitorquellen unabhängig von der Provider-ID als verifizierten Kontext. Bestehende Quellen-IDs `schedule` und `status` bleiben unterstützt. Statusquellen enthalten `{ monitors: [...] }`; die Monitorzustände können zusätzlich `ok`, `warning`, `alert` und `no-data` sein. Schichtquellen verwenden weiterhin `Schedule`. Veraltete oder ungültige Quellen bestätigen keinen Dienststatus.

@@ -95,3 +95,7 @@ Chat-Antworten verwenden die aktuelle Bereitschaftsperson in Ich-Form, mit Name 
 Optional: [Teams-Support mit Entra-Anmeldung und menschlicher Chat-Übernahme](docs/teams-support.md), einschließlich lokaler Demo ohne Microsoft-Zugangsdaten. Außerdem [Slack-Support mit Channel-Threads und menschlicher Übernahme](docs/slack-support.md); die echte Slack-Anbindung ist noch ungetestet.
 
 Telegram-Support ist als separates `@kieksme/csp-plugin-telegram` mit Themen, Übernahme und anonymen Besuchersitzungen verfügbar. [Einrichtung](docs/telegram-support.md); reale Verbindung noch ungetestet.
+
+### Datadog
+
+Das optionale `@kieksme/csp-plugin-datadog` zeigt Cases, Monitorstatus, SLOs und Bereitschaften. Es enthält eine lokale und statische Demo ohne Provider-Zugriff. [Einrichtung, Konfiguration und API](docs/datadog.md). Die Live-Anbindung ist noch ungetestet.

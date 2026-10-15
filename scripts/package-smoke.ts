@@ -86,7 +86,7 @@ try {
   await writeFile(pkgPath, JSON.stringify(pkg, null, 2));
   await writeFile(
     join(customer, '.env'),
-    'CSP_DEMO=true\nCSP_NAME=Packed Customer\nCSP_CONTACT_PHONE=+49000\nCSP_API_URL=http://localhost:3999\nCSP_ALLOWED_ORIGINS=http://localhost:4173\nCSP_CHAT_OPENAI_API_KEY=sentinel-not-for-browser\nCSP_SIGNL4_API_KEY=sentinel-not-for-browser\n',
+    'CSP_DEMO=true\nCSP_NAME=Packed Customer\nCSP_CONTACT_PHONE=+49000\nCSP_API_URL=http://localhost:3999\nCSP_ALLOWED_ORIGINS=http://localhost:4173\nCSP_CHAT_OPENAI_API_KEY=sentinel-not-for-browser\nCSP_SIGNL4_API_KEY=sentinel-not-for-browser\nCSP_DATADOG_API_KEY=sentinel-not-for-browser\nCSP_DATADOG_APP_KEY=sentinel-not-for-browser\n',
   );
   await run('pnpm', ['install'], customer);
   await run('pnpm', ['exec', 'csp', 'validate'], customer);
@@ -201,6 +201,7 @@ try {
     exists: boolean,
     directory = customer,
     support: false | 'teams' | 'slack' | 'telegram' = false,
+    datadog = false,
   ) {
     const child = spawn('node', [join(directory, 'dist-api/server.js')], {
       cwd: directory,
@@ -234,6 +235,14 @@ try {
       assert(ready, 'API startup timeout: ' + errors);
       const route = await fetch('http://127.0.0.1:3999/api/v1/external');
       assert.equal(route.status, exists ? 200 : 404);
+      const dd = await fetch('http://127.0.0.1:3999/api/v1/datadog/monitors');
+      assert.equal(dd.status, datadog ? 200 : 404);
+      if (datadog)
+        assert(
+          (await dd.json()).data.some(
+            (m: { status: string }) => m.status === 'warning',
+          ),
+        );
       const chat = await fetch('http://127.0.0.1:3999/api/v1/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -283,6 +292,29 @@ try {
   await run(
     'node',
     [cli, 'plugin', 'remove', 'csp-smoke-external-plugin'],
+    customer,
+  );
+  await run('pnpm', ['build'], customer);
+  await verifyRoute(false);
+  await run(
+    'node',
+    [cli, 'plugin', 'add', overrides['@kieksme/csp-plugin-datadog'].slice(5)],
+    customer,
+  );
+  await run('pnpm', ['build'], customer);
+  await verifyRoute(false, customer, false, true);
+  for (const asset of (await readdir(join(customer, 'dist/assets'))).filter(
+    (a) => /\.(js|css)$/.test(a),
+  ))
+    assert(
+      !(await readFile(join(customer, 'dist/assets', asset), 'utf8')).includes(
+        'sentinel-not-for-browser',
+      ),
+      'Datadog secret leaked into browser',
+    );
+  await run(
+    'node',
+    [cli, 'plugin', 'remove', '@kieksme/csp-plugin-datadog'],
     customer,
   );
   await run('pnpm', ['build'], customer);

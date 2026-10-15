@@ -9,6 +9,11 @@ export default defineConfig(({ mode }) => {
     ...process.env,
   };
   return {
+    define: {
+      __CSP_DATADOG_DEMO__: JSON.stringify(
+        process.env.CSP_DATADOG_DEMO === 'true',
+      ),
+    },
     plugins: [react(), portalBuild(publicConfig(env))],
     server: { port: 5173, strictPort: true },
   };

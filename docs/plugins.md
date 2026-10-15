@@ -50,3 +50,7 @@ Weiter: [Plugin-SDK](plugin-sdk.md), [Konfiguration](configuration.md), [API](ap
 ## Telegram-Support
 
 `@kieksme/csp-plugin-telegram` benötigt `chat` und nutzt die gemeinsame Support-UI ohne zusätzliche Browser-Sektion. `chatSupport.mode: "telegram"` wählt diesen Transport; anonyme Besuchersitzungen und Entra sind verfügbar. Ein Thema je Gespräch in einer Forum-Supergruppe, Secret-geschützte Webhooks, dauerhafte Inbox und aktuelle Mitgliedschaftsprüfung. [Einrichtung und Architektur](telegram-support.md).
+
+## Datadog
+
+`@kieksme/csp-plugin-datadog` zeigt Cases, Monitorstatus, SLOs und On-Call-Schichten. Es hat keine verpflichtenden Plugin-Abhängigkeiten und liefert eigene Wissensquellen sowie synthetische Browser-Daten. [Einrichtung und API](datadog.md).

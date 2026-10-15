@@ -25,3 +25,5 @@
 - [Telegram-Support und Übernahme](telegram-support.md)
 
 - [Chat, Spracheingabe und persönlicher Support](chat.md)
+
+- [Datadog: Cases, Health und Bereitschaften](datadog.md)

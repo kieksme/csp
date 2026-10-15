@@ -14,3 +14,5 @@ packages/cli/template/
 .csp/
 
 apps/demo/dist-support/
+
+apps/demo/dist-datadog/

@@ -203,3 +203,28 @@ it('prioritizes clarifying vague requests and reserves ticket links for escalati
   );
   expect(prompt).toContain('[ticket:0]');
 });
+
+it('uses provider-independent Datadog context without dropping warning or no-data states', () => {
+  const context = chatContext(
+    [
+      { ...schedule(), id: 'datadog-schedule', kind: 'schedule' },
+      {
+        id: 'datadog-health',
+        kind: 'status',
+        title: 'Health',
+        text: JSON.stringify({
+          monitors: [
+            { id: 'email', name: 'E-Mail', status: 'no-data' },
+            { id: 'api', name: 'API', status: 'warning' },
+          ],
+        }),
+      },
+    ],
+    now,
+    'E-Mail Status',
+  );
+  expect(context.responder.name).toBe('Lena Beispiel');
+  expect(context.status?.monitors).toEqual([
+    { id: 'email', name: 'E-Mail', status: 'no-data' },
+  ]);
+});

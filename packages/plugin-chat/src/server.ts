@@ -299,8 +299,8 @@ export default {
         );
         // These facts are also supplied in full through context; keep their citation metadata.
         for (const id of ['schedule', 'status']) {
-          const source = available.find((s) => s.id === id);
-          if (source && !sources.some((s) => s.id === id))
+          const source = available.find((s) => s.id === id || s.kind === id);
+          if (source && !sources.some((s) => s.id === source.id))
             sources.push({ ...source, text: '' });
         }
         if (controller.signal.aborted)
@@ -347,6 +347,8 @@ export default {
                       (s) =>
                         s.id.startsWith('ticket:') ||
                         ['status', 'schedule'].includes(s.id) ||
+                        s.kind === 'status' ||
+                        s.kind === 'schedule' ||
                         parsed.data.messages
                           .at(-1)!
                           .content.toLowerCase()
@@ -357,7 +359,9 @@ export default {
                           ),
                     )
                     .map((s) =>
-                      ['schedule', 'status'].includes(s.id)
+                      ['schedule', 'status'].includes(s.id) ||
+                      s.kind === 'status' ||
+                      s.kind === 'schedule'
                         ? { ...s, text: '' }
                         : s,
                     ),
