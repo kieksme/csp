@@ -1,3 +1,4 @@
+import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { cspPlugin } from '../package.json';
 import { chatTools } from './tools.js';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -105,6 +106,7 @@ function LegacyChat(ctx: BrowserContext) {
             ? 'Zu viele Anfragen. Bitte warten Sie eine Minute.'
             : 'Chat derzeit nicht erreichbar.',
         );
+      emitAnalytics('CHAT_MESSAGE_SENT', { chatMode: 'bot' });
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
@@ -148,7 +150,10 @@ function LegacyChat(ctx: BrowserContext) {
                 ),
               );
             if (type === 'error') throw new Error(event.message);
-            if (type === 'done') complete = true;
+            if (type === 'done' && !complete) {
+              complete = true;
+              emitAnalytics('CHAT_REPLY_RECEIVED', { chatMode: 'bot' });
+            }
           }
           if (done) break;
         }
@@ -322,6 +327,7 @@ function LegacyChat(ctx: BrowserContext) {
             onClick={() => {
               abort.current?.abort();
               setResolved(true);
+              emitAnalytics('CONVERSATION_RESOLVED', { chatMode: 'bot' });
               setError('');
               setInput('');
               setMessages((previous) =>

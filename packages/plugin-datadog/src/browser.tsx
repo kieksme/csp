@@ -1,3 +1,4 @@
+import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { useEffect, useState } from 'react';
 import { useLive, DataState, DutyHero, Avatar } from '@kieksme/csp-sdk/browser';
 import {
@@ -22,10 +23,19 @@ const grid =
   'grid grid-cols-[repeat(3,minmax(0,1fr))] gap-4 compact:grid-cols-[1fr]';
 const button =
   'border border-line rounded-card px-4 py-2 bg-card text-ink text-[0.8125rem] disabled:opacity-50';
-function ProviderLink({ href }: { href?: string }) {
+function ProviderLink({
+  href,
+  event,
+}: {
+  href?: string;
+  event?: 'STATUS_CLICK' | 'TICKET_CLICK';
+}) {
   return href ? (
     <a
       className="inline-block mt-4 text-[0.75rem]"
+      onClick={() => {
+        if (event) emitAnalytics(event);
+      }}
       href={href}
       target="_blank"
       rel="noopener noreferrer"
@@ -81,7 +91,7 @@ function Cases(ctx: BrowserContext) {
               <p className="text-muted text-[0.75rem] mt-2">
                 Zuständig: {c.assignee ?? 'Nicht zugewiesen'}
               </p>
-              <ProviderLink href={c.href} />
+              <ProviderLink event="TICKET_CLICK" href={c.href} />
             </article>
           ))}
       </div>
@@ -126,7 +136,7 @@ function Health(ctx: BrowserContext) {
               {monitors.stale ? 'Letzter bekannter Zustand: ' : ''}
               {monitorLabels[m.status]}
             </p>
-            <ProviderLink href={m.href} />
+            <ProviderLink event="STATUS_CLICK" href={m.href} />
           </article>
         ))}
       </div>
@@ -157,7 +167,7 @@ function Health(ctx: BrowserContext) {
               <dt>Error Budget</dt>
               <dd>{percent(s.errorBudget)}</dd>
             </dl>
-            <ProviderLink href={s.href} />
+            <ProviderLink event="STATUS_CLICK" href={s.href} />
           </article>
         ))}
       </div>

@@ -148,6 +148,27 @@ try {
     ),
   );
   const cli = join(customer, 'node_modules/@kieksme/csp-cli/dist/index.js');
+  // Install the invisible analytics plugin from its actual packed artifact.
+  await run(
+    'node',
+    [cli, 'plugin', 'add', overrides['@kieksme/csp-plugin-swetrix']],
+    customer,
+  );
+  const analyticsProfile = JSON.parse(await readFile(profilePath, 'utf8'));
+  analyticsProfile.analytics = {
+    swetrix: {
+      projectId: 'packedtest',
+      apiUrl: 'https://analytics.example.org/log',
+      variant: 'packed',
+    },
+  };
+  await writeFile(profilePath, JSON.stringify(analyticsProfile, null, 2));
+  await run('pnpm', ['build'], customer);
+  assert(
+    (
+      await readFile(join(customer, 'dist-api/portal.config.json'), 'utf8')
+    ).includes('packedtest'),
+  );
   // A third-party plugin has no workspace imports; installation is a real pnpm transaction.
   const fixture = join(temp, 'fixture');
   await mkdir(fixture);

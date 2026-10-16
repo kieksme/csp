@@ -54,3 +54,7 @@ Weiter: [Plugin-SDK](plugin-sdk.md), [Konfiguration](configuration.md), [API](ap
 ## Datadog
 
 `@kieksme/csp-plugin-datadog` zeigt Cases, Monitorstatus, SLOs und On-Call-Schichten. Es hat keine verpflichtenden Plugin-Abhängigkeiten und liefert eigene Wissensquellen sowie synthetische Browser-Daten. [Einrichtung und API](datadog.md).
+
+## Swetrix
+
+`@kieksme/csp-plugin-swetrix` adds anonymous browser analytics with no visible portal section. Configure the public project ID, HTTPS ingestion endpoint and variant through `analytics.swetrix`. See [Swetrix analytics](analytics.md) for events, funnels and privacy defaults. Browser plugins can provide an optional `integration` component for invisible integrations; Core mounts it with `BrowserContext` and React runs its cleanup when unmounted.

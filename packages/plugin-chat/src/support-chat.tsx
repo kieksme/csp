@@ -1,3 +1,4 @@
+import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { useEffect, useRef, useState } from 'react';
 import type { BrowserContext, ChatResponder } from '@kieksme/csp-sdk';
 import { answerParts } from './answer.js';
@@ -39,6 +40,27 @@ export function SupportChat(ctx: BrowserContext) {
     [auth, setAuth] = useState<Session | null>(null);
   const [voiceBusy, setVoiceBusy] = useState(false);
   const scroll = useChatScroll(current?.messages, current?.id);
+  const seenResolutions = useRef(new Set<string>());
+  const seenReplies = useRef(new Set<string>());
+  const chatMode = ctx.config.chatSupport?.mode ?? 'bot';
+  useEffect(() => {
+    for (const message of current?.messages ?? []) {
+      if (
+        message.complete &&
+        ['bot', 'support'].includes(message.kind) &&
+        !seenReplies.current.has(message.id)
+      ) {
+        seenReplies.current.add(message.id);
+        emitAnalytics('CHAT_REPLY_RECEIVED', { chatMode });
+      }
+    }
+  }, [current?.messages, chatMode]);
+  useEffect(() => {
+    if (current?.resolution && !seenResolutions.current.has(current.id)) {
+      seenResolutions.current.add(current.id);
+      emitAnalytics('CONVERSATION_RESOLVED', { chatMode });
+    }
+  }, [current?.resolution, current?.id, chatMode]);
   const sending = useRef(false);
   const blocked =
     busy ||
@@ -92,6 +114,9 @@ export function SupportChat(ctx: BrowserContext) {
         const latest = list[0];
         if (latest) {
           seq.current = latest.seq;
+          for (const m of latest.messages)
+            if (m.complete) seenReplies.current.add(m.id);
+          if (latest.resolution) seenResolutions.current.add(latest.id);
           setCurrent(latest);
         }
         setReady(true);
@@ -196,6 +221,7 @@ export function SupportChat(ctx: BrowserContext) {
         method: 'POST',
         body: JSON.stringify(pending.current),
       });
+      emitAnalytics('CHAT_MESSAGE_SENT', { chatMode });
       pending.current = null;
       setInput('');
       const refreshed: Conversation = await (
@@ -230,6 +256,8 @@ export function SupportChat(ctx: BrowserContext) {
         })
       ).json();
       applySnapshot(result);
+      if (['waiting', 'support'].includes(result.status))
+        emitAnalytics('HUMAN_SUPPORT_REQUESTED', { chatMode });
       scroll.follow();
     } catch (error) {
       setError(

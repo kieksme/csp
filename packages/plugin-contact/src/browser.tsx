@@ -1,3 +1,4 @@
+import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { cspPlugin } from '../package.json';
 import { contactTools } from './tools.js';
 import type { BrowserPlugin, BrowserContext } from '@kieksme/csp-sdk';
@@ -9,7 +10,10 @@ function Contact({ config }: BrowserContext) {
           <p>{config.phoneLabel}</p>
           <span>{config.phone}</span>
         </div>
-        <a href={'tel:' + config.phone.replace(/[^+\d]/g, '')}>
+        <a
+          onClick={() => emitAnalytics('CONTACT_CLICK', { channel: 'phone' })}
+          href={'tel:' + config.phone.replace(/[^+\d]/g, '')}
+        >
           Jetzt anrufen <span aria-hidden="true">↗</span>
         </a>
       </div>

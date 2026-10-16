@@ -216,3 +216,25 @@ it('allows anonymous Telegram profiles and rejects multiple support transports',
   });
   expect(() => loadProfile(mixed.file)).toThrow('exactly one matching');
 });
+it('passes Swetrix defaults to browser config and rejects unsafe endpoints', () => {
+  const swetrix = {
+    projectId: 'test123',
+    apiUrl: 'https://analytics.example.org/log',
+    variant: 'support',
+  };
+  expect(
+    loadProfile(fixture({ analytics: { swetrix } }).file).config.analytics
+      ?.swetrix,
+  ).toEqual({ ...swetrix, enabled: true, respectDNT: true });
+  for (const apiUrl of [
+    'http://analytics.example.org/log',
+    'https://user:password@example.org/log',
+    'https://example.org/log?secret=x',
+  ]) {
+    expect(() =>
+      loadProfile(
+        fixture({ analytics: { swetrix: { ...swetrix, apiUrl } } }).file,
+      ),
+    ).toThrow('Analytics endpoint');
+  }
+});

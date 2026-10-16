@@ -367,6 +367,40 @@
           }
         }
       ]
+    },
+    "analytics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "swetrix": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["projectId", "apiUrl", "variant"],
+          "properties": {
+            "projectId": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9]{1,50}$"
+            },
+            "apiUrl": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://[^@?#]+$"
+            },
+            "variant": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,49}$"
+            },
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "respectDNT": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        }
+      }
     }
   },
   "required": [

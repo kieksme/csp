@@ -1,3 +1,4 @@
+import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { Avatar } from './avatar.js';
 import { DutyHero } from './duty-hero.js';
 import { cspPlugin } from '../package.json';
@@ -143,15 +144,33 @@ function Team(ctx: BrowserContext) {
               </div>
             </div>
             <div className="person-contact grid gap-2 text-[0.75rem] [overflow-wrap:anywhere] [&_a]:no-underline">
-              {p.email && <a href={'mailto:' + p.email}>{p.email}</a>}
+              {p.email && (
+                <a
+                  onClick={() =>
+                    emitAnalytics('CONTACT_CLICK', { channel: 'email' })
+                  }
+                  href={'mailto:' + p.email}
+                >
+                  {p.email}
+                </a>
+              )}
               {p.phones.map((phone) => (
-                <a key={phone} href={'tel:' + phone.replace(/[^+\d]/g, '')}>
+                <a
+                  onClick={() =>
+                    emitAnalytics('CONTACT_CLICK', { channel: 'phone' })
+                  }
+                  key={phone}
+                  href={'tel:' + phone.replace(/[^+\d]/g, '')}
+                >
                   {phone}
                 </a>
               ))}
             </div>
             <a
               className="vcard block mt-5 font-mono text-[0.625rem] no-underline uppercase tracking-[1px]"
+              onClick={() =>
+                emitAnalytics('CONTACT_CLICK', { channel: 'vcard' })
+              }
               href={
                 ctx.config.apiUrl +
                 '/api/v1/team/' +

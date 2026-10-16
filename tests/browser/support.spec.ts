@@ -3,6 +3,12 @@ import AxeBuilder from '@axe-core/playwright';
 test('takes over a persisted chat, replies as Lena, releases and closes it', async ({
   page,
 }, info) => {
+  await page.addInitScript(() => {
+    (window as any).__analytics = [];
+    window.addEventListener('csp:analytics', (e) =>
+      (window as any).__analytics.push((e as CustomEvent).detail.event),
+    );
+  });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   const existing = await (
@@ -44,7 +50,20 @@ test('takes over a persisted chat, replies as Lena, releases and closes it', asy
   await expect(page.locator('.chat-history')).toContainText(
     'Hallo, ich bin Lena vom Support.',
   );
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as any).__analytics.filter(
+            (e: string) => e === 'CHAT_REPLY_RECEIVED',
+          ).length,
+      ),
+    )
+    .toBe(2);
   await page.reload();
+  expect(await page.evaluate(() => (window as any).__analytics)).not.toContain(
+    'CHAT_REPLY_RECEIVED',
+  );
   await expect(page.locator('.chat-history')).toContainText(
     'Hallo, ich bin Lena vom Support.',
   );

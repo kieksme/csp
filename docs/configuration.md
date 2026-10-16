@@ -330,3 +330,17 @@ Optionales Plugin: `@kieksme/csp-plugin-datadog`. Alle nachfolgenden Optionen si
 | `CSP_DATADOG_SCHEDULE_IDS`    | Freigegebene Bereitschaftspläne | Pflicht außerhalb Demo   | 1–10 IDs aus Buchstaben, Zahlen und Bindestrichen, kommagetrennt                                                                         |
 
 `CSP_DEMO=true` verzichtet auf alle Datadog-Zugangsdaten und liefert synthetische Daten. SLO-Fenster: fest 30 Tage. Schichtfenster: fest sieben Tage. Browser-Aktualisierung: bestehendes `public.pollMs`, standardmäßig 60 Sekunden.
+
+## Optional Swetrix analytics
+
+`analytics.swetrix` is an optional public **build-time** profile object. It is copied to `PublicConfig.analytics.swetrix`; changing it requires rebuilding the frontend. Install `@kieksme/csp-plugin-swetrix` to activate it. There are no new server secrets or environment overrides.
+
+| Property     | Required             | Default | Allowed values / purpose                                                                           |
+| ------------ | -------------------- | ------- | -------------------------------------------------------------------------------------------------- |
+| `projectId`  | yes, when configured | none    | 1–50 ASCII letters/digits; public Swetrix project ID                                               |
+| `apiUrl`     | yes                  | none    | Absolute HTTPS Events API ingestion endpoint (including `/log`); no credentials, query or fragment |
+| `variant`    | yes                  | none    | 1–50 lowercase letters/digits/hyphens, starting with letter/digit; distinguishes portal builds     |
+| `enabled`    | no                   | `true`  | Boolean; disables all analytics requests when false                                                |
+| `respectDNT` | no                   | `true`  | Boolean; suppresses requests for browser DNT `1`                                                   |
+
+Localhost, `.localhost`, IPv4 loopback, IPv6 loopback and `0.0.0.0` never send analytics even when enabled. Metadata is limited to variant, section, FAQ/process IDs, contact channel and chat mode. See [Swetrix analytics](analytics.md) for the event catalog, funnels and verification.

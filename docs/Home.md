@@ -41,3 +41,5 @@ Quellcode: [kieksme/csp](https://github.com/kieksme/csp). Lizenz: [MIT](https://
 - [Chat, Spracheingabe und persönlicher Support](chat.md)
 
 - [Datadog: Cases, Health und Bereitschaften](datadog.md)
+
+- [Swetrix analytics](analytics.md)

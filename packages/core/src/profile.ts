@@ -71,6 +71,33 @@ export const profileSchema = z
       })
       .strict()
       .optional(),
+    analytics: z
+      .object({
+        swetrix: z
+          .object({
+            projectId: z.string().regex(/^[a-zA-Z0-9]{1,50}$/),
+            apiUrl: z
+              .string()
+              .url()
+              .refine((value) => {
+                const url = new URL(value);
+                return (
+                  url.protocol === 'https:' &&
+                  !url.username &&
+                  !url.password &&
+                  !url.search &&
+                  !url.hash
+                );
+              }, 'Analytics endpoint must be HTTPS without credentials, query or fragment'),
+            enabled: z.boolean().default(true),
+            variant: z.string().regex(/^[a-z0-9][a-z0-9-]{0,49}$/),
+            respectDNT: z.boolean().default(true),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
     chatSupport: z
       .object({
         mode: z.enum(['teams', 'slack', 'telegram', 'demo']),
@@ -210,6 +237,7 @@ export function loadProfile(file: string, env: Env = {}, production = false) {
   };
   if (p.branding.logoFile && !env.CSP_LOGO_URL)
     config.logo = asset(p.branding.logoFile);
+  config.analytics = p.analytics;
   config.theme = p.theme;
   config.chatSupport = p.chatSupport;
   if (p.chatSupport) {
