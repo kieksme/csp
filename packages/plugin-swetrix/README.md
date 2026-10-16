@@ -27,3 +27,5 @@ Semantic events: `FAQ_OPEN`, `TICKET_CLICK`, `PROCESS_CLICK`, `STATUS_CLICK`, `C
 Only variant, section, FAQ/process IDs, contact channel and chat mode are sent as event metadata. IDs must be non-personal, 1–64 letters, numbers, underscores or hyphens. No message text, search terms, query strings, referrers, contact details, profile IDs, cookies or session replay are sent. Request failures are ignored without affecting portal actions. Direct anonymous tracking starts without an additional consent interface; DNT defaults to respected.
 
 Create projects and funnels administratively through Swetrix MCP. Events appear after real interactions; registering names with fabricated conversions is unnecessary. See [analytics documentation](../../docs/analytics.md) for suggested funnels and verification.
+
+Repeated visits send normal pageviews. Deduplication is scoped to one document load and does not use the API’s cross-visit `unique` flag.

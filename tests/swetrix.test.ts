@@ -75,6 +75,9 @@ it('sends allowlisted payloads without query, referrer or cookies and tolerates 
   tracker.view();
   tracker.track({ ev: 'FAQ_OPEN', meta: { faqId: 'vpn' } });
   expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(JSON.parse(fetcher.mock.calls[0][1].body)).not.toHaveProperty(
+    'unique',
+  );
   const [url, options] = fetcher.mock.calls[1];
   expect(url).toBe('https://analytics.example.org/log/custom');
   expect(options).toMatchObject({

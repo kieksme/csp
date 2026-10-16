@@ -30,7 +30,7 @@ export function createTracker(config: SwetrixConfig): Tracker {
     }).catch(() => {});
   };
   return {
-    view: () => send('', { unique: true }),
+    view: () => send('', {}),
     track: (event) => send('/custom', event),
   };
 }
