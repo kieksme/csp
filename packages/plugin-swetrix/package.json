@@ -1,6 +1,6 @@
 {
   "name": "@kieksme/csp-plugin-swetrix",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -36,7 +36,7 @@
   },
   "cspPlugin": {
     "id": "swetrix",
-    "sdkVersion": "^0.15.0",
+    "sdkVersion": "^0.15.1",
     "browser": "./browser",
     "server": "./server"
   },
