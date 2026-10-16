@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/kieksme/csp/compare/v0.15.0...v0.15.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **swetrix:** count repeated portal visits ([#72](https://github.com/kieksme/csp/issues/72)) ([a9346e3](https://github.com/kieksme/csp/commit/a9346e3d9f6d9292d268ff33045da63ee83694da))
+
 ## [0.15.0](https://github.com/kieksme/csp/compare/v0.14.1...v0.15.0) (2026-10-16)
 
 
