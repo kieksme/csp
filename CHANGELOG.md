@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/kieksme/csp/compare/v0.14.1...v0.15.0) (2026-10-16)
+
+
+### Features
+
+* **swetrix:** add anonymous portal analytics plugin ([#70](https://github.com/kieksme/csp/issues/70)) ([2d71d00](https://github.com/kieksme/csp/commit/2d71d00e787e8035993b05d645e9b4656977160d))
+
 ## [0.14.1](https://github.com/kieksme/csp/compare/v0.14.0...v0.14.1) (2026-10-16)
 
 
