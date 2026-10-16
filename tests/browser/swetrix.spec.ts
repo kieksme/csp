@@ -5,6 +5,7 @@ let bundle: string;
 test.beforeAll(async () => {
   const result = await build({
     configFile: false,
+    define: { 'process.env.NODE_ENV': JSON.stringify('production') },
     logLevel: 'error',
     build: {
       write: false,
