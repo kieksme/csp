@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/kieksme/csp/compare/v0.14.0...v0.14.1) (2026-10-16)
+
+
+### Bug Fixes
+
+* **datadog:** accept live API responses and one-based pages ([#68](https://github.com/kieksme/csp/issues/68)) ([067d9ac](https://github.com/kieksme/csp/commit/067d9ac6c3c8224323eac43f35491b3b00078383))
+
 ## [0.14.0](https://github.com/kieksme/csp/compare/v0.13.4...v0.14.0) (2026-10-15)
 
 
