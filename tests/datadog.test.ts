@@ -333,3 +333,65 @@ it('accepts blank env-template placeholders only when live requirements are not 
     configSchema.safeParse({ ...placeholders, CSP_DEMO: 'false' }).success,
   ).toBe(false);
 });
+
+it('accepts monitor timestamps as strings without changing the health status', () => {
+  expect(
+    normalizeMonitor(
+      {
+        id: 1,
+        name: 'API',
+        overall_state: 'OK',
+        overall_state_modified: '2026-10-16T08:00:00Z',
+      },
+      app,
+    ).status,
+  ).toBe('ok');
+});
+it('accepts null SLO error arrays without hiding valid measurements', () => {
+  expect(
+    normalizeSlo(
+      {
+        data: {
+          id: 's',
+          name: 'API',
+          thresholds: [{ timeframe: '30d', target: 99.9 }],
+        },
+      },
+      { data: { overall: { sli_value: 100, errors: null }, errors: null } },
+      app,
+    ),
+  ).toMatchObject({ sli: 100, unavailable: false });
+});
+it.each(['', '   ', null, undefined])(
+  'uses a responder ID for an unset display name (%s) without exposing email',
+  (name) => {
+    const raw = responders('2026-10-16T08:00:00Z', '2026-10-16T18:00:00Z');
+    const user = raw.included.find((x) => x.type === 'users')!;
+    user.attributes = { ...user.attributes, name } as typeof user.attributes;
+    const result = normalizeResponders(raw, 'ops', app);
+    expect(result.shifts[0].name).toBe('ID: ada');
+    expect(JSON.stringify(result)).not.toContain('private@example.invalid');
+  },
+);
+it('translates zero-based portal pages to one-based Datadog pages', async () => {
+  const fetcher = vi.fn(async (_url: RequestInfo | URL) =>
+    Response.json({ data: [], meta: { page: { total: 3 } } }),
+  );
+  const server = await createServer({
+    env: liveEnv,
+    config: publicConfig({}),
+    plugins: [plugin],
+    fetch: fetcher as typeof fetch,
+  });
+  for (const page of [0, 1]) {
+    const response = await server.inject('/api/v1/datadog/cases?page=' + page);
+    expect(response.json()).toMatchObject({
+      stale: false,
+      data: { page, hasMore: true },
+    });
+    const url = new URL(String(fetcher.mock.calls.at(-1)![0]));
+    expect(url.searchParams.get('page[number]')).toBe(String(page + 1));
+    expect(url.searchParams.get('filter')).toBe('project_id:' + project);
+  }
+  await server.close();
+});

@@ -4,4 +4,4 @@ Lesende Datadog-Integration für Cases, Monitorstatus, SLOs über 30 Tage und On
 
 [Einrichtung und API](../../docs/datadog.md) · [CSP-Wiki](https://github.com/kieksme/csp/wiki/datadog)
 
-Live-Verbindung **noch ungetestet**. Bearbeitung erfolgt über Links in Datadog.
+Live-Leseabnahme am 16. Oktober 2026: Monitore, SLO, Schichten/Team und ein leeres Case-Projekt im Acme-EU1-Testkonto erfolgreich geprüft. Befüllte Projekte, Statusfilter und Alarmzustellung sind noch nicht live abgenommen. Bearbeitung erfolgt über Links in Datadog.
