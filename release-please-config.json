@@ -124,6 +124,16 @@
           "type": "json",
           "path": "packages/plugin-datadog/package.json",
           "jsonpath": "$.cspPlugin.sdkVersion"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-swetrix/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/plugin-swetrix/package.json",
+          "jsonpath": "$.cspPlugin.sdkVersion"
         }
       ]
     }

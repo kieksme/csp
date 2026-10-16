@@ -99,3 +99,5 @@ Telegram-Support ist als separates `@kieksme/csp-plugin-telegram` mit Themen, Ü
 ### Datadog
 
 Das optionale `@kieksme/csp-plugin-datadog` zeigt Cases, Monitorstatus, SLOs und Bereitschaften. Es enthält eine lokale und statische Demo ohne Provider-Zugriff. [Einrichtung, Konfiguration und API](docs/datadog.md). Die Live-Anbindung ist noch ungetestet.
+
+Optional [Swetrix analytics](docs/analytics.md) tracks anonymous portal interactions and support funnels through a dedicated CSP plugin.

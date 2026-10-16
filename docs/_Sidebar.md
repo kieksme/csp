@@ -27,3 +27,5 @@
 - [Chat, Spracheingabe und persönlicher Support](chat.md)
 
 - [Datadog: Cases, Health und Bereitschaften](datadog.md)
+
+- [Swetrix analytics](analytics.md)

@@ -1,3 +1,4 @@
+export * from './analytics.js';
 import { useEffect, useState } from 'react';
 import type { BrowserContext, LiveData } from './index.js';
 export function useLive<T>(ctx: BrowserContext, path: string) {

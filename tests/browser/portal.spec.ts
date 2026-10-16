@@ -3,6 +3,12 @@ import { test, expect } from '@playwright/test';
 test('serves every module, filters FAQ, downloads vCard and streams chat', async ({
   page,
 }, info) => {
+  await page.addInitScript(() => {
+    (window as any).__analytics = [];
+    window.addEventListener('csp:analytics', (e) =>
+      (window as any).__analytics.push((e as CustomEvent).detail),
+    );
+  });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
@@ -24,12 +30,25 @@ test('serves every module, filters FAQ, downloads vCard and streams chat', async
   await expect(page.locator('#faq details')).toHaveCount(1);
   await page.locator('#faq summary').click();
   await expect(page.locator('#faq .markdown')).toContainText('Fehlermeldung');
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).__analytics.map((e: any) => e.event)),
+    )
+    .toContain('FAQ_OPEN');
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Kontakt speichern' }).first().click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('contact.vcf');
+  expect(await page.evaluate(() => (window as any).__analytics)).toContainEqual(
+    { event: 'CONTACT_CLICK', meta: { channel: 'vcard' } },
+  );
   await page.locator('#chat-input').fill('Was mache ich bei einer Störung?');
   await page.getByRole('button', { name: 'Frage senden' }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).__analytics.map((e: any) => e.event)),
+    )
+    .toContain('CHAT_MESSAGE_SENT');
   await expect(page.locator('.chat-history')).toContainText(
     'synthetische Demo-Antwort',
   );
@@ -437,4 +456,28 @@ test('runs normally without WebMCP support', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.duty-greeting')).toContainText('Lena Beispiel');
   expect(errors).toEqual([]);
+});
+
+test('failed chat requests do not emit successful message or reply events', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    (window as any).__analytics = [];
+    window.addEventListener('csp:analytics', (e) =>
+      (window as any).__analytics.push((e as CustomEvent).detail.event),
+    );
+  });
+  await page.route('**/api/v1/chat', (route) =>
+    route.fulfill({ status: 503, body: '{}' }),
+  );
+  await page.goto('/');
+  await page.locator('#chat-input').fill('Private content');
+  await page.getByRole('button', { name: 'Frage senden' }).click();
+  await expect(page.locator('.chat-error')).toBeVisible();
+  expect(await page.evaluate(() => (window as any).__analytics)).not.toContain(
+    'CHAT_MESSAGE_SENT',
+  );
+  expect(await page.evaluate(() => (window as any).__analytics)).not.toContain(
+    'CHAT_REPLY_RECEIVED',
+  );
 });

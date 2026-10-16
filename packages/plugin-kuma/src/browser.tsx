@@ -1,3 +1,4 @@
+import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { cspPlugin } from '../package.json';
 import { kumaTools } from './tools.js';
 import { useLive, DataState } from '@kieksme/csp-sdk/browser';
@@ -46,6 +47,7 @@ function StatusView(ctx: BrowserContext) {
       {live.data?.url && (
         <a
           className="status-link text-[0.75rem] inline-block mt-4"
+          onClick={() => emitAnalytics('STATUS_CLICK')}
           href={live.data.url}
           target="_blank"
           rel="noopener noreferrer"

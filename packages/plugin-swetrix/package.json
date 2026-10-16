@@ -1,0 +1,51 @@
+{
+  "name": "@kieksme/csp-plugin-swetrix",
+  "version": "0.14.1",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsup src/browser.tsx src/server.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom"
+  },
+  "dependencies": {
+    "@kieksme/csp-sdk": "workspace:^",
+    "zod": "^3.25.76"
+  },
+  "engines": {
+    "node": ">=22.12"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "cspPlugin": {
+    "id": "swetrix",
+    "sdkVersion": "^0.14.1",
+    "browser": "./browser",
+    "server": "./server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kieksme/customer-service-portal.git",
+    "directory": "packages/plugin-swetrix"
+  },
+  "bugs": {
+    "url": "https://github.com/kieksme/customer-service-portal/issues"
+  }
+}

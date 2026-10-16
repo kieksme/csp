@@ -141,7 +141,15 @@ export interface ChatEngine {
     signal: AbortSignal,
   ): AsyncIterable<ChatEvent>;
 }
+export interface SwetrixConfig {
+  projectId: string;
+  apiUrl: string;
+  enabled: boolean;
+  variant: string;
+  respectDNT: boolean;
+}
 export interface PublicConfig {
+  analytics?: { swetrix?: SwetrixConfig };
   chatSupport?: ChatSupportConfig;
   theme?: {
     mode: 'light' | 'dark' | 'system';
@@ -194,6 +202,8 @@ export interface BrowserPlugin extends PluginMeta {
   demoData?: (path: string) => unknown | undefined;
   /** Synthetic knowledge for the browser-only demo chat. */
   demoSources?: () => Source[];
+  /** Invisible browser integration, mounted once with the portal. */
+  integration?: ComponentType<BrowserContext>;
   hero?: ComponentType<BrowserContext>;
   sections: Section[];
   /** Optional WebMCP tools; names must start with the plugin id. */

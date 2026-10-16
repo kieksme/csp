@@ -100,6 +100,11 @@ export function Portal({
         } as React.CSSProperties
       }
     >
+      {plugins.map((plugin) =>
+        plugin.integration ? (
+          <plugin.integration key={plugin.id} {...ctx} />
+        ) : null,
+      )}
       <a
         className="skip-link absolute top-[-100px] p-3 bg-card z-[10] [&:focus]:top-[10px]"
         href="#main"

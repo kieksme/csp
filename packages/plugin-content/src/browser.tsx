@@ -1,3 +1,4 @@
+import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { cspPlugin } from '../package.json';
 import { contentTools } from './tools.js';
 import { useState } from 'react';
@@ -18,7 +19,14 @@ function Help({ config }: BrowserContext) {
               <ReactMarkdown>{p.text}</ReactMarkdown>
             </div>
             {p.href && (
-              <a href={p.href} target="_blank" rel="noopener noreferrer">
+              <a
+                onClick={() =>
+                  emitAnalytics('PROCESS_CLICK', { processId: p.id })
+                }
+                href={p.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Prozess öffnen ↗
               </a>
             )}
@@ -32,6 +40,7 @@ function Help({ config }: BrowserContext) {
             <div key={t.href}>
               <a
                 className="ticket block bg-card border border-line p-5.5 no-underline rounded-card [transition:transform_0.15s] [&:hover]:[transform:translateY(-2px)] [&:hover]:[border-color:var(--accent)] [&_strong]:flex [&_strong]:justify-between [&_strong]:text-[0.9375rem] [&_p]:text-[0.8125rem] [&_p]:text-muted [&_p]:leading-[1.7] [&_p]:m-[calc(var(--spacing)_*_2)_0_0]"
+                onClick={() => emitAnalytics('TICKET_CLICK')}
                 href={t.href}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -98,6 +107,10 @@ function FAQ({ config }: BrowserContext) {
       {results.map((f) => (
         <details
           className="border-t border-line py-5 px-0 [&:last-child]:border-b [&:last-child]:border-line [&[open]_summary::after]:[content:'−'] [&_p]:max-w-[850px] [&_p]:text-[0.875rem] [&_p]:text-muted [&_p]:leading-[1.8] [&_p]:whitespace-pre-wrap"
+          onToggle={(e) => {
+            if (e.currentTarget.open)
+              emitAnalytics('FAQ_OPEN', { faqId: f.id });
+          }}
           key={f.id}
         >
           <summary className="text-[0.875rem] font-bold cursor-pointer list-none flex justify-between gap-3.75 [&::after]:[content:'+'] [&::after]:text-[1.1875rem] [&::after]:font-normal [&::after]:text-muted">
