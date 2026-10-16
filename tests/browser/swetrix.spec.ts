@@ -73,6 +73,7 @@ test('browser integration sends private payloads, deduplicates and cleans up', a
     /private|email|referrer|profileId|qs/,
   );
   expect(requests[0].payload.pg).toBe('/portal/');
+  expect(requests[0].payload).not.toHaveProperty('unique');
   expect(requests[1].payload.meta).toEqual({ variant: 'browser' });
   await page.evaluate((settings) => {
     const w = window as any;
