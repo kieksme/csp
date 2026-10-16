@@ -124,7 +124,7 @@ export default {
             );
           const params = new URLSearchParams({
             'page[size]': '20',
-            'page[number]': String(page),
+            'page[number]': String(page + 1),
             'sort[field]': 'created_at',
             'sort[asc]': 'false',
             filter:

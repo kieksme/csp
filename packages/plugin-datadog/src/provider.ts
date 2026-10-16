@@ -63,7 +63,6 @@ export function normalizeMonitor(raw: unknown, app: string): DatadogMonitor {
       id,
       name: z.string(),
       overall_state: z.string().optional(),
-      overall_state_modified: z.number().optional(),
       matching_downtimes: z.array(z.unknown()).optional(),
     })
     .parse(raw);
@@ -111,10 +110,10 @@ export function normalizeSlo(
           .object({
             sli_value: z.number().finite().optional(),
             error_budget_remaining: z.record(z.number().finite()).optional(),
-            errors: z.array(z.unknown()).optional(),
+            errors: z.array(z.unknown()).nullish(),
           })
           .optional(),
-        errors: z.array(z.unknown()).optional(),
+        errors: z.array(z.unknown()).nullish(),
       }),
     })
     .parse(history).data;
@@ -196,7 +195,10 @@ export function normalizeResponders(
         .object({ data: z.object({ id: z.string() }) })
         .parse(shift.relationships?.user).data.id;
       const user = included.find((v) => v.type === 'users' && v.id === userId);
-      const name = z.string().min(1).parse(user?.attributes?.name);
+      if (!user) throw new Error('Missing responder user');
+      const name =
+        z.string().nullish().parse(user.attributes?.name)?.trim() ||
+        'ID: ' + userId;
       shifts.push({
         ...dates,
         userId,

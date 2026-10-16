@@ -10,7 +10,9 @@ Drei Bereiche zeigen Tickets (20 pro Seite, Statusfilter), Monitorstatus und SLO
 
 Monitorzustände bleiben unterscheidbar: OK, Warnung, Alarm, Wartung, keine Daten und unbekannt. Bei Ausfällen kennzeichnet der Cache den letzten Erfolg als veraltet. Erreichbarkeit wird dann nicht bestätigt. Dienste werden an ihren Grenzen neu ausgewertet. Jede Schicht zeigt die Zeitzone ihres Datadog-Schedules; parallele Schichten und durch Datadog aufgelöste Vertretungen bleiben sichtbar.
 
-Cases zeigen Titel, Status, Priorität und Zuständigkeit als Datadog-Benutzer-ID. Beschreibungen, E-Mail-Adressen und Telefonnummern werden nicht übertragen. Der Server prüft zusätzlich die Projektzugehörigkeit der Suchergebnisse. Eigene Statusnamen bleiben erhalten. Die Suchfilter sind in einem echten Konto noch zu verifizieren.
+Cases zeigen Titel, Status, Priorität und Zuständigkeit als Datadog-Benutzer-ID. Beschreibungen, E-Mail-Adressen und Telefonnummern werden nicht übertragen. Der Server prüft zusätzlich die Projektzugehörigkeit der Suchergebnisse. Eigene Statusnamen bleiben erhalten. Die Portal-Seiten beginnen bei 0 und werden für Datadog in Seiten ab 1 übersetzt. Die erste Seite des ausgewählten Acme-Testprojekts wurde am 16. Oktober 2026 live gelesen; das Projekt war dabei leer. Statusfilter und befüllte Projekte sind noch nicht live abgenommen.
+
+Leere oder fehlende Anzeigenamen von Dienstpersonen werden als `ID: <Benutzer-ID>` dargestellt; E-Mail-Adressen dienen nicht als Ersatz. Monitor-Zeitstempel werden für die Statusanzeige nicht benötigt. `null` statt einer SLO-Fehlerliste gilt als keine gemeldeten Fehler; vorhandene Fehler oder fehlende Kennzahlen bleiben als nicht verfügbar gekennzeichnet.
 
 ## Serverkonfiguration
 
@@ -52,7 +54,7 @@ Ungültige Ticketfilter ergeben HTTP 400. Es gibt keine schreibenden Routen oder
 
 Acme veröffentlicht eine zusätzliche, vollständig synthetische Demo unter `https://kieksme.github.io/csp-acme/datadog/`. Das bestehende Supportportal bleibt unter `/csp-acme/` erreichbar. Die Datadog-Demo benötigt keinen API-Account und keine Datadog-Schlüssel.
 
-Für die Acme-Einrichtung wurde ein eigenständiger EU1-Testaccount angelegt. Am 15. Oktober 2026 wurden Browser-Login, bestätigte Eigentümeradresse und Admin-Zugriff auf die vom Eigentümer benannte Organisation „kieks.me GbR“ geprüft. Die Live-Provider-Verbindung ist weiterhin **noch ungetestet und deaktiviert**. Die Vorlage für die spätere Live-Anbindung benötigt die unten dokumentierten Leserechte sowie die Auswahl von Case-Projekt, Monitoren, SLOs und Schedules. Der öffentliche Demo-Build bleibt bis zur separat geprüften Live-Aktivierung synthetisch.
+Für die Acme-Einrichtung wurde ein eigenständiger EU1-Testaccount angelegt. Am 15. Oktober 2026 wurden Browser-Login, bestätigte Eigentümeradresse und Admin-Zugriff auf die vom Eigentümer benannte Organisation „kieks.me GbR“ geprüft. Am 16. Oktober 2026 wurde die korrigierte Provider-Version mit serverseitigen Leseschlüsseln gegen diesen Account geprüft: zwei Monitore mit Status OK, ein verfügbares SLO, sieben Schichten und das leere Case-Projekt ließen sich lesen. Auch die Team-Ableitung war erfolgreich. Diese Leseabnahme bestätigt weder Statusfilter an befüllten Projekten noch Alarmzustellung oder einen öffentlichen Live-Betrieb. Der öffentliche Demo-Build bleibt bis zur separat geprüften Live-Aktivierung synthetisch.
 
 ## Quellen
 
