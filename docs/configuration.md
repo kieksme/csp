@@ -344,3 +344,14 @@ Optionales Plugin: `@kieksme/csp-plugin-datadog`. Alle nachfolgenden Optionen si
 | `respectDNT` | no                   | `true`  | Boolean; suppresses requests for browser DNT `1`                                                   |
 
 Localhost, `.localhost`, IPv4 loopback, IPv6 loopback and `0.0.0.0` never send analytics even when enabled. Metadata is limited to variant, section, FAQ/process IDs, contact channel and chat mode. See [Swetrix analytics](analytics.md) for the event catalog, funnels and verification.
+
+## Serverseitiges MCP
+
+Diese Optionen gelten nur zur Runtime im API-Prozess, nicht für Frontend-Builds. Sie sind unabhängig von `public.webmcp`. Nach Änderungen den API-Host neu starten. [Verbindung und Tools](mcp.md).
+
+| Variable          | Zweck                           | Pflicht | Standard      | Zulässige Werte und Grenzen                                                                    |
+| ----------------- | ------------------------------- | ------- | ------------- | ---------------------------------------------------------------------------------------------- |
+| `CSP_MCP_ENABLED` | Registriert `/mcp`              | Nein    | `false`       | `true` oder `false`; andere Werte verhindern den Start                                         |
+| `CSP_MCP_TOKEN`   | Separates Bearer-Secret für MCP | Nein    | Nicht gesetzt | Bei aktiviertem MCP mindestens 32 Zeichen nach Entfernen äußerer Leerzeichen; exakt übertragen |
+
+Vorhandene Origin-Header werden gegen `CSP_ALLOWED_ORIGINS` geprüft. Ohne Origin sind Server-Clients zugelassen.

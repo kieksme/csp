@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import { registerMcp } from './mcp.js';
 import {
   LiveCache,
   validatePlugins,
@@ -73,6 +74,7 @@ export async function createServer(options: {
     await plugin.setup(ctx);
     installed.add(plugin.id);
   }
+  registerMcp(ctx, installed, allowed);
   app.get('/health', async () => ({
     status: 'ok',
     plugins: options.plugins.map((p) => p.id),
