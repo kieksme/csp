@@ -22,6 +22,8 @@ Das Customer Service Portal bündelt Notfallkontakt, Operations-Team, Schichtpla
 | Instanz betreiben und Pakete veröffentlichen        | [Betrieb und Releases](operations.md)                   |
 | Änderungen entwickeln und prüfen                    | [Entwicklung und Tests](development.md)                 |
 | Datenflüsse und öffentliche Informationen verstehen | [Sicherheit und Daten](security.md)                     |
+| Backend für externe Agents öffnen                   | [MCP](mcp.md)                                           |
+| Serviceportal mit einem MCP-Client verwenden        | [MCP-Nutzeranleitung](mcp-client.md)                    |
 | Portal für Browser-Agenten über WebMCP öffnen       | [WebMCP](webmcp.md)                                     |
 | Störungen eingrenzen                                | [Fehlerbehebung](troubleshooting.md)                    |
 | Dokumentation pflegen und ins Wiki spiegeln         | [Dokumentation und Wiki](wiki.md)                       |

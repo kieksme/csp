@@ -93,3 +93,5 @@ Das aktivierte Telegram-Plugin registriert `POST /api/telegram/webhook` (maximal
 `GET /api/v1/chat/capabilities` meldet die serverseitige Verfügbarkeit der Spracheingabe. `POST /api/v1/chat/transcriptions` nimmt eine begrenzte binäre Audioaufnahme an und liefert nur `{ text }`; die Nachricht wird nicht automatisch gesendet. Bei aktivem Support-Transport gilt dessen Authentifizierung. [Formate, Limits und Fehler](chat.md#diktieren).
 
 `POST /api/v1/conversations/:id/request-support` ist eine idempotente Eigentümeraktion mit leerem JSON-Body. Sie pausiert die KI sofort und speichert den Status `waiting` neben `bot`, `support` und `closed`. Die Gesprächsansicht und SSE-Statusereignisse enthalten optional `supportRequest` mit Anfrage-ID, Unix-Zeitpunkt in Millisekunden und Zustellung `pending`, `sent` oder `failed`; die interne Plattform-Nachrichten-ID kann zusätzlich vorhanden sein. [Übergabe, Benachrichtigung und Berechtigungen](chat.md#persönlichen-support-anfragen).
+
+Die optionale [serverseitige MCP-Schnittstelle](mcp.md) ermöglicht externen Agents lesenden Zugriff ohne Browser.
