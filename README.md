@@ -101,3 +101,5 @@ Telegram-Support ist als separates `@kieksme/csp-plugin-telegram` mit Themen, Ü
 Das optionale `@kieksme/csp-plugin-datadog` zeigt Cases, Monitorstatus, SLOs und Bereitschaften. Es enthält eine lokale und statische Demo ohne Provider-Zugriff. [Einrichtung, Konfiguration und API](docs/datadog.md). Die Live-Anbindung ist noch ungetestet.
 
 Optional [Swetrix analytics](docs/analytics.md) tracks anonymous portal interactions and support funnels through a dedicated CSP plugin.
+
+Alle Portal-Builds enthalten standardmäßig `noindex, nofollow`, eine sperrende `robots.txt` und eine `_headers`-Vorlage. Bei Unterpfad-Hosting muss `robots.txt` zusätzlich am Domain-Root veröffentlicht werden. Suchmaschinensteuerung ist keine Zugriffssperre und garantiert keine Entfernung bestehender Suchtreffer.

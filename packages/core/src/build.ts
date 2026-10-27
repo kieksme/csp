@@ -4,7 +4,17 @@ import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import type { PublicConfig } from '@kieksme/csp-sdk';
 export { publicConfig } from './config.js';
-import type { Plugin } from 'vite';
+import type { Plugin, ViteDevServer, PreviewServer } from 'vite';
+const robots = 'User-agent: *\nDisallow: /\n';
+const robotsHeader = 'noindex, nofollow';
+function crawlerMiddleware(server: ViteDevServer | PreviewServer) {
+  server.middlewares.use((req, res, next) => {
+    res.setHeader('X-Robots-Tag', robotsHeader);
+    if (req.url?.split('?')[0] !== '/robots.txt') return next();
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.end(robots);
+  });
+}
 export function portalBuild(config: PublicConfig, cwd = process.cwd()): Plugin {
   const { icon: _icon, ...browserConfig } = config;
   const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="${config.background}"/><path d="M128 270h80l40-112 48 210 32-98h56" fill="none" stroke="${config.color}" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
@@ -44,45 +54,61 @@ export function portalBuild(config: PublicConfig, cwd = process.cwd()): Plugin {
       base: config.basePath,
       define: { __CSP_CONFIG__: JSON.stringify(browserConfig) },
     }),
-    transformIndexHtml: () => [
-      { tag: 'title', children: config.name, injectTo: 'head' },
-      {
-        tag: 'meta',
-        attrs: { name: 'description', content: config.description },
-        injectTo: 'head',
-      },
-      {
-        tag: 'meta',
-        attrs: { name: 'theme-color', content: config.background },
-        injectTo: 'head',
-      },
-      {
-        tag: 'link',
-        attrs: {
-          rel: 'manifest',
-          href: config.basePath + 'manifest.webmanifest',
+    configureServer: crawlerMiddleware,
+    configurePreviewServer: crawlerMiddleware,
+    transformIndexHtml: (html) => ({
+      html: html.replace(/<meta\b[^>]*\bname\s*=\s*["']robots["'][^>]*>/gi, ''),
+      tags: [
+        {
+          tag: 'meta',
+          attrs: { name: 'robots', content: robotsHeader },
+          injectTo: 'head',
         },
-        injectTo: 'head',
-      },
-      {
-        tag: 'link',
-        attrs: { rel: 'icon', href: config.basePath + 'icon-192.png' },
-        injectTo: 'head',
-      },
-      ...(config.domain
-        ? [
-            {
-              tag: 'link',
-              attrs: {
-                rel: 'canonical',
-                href: config.domain + config.basePath,
+        { tag: 'title', children: config.name, injectTo: 'head' },
+        {
+          tag: 'meta',
+          attrs: { name: 'description', content: config.description },
+          injectTo: 'head',
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'theme-color', content: config.background },
+          injectTo: 'head',
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'manifest',
+            href: config.basePath + 'manifest.webmanifest',
+          },
+          injectTo: 'head',
+        },
+        {
+          tag: 'link',
+          attrs: { rel: 'icon', href: config.basePath + 'icon-192.png' },
+          injectTo: 'head',
+        },
+        ...(config.domain
+          ? [
+              {
+                tag: 'link',
+                attrs: {
+                  rel: 'canonical',
+                  href: config.domain + config.basePath,
+                },
+                injectTo: 'head' as const,
               },
-              injectTo: 'head' as const,
-            },
-          ]
-        : []),
-    ],
+            ]
+          : []),
+      ],
+    }),
     async generateBundle(_options, bundle) {
+      this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robots });
+      this.emitFile({
+        type: 'asset',
+        fileName: '_headers',
+        source: '/*\n  X-Robots-Tag: ' + robotsHeader + '\n',
+      });
       this.emitFile({
         type: 'asset',
         fileName: 'manifest.webmanifest',
@@ -122,7 +148,9 @@ export function portalBuild(config: PublicConfig, cwd = process.cwd()): Plugin {
           'icon-192.png',
           'icon-512.png',
           'icon-maskable-512.png',
-          ...Object.keys(bundle),
+          ...Object.keys(bundle).filter(
+            (name) => !['robots.txt', '_headers'].includes(name),
+          ),
         ]),
       ];
       const prefix =

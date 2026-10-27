@@ -344,3 +344,5 @@ Optionales Plugin: `@kieksme/csp-plugin-datadog`. Alle nachfolgenden Optionen si
 | `respectDNT` | no                   | `true`  | Boolean; suppresses requests for browser DNT `1`                                                   |
 
 Localhost, `.localhost`, IPv4 loopback, IPv6 loopback and `0.0.0.0` never send analytics even when enabled. Metadata is limited to variant, section, FAQ/process IDs, contact channel and chat mode. See [Swetrix analytics](analytics.md) for the event catalog, funnels and verification.
+
+Die Suchmaschinenregeln sind ein fester Build-Default ohne Env-/Profiloption: `noindex, nofollow`, Root-`robots.txt` mit `Disallow: /` und eine statische Header-Vorlage. Runtime-API und Dev-/Preview-Server setzen `X-Robots-Tag`. Hosting unter `CSP_BASE_PATH` benötigt zusätzlich die Root-Datei; siehe [Deployment](deployment.md#suchmaschinensteuerung).

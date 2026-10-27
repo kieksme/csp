@@ -19,3 +19,5 @@ Set `--hero-background-image` in the customer stylesheet to add a decorative ima
 Core registers the WebMCP tools of the portal (`portal_get_info`) and of all installed plugins when the browser offers `document.modelContext` or `navigator.modelContext`. It is a no-op otherwise. Set `public.webmcp: false` (or `CSP_WEBMCP=false`) to opt out. See [WebMCP](../../docs/webmcp.md).
 
 The server-only `@kieksme/csp-core/support` export shares authenticated conversation ownership, persistence, streaming and human takeover between Teams, Slack and Telegram. It is not a browser entry point. See [Slack support](../../docs/slack-support.md) , [Teams support](../../docs/teams-support.md) and [Telegram support](../../docs/telegram-support.md).
+
+Alle Portal-Builds enthalten standardmäßig `noindex, nofollow`, eine sperrende `robots.txt` und eine `_headers`-Vorlage. Bei Unterpfad-Hosting muss `robots.txt` zusätzlich am Domain-Root veröffentlicht werden. Suchmaschinensteuerung ist keine Zugriffssperre und garantiert keine Entfernung bestehender Suchtreffer.
