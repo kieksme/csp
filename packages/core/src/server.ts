@@ -32,6 +32,7 @@ export async function createServer(options: {
   });
   app.addHook('onSend', async (_req, reply) => {
     reply.header('X-Content-Type-Options', 'nosniff');
+    reply.header('X-Robots-Tag', 'noindex, nofollow');
     reply.header(
       'Cache-Control',
       _req.routeOptions.url?.startsWith('/api/v1/conversations')
@@ -73,6 +74,11 @@ export async function createServer(options: {
     await plugin.setup(ctx);
     installed.add(plugin.id);
   }
+  app.get('/robots.txt', async (_req, reply) =>
+    reply
+      .type('text/plain; charset=utf-8')
+      .send('User-agent: *\nDisallow: /\n'),
+  );
   app.get('/health', async () => ({
     status: 'ok',
     plugins: options.plugins.map((p) => p.id),

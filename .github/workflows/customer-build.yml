@@ -46,6 +46,11 @@ jobs:
       - run: pnpm exec csp build --config "$PORTAL_CONFIG" --production
         env:
           PORTAL_CONFIG: ${{ inputs.config }}
+      - name: Apply customer crawler policy for older CSP versions
+        run: |
+          if [ -f scripts/search-policy.mjs ]; then
+            node scripts/search-policy.mjs
+          fi
       - name: Build API image artifact
         env:
           PORTAL_CONFIG: ${{ inputs.config }}
