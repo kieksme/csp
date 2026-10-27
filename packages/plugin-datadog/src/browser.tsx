@@ -17,6 +17,7 @@ import {
   type DatadogSchedule,
 } from './model.js';
 import { demoData, demoSources } from './demo.js';
+import { datadogTools } from './tools.js';
 const card =
   'bg-card border border-line rounded-card p-6 min-w-0 [overflow-wrap:anywhere]';
 const grid =
@@ -257,6 +258,7 @@ function DatadogHero(ctx: BrowserContext) {
 export default {
   id: 'datadog',
   sdkVersion: cspPlugin.sdkVersion,
+  tools: datadogTools,
   hero: DatadogHero,
   demoData,
   demoSources,

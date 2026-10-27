@@ -63,3 +63,72 @@ test('Datadog static demo supports cases, health, schedules and chat without pro
   expect(errors).toEqual([]);
   expect(traffic).toEqual([]);
 });
+
+test('Datadog static demo registers read-only WebMCP tools backed by demo data', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const tools = new Map<
+      string,
+      { execute: (a: object) => Promise<unknown> }
+    >();
+    Object.defineProperty(document, 'modelContext', {
+      configurable: true,
+      value: {
+        registerTool(tool: { name: string; execute: never }) {
+          tools.set(tool.name, tool);
+          return Promise.resolve();
+        },
+      },
+    });
+    (window as unknown as { __tools: typeof tools }).__tools = tools;
+  });
+  await page.goto(process.env.CSP_DATADOG_TEST_URL ?? 'http://127.0.0.1:4178');
+  const call = (name: string, args: object = {}) =>
+    page.evaluate(
+      async ([n, a]) => {
+        const tools = (
+          window as unknown as {
+            __tools: Map<
+              string,
+              {
+                execute: (
+                  a: object,
+                ) => Promise<{ content: { text: string }[] }>;
+              }
+            >;
+          }
+        ).__tools;
+        return JSON.parse(
+          (await tools.get(n as string)!.execute(a as object)).content[0].text,
+        );
+      },
+      [name, args] as const,
+    );
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        [
+          ...(
+            window as unknown as { __tools: Map<string, unknown> }
+          ).__tools.keys(),
+        ]
+          .filter((n) => n.startsWith('datadog_'))
+          .sort(),
+      ),
+    )
+    .toEqual([
+      'datadog_get_on_duty',
+      'datadog_get_oncall_schedule',
+      'datadog_list_cases',
+      'datadog_list_monitors',
+      'datadog_list_slos',
+    ]);
+  expect((await call('datadog_get_on_duty')).onDuty[0].name).toContain('Demo');
+  expect(
+    (await call('datadog_list_monitors', { status: 'alert' })).monitors[0].name,
+  ).toBe('Zahlungsdienst');
+  expect(
+    (await call('datadog_list_cases', { status: 'CLOSED' })).cases.length,
+  ).toBe(8);
+});
