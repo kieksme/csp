@@ -57,3 +57,11 @@ Entra-/Bot-Registrierung, PostgreSQL, Standard-Channel und Runtime-Secrets sind 
 ## Infrastruktur der eingerichteten Instanzen
 
 Die [Infrastrukturübersicht](infrastructure.md) dokumentiert Hosting, Netzgrenzen, Releasewege und den belegten Live-Stand. Details: [Coolify](infrastructure-coolify.md), [Thinkport und Teams](infrastructure-thinkport.md), [Lieferkette und Wiederherstellung](infrastructure-operations.md).
+
+## Suchmaschinensteuerung
+
+Alle Builds mit `portalBuild` (CLI, Kundentemplate und sämtliche Produktdemos) setzen im initialen HTML `<meta name="robots" content="noindex, nofollow">`. Der Build erzeugt `robots.txt` mit `User-agent: *` und `Disallow: /` sowie `_headers` mit `X-Robots-Tag: noindex, nofollow` für unterstützende Hosts. Dies ist ein fester Build-Default ohne Konfigurationsoption. Entwicklungs-/Preview-Server und die API setzen denselben Header; die API liefert zusätzlich `/robots.txt` als Text. Ältere Kundenpakete können bis zum Paketupgrade `scripts/search-policy.mjs` im Kundenrepo verwenden; der gemeinsame Workflow führt dieses Skript vor der Artefakterstellung aus, wenn es vorhanden ist.
+
+Die `robots.txt` muss am **Domain-Root** unter `https://<domain>/robots.txt` mit HTTP 200 erreichbar sein. Bei `CSP_BASE_PATH=/kundenportal/` liegt sie zunächst im Build-Artefakt: zusätzlich am Domain-Root veröffentlichen. Eine Datei nur unter `/kundenportal/robots.txt` steuert keine Crawler. Bei GitHub Pages auf einer geteilten Organisationsdomain gehört die Root-Datei in das zuständige `<organisation>.github.io`-Repository; sie sperrt dann auch alle anderen Pfade dieser Domain. GitHub Pages unterstützt `_headers` nicht. Hosts ohne `_headers`-Unterstützung benötigen eine entsprechende Server-/Proxy-Regel. Bei eigener Domain am Webroot werden beide Dateien mit `dist/` veröffentlicht.
+
+Suchmaschinensteuerung ersetzt keine Zugriffskontrolle. `Disallow: /` kann verhindern, dass Crawler das `noindex` lesen; bereits indexierte URLs verschwinden dadurch nicht garantiert. Nach Deployment initiales HTML, Root-robots.txt (kein SPA-Fallback), Status und unterstützte Header prüfen. Eine notwendige Entfernung bestehender Suchtreffer separat beim Suchmaschinenbetreiber veranlassen.

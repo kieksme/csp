@@ -129,6 +129,18 @@ try {
     await readFile(join(customer, 'dist/manifest.webmanifest'), 'utf8'),
   );
   assert.equal(manifest.scope, '/pilot/');
+  assert.match(
+    await readFile(join(customer, 'dist/index.html'), 'utf8'),
+    /<meta name="robots" content="noindex, nofollow">/,
+  );
+  assert.equal(
+    await readFile(join(customer, 'dist/robots.txt'), 'utf8'),
+    'User-agent: *\nDisallow: /\n',
+  );
+  assert.match(
+    await readFile(join(customer, 'dist/_headers'), 'utf8'),
+    /X-Robots-Tag: noindex, nofollow/,
+  );
   assert(
     (await readFile(join(customer, 'dist/sw.js'), 'utf8')).includes('/pilot/'),
   );

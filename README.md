@@ -103,3 +103,5 @@ Das optionale `@kieksme/csp-plugin-datadog` zeigt Cases, Monitorstatus, SLOs und
 Optional [Swetrix analytics](docs/analytics.md) tracks anonymous portal interactions and support funnels through a dedicated CSP plugin.
 
 Externe AI Agents können über die optionale [MCP-Schnittstelle](docs/mcp.md) auf öffentliche Backend-Daten zugreifen. Die [Nutzeranleitung](docs/mcp-client.md) beschreibt Verbindung und Verwendung.
+
+Alle Portal-Builds enthalten standardmäßig `noindex, nofollow`, eine sperrende `robots.txt` und eine `_headers`-Vorlage. Bei Unterpfad-Hosting muss `robots.txt` zusätzlich am Domain-Root veröffentlicht werden. Suchmaschinensteuerung ist keine Zugriffssperre und garantiert keine Entfernung bestehender Suchtreffer.

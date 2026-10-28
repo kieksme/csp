@@ -355,3 +355,5 @@ Diese Optionen gelten nur zur Runtime im API-Prozess, nicht für Frontend-Builds
 | `CSP_MCP_TOKEN`   | Separates Bearer-Secret für MCP | Nein    | Nicht gesetzt | Bei aktiviertem MCP mindestens 32 Zeichen nach Entfernen äußerer Leerzeichen; exakt übertragen |
 
 Vorhandene Origin-Header werden gegen `CSP_ALLOWED_ORIGINS` geprüft. Ohne Origin sind Server-Clients zugelassen.
+
+Die Suchmaschinenregeln sind ein fester Build-Default ohne Env-/Profiloption: `noindex, nofollow`, Root-`robots.txt` mit `Disallow: /` und eine statische Header-Vorlage. Runtime-API und Dev-/Preview-Server setzen `X-Robots-Tag`. Hosting unter `CSP_BASE_PATH` benötigt zusätzlich die Root-Datei; siehe [Deployment](deployment.md#suchmaschinensteuerung).

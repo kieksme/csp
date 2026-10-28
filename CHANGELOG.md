@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/kieksme/csp/compare/v0.15.1...v0.16.0) (2026-10-27)
+
+
+### Features
+
+* **security:** disable search indexing across portal builds ([#76](https://github.com/kieksme/csp/issues/76)) ([cebb49c](https://github.com/kieksme/csp/commit/cebb49ccf1a69d2e28a66e64e907011f2b51716d))
+
 ## [0.15.1](https://github.com/kieksme/csp/compare/v0.15.0...v0.15.1) (2026-10-16)
 
 
