@@ -1,6 +1,6 @@
 # WebMCP für Browser-Agenten
 
-Das Portal stellt seine Funktionen über [WebMCP](https://webmachinelearning.github.io/webmcp/) bereit. Ein KI-Agent im Browser kann damit Dienstplan, Team, Alerts, Systemstatus, Hotline, FAQ und Ticketvorlagen als Tools aufrufen, statt die Oberfläche zu bedienen. Die Plugins `contact`, `signl4`, `kuma`, `content` und `chat` bringen ihre eigenen Tools mit; Core ergänzt `portal_get_info`. Das Teams-Plugin hat bewusst keine (siehe unten).
+Das Portal stellt seine Funktionen über [WebMCP](https://webmachinelearning.github.io/webmcp/) bereit. Ein KI-Agent im Browser kann damit Dienstplan, Team, Alerts, Systemstatus, Hotline, FAQ, Ticketvorlagen und Datadog-Daten als Tools aufrufen, statt die Oberfläche zu bedienen. Die Plugins `contact`, `signl4`, `kuma`, `content`, `chat` und `datadog` bringen ihre eigenen Tools mit; Core ergänzt `portal_get_info`. Die Support-Plugins `teams`, `slack` und `telegram` sowie das Analytics-Plugin `swetrix` haben bewusst keine (siehe unten).
 
 WebMCP ist ein frühes Browser-Angebot und noch nicht überall verfügbar. Das Portal erkennt `document.modelContext` und `navigator.modelContext` und registriert nur über `registerTool`. Fehlt die Schnittstelle, passiert nichts und die Oberfläche bleibt unverändert. Der Spezifikationsstand kann sich ändern; die Anbindung ist deshalb in einem Modul (`packages/sdk/src/webmcp.ts`) gekapselt.
 
@@ -26,6 +26,11 @@ Alle Tools lesen ausschließlich die bestehenden öffentlichen Routen unter `/ap
 | `signl4`  | `signl4_list_team`              | Teammitglieder mit Rolle, E-Mail und Telefon, optional `query`                        | nein       |
 | `signl4`  | `signl4_get_vcard`              | vCard 3.0 als Text für `id`                                                           | nein       |
 | `signl4`  | `signl4_list_alerts`            | Aktuelle Alerts, optional `minSeverity`                                               | nein       |
+| `datadog` | `datadog_get_on_duty`           | Wer hat jetzt Bereitschaft (On-Call), wer ist als Nächstes dran                       | nein       |
+| `datadog` | `datadog_get_oncall_schedule`   | Bereitschaftsplan, optional `personId`, `scheduleId`, `horizonHours` (1–2160)         | nein       |
+| `datadog` | `datadog_list_monitors`         | Zustand der Services, optional `query` und `status`                                   | nein       |
+| `datadog` | `datadog_list_slos`             | SLOs der letzten 30 Tage mit Ziel, SLI und Fehlerbudget                               | nein       |
+| `datadog` | `datadog_list_cases`            | Datadog-Cases seitenweise, optional `status` und `page`; nur lesend                   | nein       |
 | `kuma`    | `kuma_get_status`               | Dienste mit Zustand und 24-Stunden-Verfügbarkeit, Störungsmeldung, optional `monitor` | nein       |
 | `contact` | `contact_get_hotline`           | Hotline und `tel:`-Link; das Tool wählt nicht selbst                                  | nein       |
 | `content` | `content_search_faq`            | FAQ nach `query`, `category`, `limit` (1–50, Standard 10)                             | nein       |
@@ -33,11 +38,11 @@ Alle Tools lesen ausschließlich die bestehenden öffentlichen Routen unter `/ap
 | `content` | `content_list_ticket_templates` | Ticketarten mit Link und Textvorlage                                                  | nein       |
 | `chat`    | `chat_ask`                      | Fragt den digitalen Assistenten (`messages`, wie in der [API](api.md#chat-anfragen))  | Kontingent |
 
-Im Supportmodus (`chatSupport`, [Teams-Support](teams-support.md)) ist die öffentliche Chat-Route gesperrt; `chat_ask` meldet das und sendet keine Anfrage. Das Teams-Plugin selbst stellt bewusst keine Tools bereit: Seine Gespräche verlangen die Anmeldung der Person, und Nachrichten erreichen echte Support-Mitarbeitende. Solche Aktionen gehören nicht in lesende Agenten-Tools.
+Im Supportmodus (`chatSupport`, [Teams-Support](teams-support.md)) ist die öffentliche Chat-Route gesperrt; `chat_ask` meldet das und sendet keine Anfrage. Die Support-Plugins `teams`, `slack` und `telegram` stellen bewusst keine Tools bereit: Ihre Gespräche verlangen eine Sitzung oder Anmeldung der Person, und Nachrichten erreichen echte Support-Mitarbeitende. `swetrix` erhebt anonyme Nutzungsdaten und hat keine Nutzerfunktion, die ein Tool bräuchte. Solche Aktionen gehören nicht in lesende Agenten-Tools.
 
 `chat_ask` ändert keine Daten, verbraucht aber das IP-Limit und das KI-Kontingent der Instanz und ruft den konfigurierten Provider auf. Es ist deshalb nicht als `readOnlyHint` markiert. Alle anderen Tools sind es.
 
-**Tickets:** Das Portal legt keine Tickets an. `content_list_ticket_templates` liefert Link und Vorlage; die Person öffnet das Ticketsystem selbst. Ein Tool zum Anlegen setzt eine eigene API mit Ticketsystem-Anbindung, Anmeldung und Bestätigung voraus und ist nicht Teil dieser Funktion.
+**Tickets:** Das Portal legt keine Tickets an, auch `datadog_list_cases` liest nur bestehende Cases. `content_list_ticket_templates` liefert Link und Vorlage; die Person öffnet das Ticketsystem selbst. Ein Tool zum Anlegen setzt eine eigene API mit Ticketsystem-Anbindung, Anmeldung und Bestätigung voraus und ist nicht Teil dieser Funktion.
 
 ## Antworten und Fehlerverhalten
 

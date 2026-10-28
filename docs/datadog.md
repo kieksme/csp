@@ -62,3 +62,7 @@ Für die Acme-Einrichtung wurde ein eigenständiger EU1-Testaccount angelegt. Am
 - [Monitor abrufen](https://docs.datadoghq.com/api/latest/monitors/get-a-monitor/)
 - [SLO-History](https://docs.datadoghq.com/api/latest/service-level-objectives/get-an-slos-history/)
 - [On-Call-Responder](https://docs.datadoghq.com/api/latest/on-call/get-on-call-responders-for-a-schedule/)
+
+## WebMCP
+
+Browser-Agenten erhalten lesende Tools für Bereitschaft (`datadog_get_on_duty`, `datadog_get_oncall_schedule`), Monitore, SLOs und Cases (`datadog_list_monitors`, `datadog_list_slos`, `datadog_list_cases`). Sie nutzen ausschließlich die oben beschriebenen `/api/v1/datadog/*`-Routen, legen keine Cases an und ändern nichts in Datadog. Veraltete Schichtdaten bestätigen keine Erreichbarkeit. Abschalten mit `public.webmcp: false`. Siehe [WebMCP](webmcp.md).
