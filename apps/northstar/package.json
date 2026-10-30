@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "dev:api": "tsx watch --env-file=.env.development server.ts",
-    "build": "vite build && tsup server.ts --format esm --platform node --out-dir dist-api --external sharp",
-    "start:api": "node dist-api/server.js"
+    "dev:api": "tsx watch --import @kieksme/csp-core/tracing-register --env-file=.env.development server.ts",
+    "build": "vite build && tsup server.ts --format esm --platform node --out-dir dist-api --external sharp --external dd-trace",
+    "start:api": "node --import @kieksme/csp-core/tracing-register dist-api/server.js"
   },
   "dependencies": {
     "@kieksme/csp-core": "workspace:^",

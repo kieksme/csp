@@ -20,7 +20,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "node ../../scripts/sync-template.mjs && tsup src/index.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom --external @kieksme/csp-core/* --external vite --external @vitejs/plugin-react --external esbuild --external dotenv --external zod"
+    "build": "node ../../scripts/sync-template.mjs && tsup src/index.ts --format esm --dts --clean --external @kieksme/csp-sdk --external react --external react-dom --external @kieksme/csp-core --external @kieksme/csp-core/* --external vite --external @vitejs/plugin-react --external esbuild --external dotenv --external zod --external dd-trace"
   },
   "dependencies": {
     "@kieksme/csp-sdk": "workspace:^",

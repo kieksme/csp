@@ -236,19 +236,29 @@ try {
     support: false | 'teams' | 'slack' | 'telegram' = false,
     datadog = false,
   ) {
-    const child = spawn('node', [join(directory, 'dist-api/server.js')], {
-      cwd: directory,
-      env: {
-        ...process.env,
-        CSP_PORT: '3999',
-        CSP_DEMO: 'true',
-        CSP_TEAMS_DEMO: support === 'teams' ? 'true' : 'false',
-        CSP_SLACK_DEMO: support === 'slack' ? 'true' : 'false',
-        CSP_TELEGRAM_DEMO: support === 'telegram' ? 'true' : 'false',
-        CSP_CONTACT_PHONE: '+49000',
+    const child = spawn(
+      'node',
+      [
+        '--import',
+        '@kieksme/csp-core/tracing-register',
+        join(directory, 'dist-api/server.js'),
+      ],
+      {
+        cwd: directory,
+        env: {
+          ...process.env,
+          CSP_PORT: '3999',
+          CSP_DEMO: 'true',
+          CSP_TEAMS_DEMO: support === 'teams' ? 'true' : 'false',
+          CSP_SLACK_DEMO: support === 'slack' ? 'true' : 'false',
+          CSP_TELEGRAM_DEMO: support === 'telegram' ? 'true' : 'false',
+          CSP_CONTACT_PHONE: '+49000',
+          // Smoke runs without a Datadog agent; keep tracing off and harmless.
+          DD_TRACE_ENABLED: 'false',
+        },
+        stdio: 'pipe',
       },
-      stdio: 'pipe',
-    });
+    );
     const exited = new Promise<void>((ok) => child.once('exit', () => ok()));
     let errors = '';
     child.stderr.on('data', (x) => (errors += x));

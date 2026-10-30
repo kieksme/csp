@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import { parse } from 'dotenv';
 import { loadProfile } from '@kieksme/csp-core/profile';
 import { portalBuild } from '@kieksme/csp-core/build';
+import { nodeArgsWithDatadogTracing } from '@kieksme/csp-core/tracing-node';
 import { build, createServer as createViteServer, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { build as bundle } from 'esbuild';
@@ -62,12 +63,13 @@ export async function runPortal(
   await mkdir(work, { recursive: true });
   if (command === 'start') {
     // Validate the current profile before executing the matching built server.
+    // Merge loaded .env into the child so DD_* is available before dd-trace init.
     const child = spawn(
       process.execPath,
-      [join(directory, 'dist-api/server.js')],
+      nodeArgsWithDatadogTracing(join(directory, 'dist-api/server.js')),
       {
         cwd: directory,
-        env: { ...process.env, CSP_CONFIG_PATH: file },
+        env: { ...process.env, ...loaded.env, CSP_CONFIG_PATH: file },
         stdio: 'inherit',
       },
     );
@@ -96,7 +98,8 @@ export async function runPortal(
   );
   await writeFile(
     join(work, 'server.ts'),
-    `import { readFileSync } from 'node:fs';
+    `import '@kieksme/csp-core/tracing';
+import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { createServer } from '@kieksme/csp-core/server';
 import { loadProfile, loadRuntimeEnv } from '@kieksme/csp-core/profile';
@@ -183,11 +186,15 @@ for(const signal of ['SIGTERM','SIGINT']) process.once(signal,()=>void app.close
     });
     await server.listen();
     server.printUrls();
-    const api = spawn(process.execPath, [join(work, 'server-dev.mjs')], {
-      cwd: directory,
-      env: { ...process.env, CSP_CONFIG_PATH: file },
-      stdio: 'inherit',
-    });
+    const api = spawn(
+      process.execPath,
+      nodeArgsWithDatadogTracing(join(work, 'server-dev.mjs')),
+      {
+        cwd: directory,
+        env: { ...process.env, ...loaded.env, CSP_CONFIG_PATH: file },
+        stdio: 'inherit',
+      },
+    );
     api.once('error', (error) => {
       console.error(error.message);
       void server.close();

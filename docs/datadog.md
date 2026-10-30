@@ -2,6 +2,8 @@
 
 Das optionale Paket `@kieksme/csp-plugin-datadog` bündelt Datadog Case Management, Monitors, SLOs und On-Call. Es liest ausschließlich Daten. Tickets, Monitore und Schichtpläne werden über Links in Datadog bearbeitet. Die echte Datadog-Verbindung ist **noch ungetestet**; automatisierte Tests prüfen dokumentierte API-Antworten mit Mocks.
 
+Unabhängig davon instrumentiert Core die API mit **Datadog APM** (`dd-trace`); siehe [APM](#apm-dd-trace).
+
 ## Installation und Anzeige
 
 Ab CSP 0.14.0 `csp plugin add @kieksme/csp-plugin-datadog@0.14.0` ausführen oder das installierte Paket in die `plugins`-Liste des Kundenprofils aufnehmen. Ein eigenes Profil kann SIGNL4 und Kuma durch Datadog ersetzen. Für einen Datadog-Header SIGNL4 aus diesem Profil entfernen: CSP verwendet die erste registrierte Hero-Komponente. Es gibt keine Überschneidung der API-Routen.
@@ -66,3 +68,27 @@ Für die Acme-Einrichtung wurde ein eigenständiger EU1-Testaccount angelegt. Am
 ## WebMCP
 
 Browser-Agenten erhalten lesende Tools für Bereitschaft (`datadog_get_on_duty`, `datadog_get_oncall_schedule`), Monitore, SLOs und Cases (`datadog_list_monitors`, `datadog_list_slos`, `datadog_list_cases`). Sie nutzen ausschließlich die oben beschriebenen `/api/v1/datadog/*`-Routen, legen keine Cases an und ändern nichts in Datadog. Veraltete Schichtdaten bestätigen keine Erreichbarkeit. Abschalten mit `public.webmcp: false`. Siehe [WebMCP](webmcp.md).
+
+## APM (`dd-trace`)
+
+Die Fastify-API lädt `dd-trace` vor den übrigen Imports (`import '@kieksme/csp-core/tracing'`) und startet Node mit `--import @kieksme/csp-core/tracing-register` (Docker-`CMD`, `csp start` / `csp dev`, Demo-`start:api`). Der Register-Einstieg lädt `dd-trace/initialize.mjs` über Core, damit pnpm und Kundeninstallationen das Paket finden. So greift die ESM-Instrumentierung. Traces laufen über den **Datadog Agent** zur Site `datadoghq.eu` (Organisation kieks.me GbR). In der Anwendung keine Datadog-API-Keys hinterlegen.
+
+```dotenv
+# API runtime only — no secrets. Agent must use site datadoghq.eu.
+DD_TRACE_ENABLED=true
+DD_AGENT_HOST=datadog-agent
+DD_TRACE_AGENT_PORT=8126
+DD_SERVICE=csp-api
+DD_ENV=production
+DD_VERSION=0.16.0
+```
+
+| Variable                | Bedeutung                            |
+| ----------------------- | ------------------------------------ |
+| `DD_TRACE_ENABLED`      | `false` schaltet Tracing aus (No-Op) |
+| `DD_AGENT_HOST`         | Agent-Host (Standard `localhost`)    |
+| `DD_TRACE_AGENT_PORT`   | Trace-Port (Standard `8126`)         |
+| `DD_SERVICE`            | Service-Name (CSP-Default `csp-api`) |
+| `DD_ENV` / `DD_VERSION` | Umgebungs- und Versionstag in APM    |
+
+Ohne Agent: Prozess startet weiter; Spans werden verworfen. Ohne Agent lokal/CI: `DD_TRACE_ENABLED=false`. API-Start ohne `--import @kieksme/csp-core/tracing-register` prüfen, falls Traces fehlen. Vollständige Tabelle: [Konfiguration](configuration.md#datadog-apm-dd-trace). Agent-Einrichtung und Intake liegen außerhalb dieses Repos.
