@@ -210,6 +210,20 @@ Vite lädt `.env`-Dateien für den jeweiligen Modus und übernimmt darüber Proz
 | `CSP_ALLOWED_ORIGINS` | Leere Liste; kommagetrennte erlaubte Frontend-Origins ohne Pfad |
 | `CSP_TRUST_PROXY`     | Nur `true` aktiviert Vertrauen in Proxy-Header                  |
 
+### OpenTelemetry (OTLP)
+
+Optionale verteilte Traces und Metriken für den **API-Prozess**. Core startet das OpenTelemetry Node SDK (`@opentelemetry/sdk-node` plus Auto-Instrumentierungen) vor den übrigen Imports (`@kieksme/csp-core/tracing`); Node-Starts nutzen `--import @kieksme/csp-core/tracing-register` für ESM. Telemetrie geht per **OTLP HTTP** an einen OpenTelemetry Collector (Deployment-Service `otel-collector`); der Collector kann an Datadog oder andere Backends weiterleiten. Vendor-neutral: keine `dd-trace`- und keine `DD_*`-APM-Variablen in der App. Gehört nicht in `public`, `VITE_*` oder das Browser-Bundle. Unabhängig vom optionalen UI-Plugin `@kieksme/csp-plugin-datadog`.
+
+| Variable                      | Zweck                              | Pflicht/Standard                                   | Zulässige Werte / Grenzen                                            |
+| ----------------------------- | ---------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------- |
+| `OTEL_SDK_DISABLED`           | SDK ein-/ausschalten               | Optional; Spec-Default aktiv                       | `true` macht Init zum No-Op; jeder andere Wert lässt das SDK starten |
+| `OTEL_SERVICE_NAME`           | Service-Name in Traces/Metriken    | Optional; CSP-Default `csp-api`                    | Nichtleerer Service-Name                                             |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP-HTTP-Basis-URL des Collectors | Optional; CSP-Default `http://otel-collector:4318` | Erreichbare HTTP-URL (ohne Pfad `/v1/traces`); Port typisch `4318`   |
+| `OTEL_RESOURCE_ATTRIBUTES`    | Zusätzliche Ressourcenattribute    | Optional; keiner                                   | Kommagetrennt `key=value`, u. a. `deployment.environment=production` |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | OTLP-Protokoll                     | Optional; CSP-Default `http/protobuf`              | z. B. `http/protobuf`, `http/json` (HTTP zum Collector)              |
+
+API-Logs (Fastify/Pino) enthalten bei aktivem Span die Felder `trace_id` und `span_id` für Log-Trace-Korrelation. Ohne erreichbaren Collector bleibt der API-Start stabil; Spans/Metriken werden verworfen. Lokal und in CI ohne Collector `OTEL_SDK_DISABLED=true` setzen. Details: [OpenTelemetry APM](datadog.md#apm-opentelemetry).
+
 Auch am API-Host dasselbe Kundenprofil und dieselbe Inhaltsdatei bereitstellen; bei Env-Konfiguration Hotline und Inhaltsdatei dort ebenfalls setzen. Provider-Variablen werden nur für installierte Plugins validiert. Der Demo-Modus entbindet SIGNL4/Kuma/Chat von produktiven Provider-Pflichtwerten; Kontakt und Inhaltsdatei bleiben erforderlich.
 
 Frontend-Hosting, eigene Domain, API-Hosting und die Workflow-Optionen `config`, `pages` und `public-overrides` stehen unter [Deployment](deployment.md). Das Setzen von `public.domain` ersetzt keine DNS-/Hosting-Konfiguration; der Kundenworkflow baut das API-Image, deployt die API aber nicht.

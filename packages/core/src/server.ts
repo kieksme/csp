@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import { trace } from '@opentelemetry/api';
 import {
   LiveCache,
   validatePlugins,
@@ -9,6 +10,16 @@ import {
   type Source,
   type ServerContext,
 } from '@kieksme/csp-sdk';
+
+/** Active span IDs for log–trace correlation (OpenTelemetry / OTLP). */
+function traceLogFields(): { trace_id?: string; span_id?: string } {
+  const span = trace.getActiveSpan();
+  if (!span) return {};
+  const { traceId, spanId } = span.spanContext();
+  if (!traceId || traceId === '00000000000000000000000000000000') return {};
+  return { trace_id: traceId, span_id: spanId };
+}
+
 export async function createServer(options: {
   plugins: ServerPlugin[];
   config: PublicConfig;
@@ -17,7 +28,12 @@ export async function createServer(options: {
 }) {
   const env = options.env ?? process.env;
   const app = Fastify({
-    logger: false,
+    // Structured logs include trace_id/span_id when a span is active.
+    // Default warn keeps happy-path output quiet (previous logger: false).
+    logger: {
+      level: 'warn',
+      mixin: traceLogFields,
+    },
     bodyLimit: 65536,
     trustProxy: env.CSP_TRUST_PROXY === 'true',
   });

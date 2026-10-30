@@ -4,6 +4,10 @@ export default defineConfig({
     fileParallelism: !process.env.CSP_TEST_DATABASE_URL,
     include: ['tests/**/*.test.ts'],
     testTimeout: 15000,
+    env: {
+      // Unit tests do not run an OTLP collector; keep the SDK off and harmless.
+      OTEL_SDK_DISABLED: 'true',
+    },
   },
   resolve: {
     alias: {

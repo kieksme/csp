@@ -35,7 +35,7 @@ export default defineConfig({
     },
     {
       command:
-        'CSP_CHAT_RATE_LIMIT=100 CSP_DEMO=true CSP_TEAMS_DEMO=true CSP_TEAMS_ENABLED=false CSP_HOST=127.0.0.1 CSP_PORT=3017 CSP_CONTACT_PHONE=+49000 CSP_ALLOWED_ORIGINS=http://127.0.0.1:4176 pnpm --filter csp-demo start:api',
+        'OTEL_SDK_DISABLED=true CSP_CHAT_RATE_LIMIT=100 CSP_DEMO=true CSP_TEAMS_DEMO=true CSP_TEAMS_ENABLED=false CSP_HOST=127.0.0.1 CSP_PORT=3017 CSP_CONTACT_PHONE=+49000 CSP_ALLOWED_ORIGINS=http://127.0.0.1:4176 pnpm --filter csp-demo start:api',
       url: 'http://127.0.0.1:3017/health',
       reuseExistingServer: false,
     },
@@ -47,7 +47,7 @@ export default defineConfig({
     },
     {
       command:
-        'CSP_DEMO=true CSP_CONTACT_PHONE=+49000 CSP_ALLOWED_ORIGINS=http://127.0.0.1:4173 pnpm --filter csp-demo start:api',
+        'OTEL_SDK_DISABLED=true CSP_DEMO=true CSP_CONTACT_PHONE=+49000 CSP_ALLOWED_ORIGINS=http://127.0.0.1:4173 pnpm --filter csp-demo start:api',
       url: 'http://127.0.0.1:3001/health',
       reuseExistingServer: false,
     },
@@ -59,7 +59,7 @@ export default defineConfig({
     },
     {
       command:
-        'CSP_DEMO=true CSP_CONTACT_PHONE=+49000 CSP_PORT=3002 CSP_NAME=Northstar CSP_ALLOWED_ORIGINS=http://127.0.0.1:4174 pnpm --filter csp-northstar start:api',
+        'OTEL_SDK_DISABLED=true CSP_DEMO=true CSP_CONTACT_PHONE=+49000 CSP_PORT=3002 CSP_NAME=Northstar CSP_ALLOWED_ORIGINS=http://127.0.0.1:4174 pnpm --filter csp-northstar start:api',
       url: 'http://127.0.0.1:3002/health',
       reuseExistingServer: false,
     },

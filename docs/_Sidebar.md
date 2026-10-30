@@ -26,6 +26,6 @@
 
 - [Chat, Spracheingabe und persönlicher Support](chat.md)
 
-- [Datadog: Cases, Health und Bereitschaften](datadog.md)
+- [Datadog: Cases, Health, Bereitschaften und OpenTelemetry APM](datadog.md)
 
 - [Swetrix analytics](analytics.md)

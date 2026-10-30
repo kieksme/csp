@@ -14,4 +14,4 @@ COPY --chown=node:node . .
 COPY --from=dependencies --chown=node:node /app/node_modules ./node_modules
 USER node
 EXPOSE 3001
-CMD ["node", "dist-api/server.js"]
+CMD ["node", "--import", "@kieksme/csp-core/tracing-register", "dist-api/server.js"]

@@ -2,6 +2,8 @@
 
 Das optionale Paket `@kieksme/csp-plugin-datadog` bündelt Datadog Case Management, Monitors, SLOs und On-Call. Es liest ausschließlich Daten. Tickets, Monitore und Schichtpläne werden über Links in Datadog bearbeitet. Die echte Datadog-Verbindung ist **noch ungetestet**; automatisierte Tests prüfen dokumentierte API-Antworten mit Mocks.
 
+Unabhängig davon instrumentiert Core die API vendor-neutral mit **OpenTelemetry** (OTLP an den Collector, der optional an Datadog weiterleitet); siehe [APM](#apm-opentelemetry).
+
 ## Installation und Anzeige
 
 Ab CSP 0.14.0 `csp plugin add @kieksme/csp-plugin-datadog@0.14.0` ausführen oder das installierte Paket in die `plugins`-Liste des Kundenprofils aufnehmen. Ein eigenes Profil kann SIGNL4 und Kuma durch Datadog ersetzen. Für einen Datadog-Header SIGNL4 aus diesem Profil entfernen: CSP verwendet die erste registrierte Hero-Komponente. Es gibt keine Überschneidung der API-Routen.
@@ -66,3 +68,24 @@ Für die Acme-Einrichtung wurde ein eigenständiger EU1-Testaccount angelegt. Am
 ## WebMCP
 
 Browser-Agenten erhalten lesende Tools für Bereitschaft (`datadog_get_on_duty`, `datadog_get_oncall_schedule`), Monitore, SLOs und Cases (`datadog_list_monitors`, `datadog_list_slos`, `datadog_list_cases`). Sie nutzen ausschließlich die oben beschriebenen `/api/v1/datadog/*`-Routen, legen keine Cases an und ändern nichts in Datadog. Veraltete Schichtdaten bestätigen keine Erreichbarkeit. Abschalten mit `public.webmcp: false`. Siehe [WebMCP](webmcp.md).
+
+## APM (OpenTelemetry)
+
+Die Fastify-API lädt das OpenTelemetry Node SDK vor den übrigen Imports (`import '@kieksme/csp-core/tracing'`) und startet Node mit `--import @kieksme/csp-core/tracing-register` (Docker-`CMD`, `csp start` / `csp dev`, Demo-`start:api`). Der Register-Einstieg registriert den ESM-Hook und startet `@opentelemetry/sdk-node` mit Auto-Instrumentierungen über Core, damit pnpm und Kundeninstallationen die Pakete finden. Traces und Metriken gehen per **OTLP HTTP** an den OpenTelemetry Collector (Service-Name `otel-collector`); der Collector kann an Datadog (Site `datadoghq.eu`) oder andere Backends weiterleiten. In der Anwendung keine Datadog-API-Keys und kein `dd-trace` hinterlegen.
+
+```dotenv
+# API runtime only — no secrets. Collector forwards downstream (e.g. Datadog).
+OTEL_SERVICE_NAME=csp-api
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production
+# OTEL_SDK_DISABLED=true
+```
+
+| Variable                      | Bedeutung                                                  |
+| ----------------------------- | ---------------------------------------------------------- |
+| `OTEL_SDK_DISABLED`           | `true` schaltet das SDK aus (No-Op)                        |
+| `OTEL_SERVICE_NAME`           | Service-Name (CSP-Default `csp-api`)                       |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Collector-Basis-URL (Default `http://otel-collector:4318`) |
+| `OTEL_RESOURCE_ATTRIBUTES`    | u. a. `deployment.environment=…`                           |
+
+API-Logs enthalten bei aktivem Span `trace_id` und `span_id`. Ohne Collector: Prozess startet weiter; Spans/Metriken werden verworfen. Ohne Collector lokal/CI: `OTEL_SDK_DISABLED=true`. API-Start ohne `--import @kieksme/csp-core/tracing-register` prüfen, falls Traces fehlen. Vollständige Tabelle: [Konfiguration](configuration.md#opentelemetry-otlp). Collector-Einrichtung und Downstream-Intake liegen außerhalb dieses Repos.
