@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "dev:api": "tsx watch --import @kieksme/csp-core/tracing-register --env-file=.env.development server.ts",
-    "build": "vite build && tsup server.ts --format esm --platform node --out-dir dist-api --external sharp --external dd-trace",
+    "build": "vite build && tsup server.ts --format esm --platform node --out-dir dist-api --external sharp --external @opentelemetry/api --external @opentelemetry/sdk-node --external @opentelemetry/auto-instrumentations-node",
     "start:api": "node --import @kieksme/csp-core/tracing-register dist-api/server.js"
   },
   "dependencies": {

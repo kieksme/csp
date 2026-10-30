@@ -5,8 +5,8 @@ export default defineConfig({
     include: ['tests/**/*.test.ts'],
     testTimeout: 15000,
     env: {
-      // Unit tests do not run a Datadog agent; keep APM off and harmless.
-      DD_TRACE_ENABLED: 'false',
+      // Unit tests do not run an OTLP collector; keep the SDK off and harmless.
+      OTEL_SDK_DISABLED: 'true',
     },
   },
   resolve: {

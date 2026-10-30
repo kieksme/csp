@@ -253,8 +253,8 @@ try {
           CSP_SLACK_DEMO: support === 'slack' ? 'true' : 'false',
           CSP_TELEGRAM_DEMO: support === 'telegram' ? 'true' : 'false',
           CSP_CONTACT_PHONE: '+49000',
-          // Smoke runs without a Datadog agent; keep tracing off and harmless.
-          DD_TRACE_ENABLED: 'false',
+          // Smoke runs without an OTLP collector; keep the SDK off and harmless.
+          OTEL_SDK_DISABLED: 'true',
         },
         stdio: 'pipe',
       },

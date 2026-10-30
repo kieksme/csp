@@ -32,7 +32,7 @@ docker load -i api-image.tar
 docker run --rm -p 3001:3001 --env-file customer-runtime.env customer-api
 ```
 
-Das Kundenrepo muss dafür ein Lockfile enthalten. Kontakt und Inhalte stammen aus dem mitgelieferten Profil. Am API-Host die Provider-Konfiguration und `CSP_ALLOWED_ORIGINS=https://portal.musterkunde.example` setzen. Für Datadog APM optional `DD_SERVICE`, `DD_ENV`, `DD_VERSION`, `DD_AGENT_HOST`, `DD_TRACE_AGENT_PORT` und bei Bedarf `DD_TRACE_ENABLED` setzen; Traces benötigen einen erreichbaren Datadog Agent (Site `datadoghq.eu`), keine API-Keys in der App. Build-Variablen aus GitHub werden nicht automatisch dorthin übertragen. Die Inhaltsdatei muss auch im API-Image vorhanden sein.
+Das Kundenrepo muss dafür ein Lockfile enthalten. Kontakt und Inhalte stammen aus dem mitgelieferten Profil. Am API-Host die Provider-Konfiguration und `CSP_ALLOWED_ORIGINS=https://portal.musterkunde.example` setzen. Für OpenTelemetry optional `OTEL_SERVICE_NAME`, `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_RESOURCE_ATTRIBUTES` und bei Bedarf `OTEL_SDK_DISABLED` setzen; Telemetrie benötigt einen erreichbaren OpenTelemetry Collector (`otel-collector`, OTLP HTTP), keine Vendor-API-Keys in der App. Build-Variablen aus GitHub werden nicht automatisch dorthin übertragen. Die Inhaltsdatei muss auch im API-Image vorhanden sein.
 
 TLS am Reverse-Proxy/Host terminieren. `CSP_TRUST_PROXY=true` nur setzen, wenn der vertrauenswürdige Proxy eingehende Forwarded-Header ersetzt. SSE für Chat ohne Response-Buffering weiterleiten und das 60-Sekunden-Zeitlimit berücksichtigen. `/health` und installierte Provider-Routen von außen prüfen.
 

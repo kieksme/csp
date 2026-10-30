@@ -41,7 +41,7 @@ Der Browser enthält ausschließlich die öffentliche Konfiguration aus `publicC
 
 Die zehn öffentlichen Pakete heißen `@kieksme/csp-sdk`, `@kieksme/csp-core`, `@kieksme/csp-cli` und `@kieksme/csp-plugin-{contact,signl4,kuma,content,chat,teams,slack}`. Alle erhalten dieselbe Release-Version. Private Apps und Kunden-Vorlage werden ebenfalls versioniert, aber nicht auf npm veröffentlicht.
 
-Die Core-API trennt Exporte für `./browser`, `./server`, `./config`, `./profile`, `./build`, den serverseitigen `./support` sowie `./tracing` / `./tracing-node` für Datadog APM (`dd-trace`). Plugins haben getrennte Browser- und Server-Exporte. SDK-Kompatibilität und Plugin-Abhängigkeiten werden zur Laufzeit überprüft. Kundenupdates erfolgen über Paketversionen und Lockfile mit anschließendem Build und Deployment.
+Die Core-API trennt Exporte für `./browser`, `./server`, `./config`, `./profile`, `./build`, den serverseitigen `./support` sowie `./tracing` / `./tracing-node` für OpenTelemetry (OTLP an den Collector). Plugins haben getrennte Browser- und Server-Exporte. SDK-Kompatibilität und Plugin-Abhängigkeiten werden zur Laufzeit überprüft. Kundenupdates erfolgen über Paketversionen und Lockfile mit anschließendem Build und Deployment.
 
 ## Cache und Offline-Verhalten
 

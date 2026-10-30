@@ -1,26 +1,53 @@
 /**
- * Pure Node helpers for Datadog APM. Safe to import from the CLI and tests
- * without loading `dd-trace` (which must only run in API processes).
+ * Pure Node helpers for OpenTelemetry. Safe to import from the CLI and tests
+ * without loading the OpenTelemetry SDK (which must only run in API processes).
  */
 
 /**
  * Node `--import` specifier resolved through `@kieksme/csp-core` so pnpm and
- * customer installs find `dd-trace` without a direct app dependency.
+ * customer installs find the OpenTelemetry packages without a direct app
+ * dependency.
  */
-export const DD_TRACE_NODE_IMPORT = '@kieksme/csp-core/tracing-register';
+export const OTEL_NODE_IMPORT = '@kieksme/csp-core/tracing-register';
 
-/** True unless `DD_TRACE_ENABLED` is explicitly `false`. */
-export function isDatadogTracingEnabled(
+/** Default OTLP HTTP base URL when `OTEL_EXPORTER_OTLP_ENDPOINT` is unset. */
+export const DEFAULT_OTLP_ENDPOINT = 'http://otel-collector:4318';
+
+/** Default service name when `OTEL_SERVICE_NAME` is unset. */
+export const DEFAULT_OTEL_SERVICE_NAME = 'csp-api';
+
+/**
+ * True unless `OTEL_SDK_DISABLED` is explicitly `true` (OpenTelemetry spec).
+ */
+export function isOpenTelemetryEnabled(
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
-  return env.DD_TRACE_ENABLED !== 'false';
+  return env.OTEL_SDK_DISABLED !== 'true';
 }
 
 /**
- * Build `node` argv that loads the Datadog ESM initializer before the entry.
- * `DD_TRACE_ENABLED=false` disables tracing inside dd-trace without removing
- * this flag. Missing or unreachable agents do not crash the process.
+ * Build `node` argv that loads the OpenTelemetry ESM initializer before the
+ * entry. `OTEL_SDK_DISABLED=true` disables the SDK without removing this flag.
+ * A missing or unreachable collector does not crash the process.
  */
-export function nodeArgsWithDatadogTracing(...entryArgs: string[]): string[] {
-  return ['--import', DD_TRACE_NODE_IMPORT, ...entryArgs];
+export function nodeArgsWithOpenTelemetry(...entryArgs: string[]): string[] {
+  return ['--import', OTEL_NODE_IMPORT, ...entryArgs];
+}
+
+/**
+ * Apply CSP defaults for standard `OTEL_*` variables without overriding
+ * explicit values. Mutates and returns `env` for chaining into SDK init.
+ */
+export function applyOpenTelemetryDefaults(
+  env: NodeJS.ProcessEnv = process.env,
+): NodeJS.ProcessEnv {
+  if (!env.OTEL_SERVICE_NAME) env.OTEL_SERVICE_NAME = DEFAULT_OTEL_SERVICE_NAME;
+  if (!env.OTEL_EXPORTER_OTLP_ENDPOINT) {
+    env.OTEL_EXPORTER_OTLP_ENDPOINT = DEFAULT_OTLP_ENDPOINT;
+  }
+  // Prefer OTLP/HTTP (collector port 4318) over gRPC when unset.
+  if (!env.OTEL_EXPORTER_OTLP_PROTOCOL) {
+    env.OTEL_EXPORTER_OTLP_PROTOCOL = 'http/protobuf';
+  }
+  return env;
 }
