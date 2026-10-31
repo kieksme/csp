@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import { registerMcp } from './mcp.js';
 import {
   LiveCache,
   validatePlugins,
@@ -74,6 +75,7 @@ export async function createServer(options: {
     await plugin.setup(ctx);
     installed.add(plugin.id);
   }
+  registerMcp(ctx, installed, allowed);
   app.get('/robots.txt', async (_req, reply) =>
     reply
       .type('text/plain; charset=utf-8')
