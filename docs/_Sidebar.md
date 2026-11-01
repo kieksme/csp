@@ -17,6 +17,8 @@
 - [Entwicklung und Tests](development.md)
 - [Sicherheit und Daten](security.md)
 - [WebMCP](webmcp.md)
+- [MCP für externe Agents](mcp.md)
+- [MCP mit einem Client verwenden](mcp-client.md)
 - [Fehlerbehebung](troubleshooting.md)
 - [Dokumentation und Wiki](wiki.md)
 - [Teams-Support und Übernahme](teams-support.md)

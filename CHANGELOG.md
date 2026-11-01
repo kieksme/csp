@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.0](https://github.com/kieksme/csp/compare/v0.16.0...v0.17.0) (2026-10-31)
+
+
+### Features
+
+* **datadog:** WebMCP-Tools für Bereitschaft, Monitore, SLOs und Cases ([#75](https://github.com/kieksme/csp/issues/75)) ([7bd0a41](https://github.com/kieksme/csp/commit/7bd0a419ebc8883ed39c64a26f8d67ebd8d6e725))
+* **mcp:** expose public backend capabilities to external agents ([#74](https://github.com/kieksme/csp/issues/74)) ([8da6ea1](https://github.com/kieksme/csp/commit/8da6ea16b1c7912e9be8e56fce2e42f910025684))
+
 ## [0.16.0](https://github.com/kieksme/csp/compare/v0.15.1...v0.16.0) (2026-10-27)
 
 

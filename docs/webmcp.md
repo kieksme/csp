@@ -88,3 +88,5 @@ Die Tools geben Daten aus, die das Portal ohnehin öffentlich zeigt, darunter Na
 
 - Tests: `tests/webmcp.test.ts` (Registrierung, Abmeldung, Namensregeln, alle Tool-Handler) und ein Browser-Test mit simulierter WebMCP-Schnittstelle in `tests/browser/portal.spec.ts`.
 - Manuell: Demo starten (`pnpm dev:api`, `pnpm dev`) und in einem Browser mit aktivierter WebMCP-Vorschau oder einer WebMCP-Inspector-Erweiterung die Tools auflisten und aufrufen.
+
+Die optionale [serverseitige MCP-Schnittstelle](mcp.md) ermöglicht externen Agents lesenden Zugriff ohne Browser.

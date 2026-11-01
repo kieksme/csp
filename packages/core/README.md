@@ -22,4 +22,6 @@ The server-only `@kieksme/csp-core/support` export shares authenticated conversa
 
 API processes import `@kieksme/csp-core/tracing` before other application modules and start Node with `--import @kieksme/csp-core/tracing-register`. Tracing uses the OpenTelemetry Node SDK and exports via OTLP HTTP to an OpenTelemetry Collector (`OTEL_*` env vars); it stays off or harmless when `OTEL_SDK_DISABLED=true` or when no collector is reachable. API logs include `trace_id` and `span_id` for correlation. See [OpenTelemetry APM](../../docs/datadog.md#apm-opentelemetry).
 
+Externe AI Agents können über die optionale [MCP-Schnittstelle](../../docs/mcp.md) auf öffentliche Backend-Daten zugreifen.
+
 Alle Portal-Builds enthalten standardmäßig `noindex, nofollow`, eine sperrende `robots.txt` und eine `_headers`-Vorlage. Bei Unterpfad-Hosting muss `robots.txt` zusätzlich am Domain-Root veröffentlicht werden. Suchmaschinensteuerung ist keine Zugriffssperre und garantiert keine Entfernung bestehender Suchtreffer.
