@@ -1,3 +1,4 @@
+import '@kieksme/csp-core/tracing';
 import { config } from 'dotenv';
 import { createServer } from '@kieksme/csp-core/server';
 import { publicConfig } from '@kieksme/csp-core/build';
