@@ -105,9 +105,18 @@ export const profileSchema = z
         tenantId: z.string().uuid().optional(),
         clientId: z.string().uuid().optional(),
         scope: z.string().min(1).optional(),
+        logoutUrl: z
+          .string()
+          .regex(/^\/(?![/\\])[^\s]*$/, 'logoutUrl must be a same-origin path')
+          .optional(),
       })
       .strict()
       .superRefine((c, ctx) => {
+        if (c.logoutUrl && c.auth !== 'session')
+          ctx.addIssue({
+            code: 'custom',
+            message: 'logoutUrl requires auth "session"',
+          });
         if (c.auth === 'anonymous' && !['slack', 'telegram'].includes(c.mode))
           ctx.addIssue({
             code: 'custom',

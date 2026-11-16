@@ -24,6 +24,8 @@ Optional persisted conversations and real human support are available through th
 
 For portals with an existing same-origin authenticated gateway, set `chatSupport.auth` to `session` to reuse the login without browser tokens. The API still requires a validated delegated access token supplied by the internal gateway. See [Teams support](../../docs/teams-support.md#vorhandene-portal-anmeldung-verwenden).
 
+Signed-in users (`msal`, `session`) get a round avatar with a sign-out menu in the portal header, published via `publishAccount` from `@kieksme/csp-sdk/browser`; for `session`, set `chatSupport.logoutUrl` to enable sign-out. See [Konto-Avatar und Abmelden](../../docs/teams-support.md#konto-avatar-und-abmelden-im-header).
+
 WebMCP tool: `chat_ask` streams one answer from `POST /api/v1/chat` and returns text, responder and sources. It changes no data but uses the chat rate limit and provider quota, so it is not marked read-only. See [WebMCP](../../docs/webmcp.md).
 
 Users can mark a chat **Problem gelöst** and start a new chat afterward. With a support transport this is an authenticated, persisted owner action, interrupting generation and updating the channel card; without a transport it applies to the current browser chat only. A resolved conversation is distinct from an ordinary closure.
