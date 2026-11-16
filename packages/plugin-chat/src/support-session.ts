@@ -1,9 +1,44 @@
 import type { BrowserContext } from '@kieksme/csp-sdk';
+import { publishAccount } from '@kieksme/csp-sdk/browser';
 
 interface Session {
   token(): Promise<string>;
   login(): Promise<void>;
   name: string;
+}
+const shared = new WeakMap<object, Promise<Session>>();
+/** One session per portal config, shared by the header account menu and the chat. */
+export function sharedSupportSession(ctx: BrowserContext) {
+  let session = shared.get(ctx.config);
+  if (!session) {
+    session = supportSession(ctx);
+    shared.set(ctx.config, session);
+    session.catch(() => shared.delete(ctx.config));
+  }
+  return session;
+}
+async function graphPhoto(
+  client: import('@azure/msal-browser').PublicClientApplication,
+  account: import('@azure/msal-browser').AccountInfo,
+): Promise<string | undefined> {
+  // Best effort: missing consent, no photo or Graph errors fall back to initials.
+  try {
+    const { accessToken } = await client.acquireTokenSilent({
+      account,
+      scopes: ['User.Read'],
+    });
+    const response = await fetch(
+      'https://graph.microsoft.com/v1.0/me/photos/96x96/$value',
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    );
+    if (!response.ok) return undefined;
+    const blob = await response.blob();
+    return blob.type.startsWith('image/')
+      ? URL.createObjectURL(blob)
+      : undefined;
+  } catch {
+    return undefined;
+  }
 }
 export async function supportSession(ctx: BrowserContext): Promise<Session> {
   const c = ctx.config.chatSupport!;
@@ -29,6 +64,29 @@ export async function supportSession(ctx: BrowserContext): Promise<Session> {
   const account =
     redirected?.account ??
     client.getAllAccounts().find((a) => a.tenantId === c.tenantId);
+  if (account) {
+    const name = account.name ?? 'Microsoft-Konto';
+    let photoUrl: string | undefined;
+    const publish = () =>
+      publishAccount({
+        name,
+        photoUrl,
+        async logout() {
+          if (photoUrl) URL.revokeObjectURL(photoUrl);
+          publishAccount(null);
+          await client.logoutRedirect({
+            account,
+            postLogoutRedirectUri: window.location.origin + ctx.config.basePath,
+          });
+        },
+      });
+    publish();
+    void graphPhoto(client, account).then((url) => {
+      if (!url) return;
+      photoUrl = url;
+      publish();
+    });
+  }
   return {
     name: account?.name ?? 'Microsoft-Konto',
     async token() {
@@ -68,6 +126,16 @@ function cookieSession(ctx: BrowserContext): Session {
           throw new Error('Portal-Anmeldung derzeit nicht verfügbar.');
         current.name = identity.name;
         loaded = true;
+        const logoutUrl = ctx.config.chatSupport?.logoutUrl;
+        publishAccount({
+          name: identity.name,
+          logout: logoutUrl
+            ? () => {
+                publishAccount(null);
+                window.location.assign(logoutUrl);
+              }
+            : undefined,
+        });
       }
       return '';
     },

@@ -167,6 +167,10 @@ Statusauskünfte beziehen sich ausschließlich auf einen zum Problem passenden M
 
 KI- und Support-Chat verwenden denselben Tastatur- und Scrollvertrag. Das Eingabefeld bleibt außerhalb des begrenzten Verlaufs; beim Lesen älterer Nachrichten folgt der Verlauf nicht ungefragt neuen Antworten. OpenAI-Spracheingabe ergänzt einen bearbeitbaren Entwurf. Support-Transport und SIGNL4 können über die optionalen serverseitigen `ServerContext.authenticateChat` und `ServerContext.onDuty` die vorhandene Authentifizierung sowie ausschließlich echte, frische Dienstidentitäten bereitstellen. `onDuty` liefert Dienstplan-IDs, keine Plattform-Accounts oder öffentliche Tokens. [Chat-Vertrag und API](chat.md).
 
+## Angemeldetes Konto im Portal-Header
+
+Ein Plugin, das Benutzer anmeldet, veröffentlicht das Konto mit `publishAccount({ name, photoUrl?, logout? })` aus `@kieksme/csp-sdk/browser` (`null` entfernt es). Der Portal-Header zeigt daraufhin ein kreisrundes Avatar (Foto oder Initialen) mit Menü; „Abmelden“ erscheint nur, wenn `logout` gesetzt ist. `useAccount()` liest das aktuelle Konto. `photoUrl` sollte eine Blob- oder same-origin-URL sein; ein Ladefehler fällt auf Initialen zurück. Das Chat-Plugin nutzt dies für `auth: "msal"` und `"session"` ([Details](teams-support.md#konto-avatar-und-abmelden-im-header)).
+
 ## Gemeinsamer Bereitschafts-Header und statische Plugin-Demos
 
 `@kieksme/csp-sdk/browser` exportiert `DutyHero` und `Avatar`. `DutyHero` nimmt zusätzlich zum `BrowserContext` optionale `schedulePath` und `teamPath` an (Standard `/schedule`, `/team`). Damit verwenden unterschiedliche Provider dieselbe Darstellung ohne Abhängigkeit vom SIGNL4-Paket.

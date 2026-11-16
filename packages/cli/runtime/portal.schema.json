@@ -322,6 +322,11 @@
           "type": "string",
           "minLength": 1
         },
+        "logoutUrl": {
+          "type": "string",
+          "pattern": "^/(?![/\\\\])\\S*$",
+          "description": "Same-origin path that ends the gateway session; only with auth \"session\". Adds Abmelden to the header account menu."
+        },
         "auth": {
           "type": "string",
           "enum": ["msal", "session", "anonymous"],

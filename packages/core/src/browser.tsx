@@ -1,6 +1,7 @@
 import { resolveThemeTokens, themeTokenKeys, tokenVariable } from './theme.js';
 import { staticDemoRequest } from './demo.js';
 import { useWebMcp } from './webmcp.js';
+import { AccountMenu } from './account-menu.js';
 import { useMemo, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -148,6 +149,7 @@ export function Portal({
         >
           {dark ? '☀' : '◐'}
         </button>
+        <AccountMenu />
       </header>
       {config.demo && (
         <div className="demo-bar py-2.25 px-6 text-center bg-soft text-[0.6875rem] tracking-[0.4px]">

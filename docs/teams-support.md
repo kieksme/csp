@@ -87,6 +87,13 @@ Der Login-Proxy muss den delegierten API-Scope `api://<API-App-GUID>/Chat.Access
 
 Die API prüft auch in diesem Modus Signatur, Tenant, Audience, Ablauf und `Chat.Access`. `/identity` gibt ausschließlich den Anzeigenamen zurück und setzt `Cache-Control: no-store, private`. Benutzer-IDs, Mailadressen, Token und Sitzungsdaten werden darüber nicht veröffentlicht. Dieser Modus aktiviert weder Teams noch eine Datenbank allein.
 
+## Konto-Avatar und Abmelden im Header
+
+Bei `auth: "msal"` und `auth: "session"` zeigt der Header oben rechts ein kreisrundes Konto-Avatar. Ein Klick öffnet ein Menü mit dem Anzeigenamen und „Abmelden“. Ohne Anmeldung (`anonymous`, `demo`, kein `chatSupport`) erscheint es nicht.
+
+- **MSAL:** Das Profilbild wird im Browser über Microsoft Graph (`/me/photos/96x96/$value`, delegierter Scope `User.Read`) geladen und nur als temporäre Blob-URL gehalten; es wird weder gespeichert noch an die CSP-API gesendet. Fehlt die Einwilligung oder das Bild, werden Initialen angezeigt, daher `User.Read` in der App-Registrierung per Admin-Einwilligung erteilen. „Abmelden“ ruft `logoutRedirect` auf und beendet auch die Entra-SSO-Sitzung; `postLogoutRedirectUri` (Portal-Origin samt `basePath`) muss in der App-Registrierung als SPA-Umleitungs-URI eingetragen sein.
+- **Session:** Angezeigt werden die Initialen des API-bestätigten Namens. „Abmelden“ erscheint nur mit `chatSupport.logoutUrl` (z. B. `/oauth2/sign_out?rd=%2Foauth2%2Fsign_in`). Ein Gateway sollte dann keinen eigenen Abmelden-Link mehr in den Header einfügen.
+
 ## Support über die ausgewählte Team-Gruppe autorisieren
 
 Wenn Supportgruppe und Teams-Team dieselbe Microsoft-365-Gruppe sind, `CSP_TEAMS_SUPPORT_AUTH=team` setzen. Die IDs `CSP_TEAMS_SUPPORT_GROUP_ID` und `CSP_TEAMS_TEAM_ID` müssen übereinstimmen; abweichende IDs verhindern den Start. Jede Aktion prüft die aktuelle Mitgliedschaft über Microsoft Graph `/teams/<Team-ID>/members` mit Filter auf die verifizierte Nutzer-ID. Fehler oder fehlende Mitgliedschaft verweigern die Aktion. Kein positiver Mitgliedschaftscache.
