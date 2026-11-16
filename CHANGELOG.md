@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/kieksme/csp/compare/v0.17.0...v0.18.0) (2026-11-16)
+
+
+### Features
+
+* **portal:** show round account avatar with sign-out in the header ([#80](https://github.com/kieksme/csp/issues/80)) ([1ae624e](https://github.com/kieksme/csp/commit/1ae624ebbde2dad918d970019a6b55f633ae5679))
+
 ## [0.17.0](https://github.com/kieksme/csp/compare/v0.16.0...v0.17.0) (2026-10-31)
 
 
