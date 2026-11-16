@@ -77,7 +77,10 @@ try {
   await writeFile(
     join(customer, 'pnpm-workspace.yaml'),
     JSON.stringify(
-      { overrides, allowBuilds: { esbuild: true, sharp: false } },
+      {
+        overrides,
+        allowBuilds: { esbuild: true, sharp: false, protobufjs: false },
+      },
       null,
       2,
     ),

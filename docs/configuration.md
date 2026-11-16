@@ -222,7 +222,7 @@ Optionale verteilte Traces und Metriken für den **API-Prozess**. Core startet d
 | `OTEL_RESOURCE_ATTRIBUTES`    | Zusätzliche Ressourcenattribute    | Optional; keiner                                   | Kommagetrennt `key=value`, u. a. `deployment.environment=production` |
 | `OTEL_EXPORTER_OTLP_PROTOCOL` | OTLP-Protokoll                     | Optional; CSP-Default `http/protobuf`              | z. B. `http/protobuf`, `http/json` (HTTP zum Collector)              |
 
-API-Logs (Fastify/Pino) enthalten bei aktivem Span die Felder `trace_id` und `span_id` für Log-Trace-Korrelation. Ohne erreichbaren Collector bleibt der API-Start stabil; Spans/Metriken werden verworfen. Lokal und in CI ohne Collector `OTEL_SDK_DISABLED=true` setzen. Details: [OpenTelemetry APM](datadog.md#apm-opentelemetry).
+API-Logs (Fastify/Pino) enthalten bei aktivem Span die Felder `trace_id` und `span_id` für Log-Trace-Korrelation. Ohne erreichbaren Collector bleibt der API-Start stabil; Spans/Metriken werden verworfen. Lokal und in CI ohne Collector `OTEL_SDK_DISABLED=true` setzen. Kundeninstanzen tragen `protobufjs: false` unter `allowBuilds` in `pnpm-workspace.yaml` ein (die Vorlage `templates/customer` tut das bereits); sonst bricht `pnpm install` bei neueren pnpm-Versionen mit `ERR_PNPM_IGNORED_BUILDS` ab. `protobufjs` braucht sein Install-Skript nicht. Details: [OpenTelemetry APM](datadog.md#apm-opentelemetry).
 
 Auch am API-Host dasselbe Kundenprofil und dieselbe Inhaltsdatei bereitstellen; bei Env-Konfiguration Hotline und Inhaltsdatei dort ebenfalls setzen. Provider-Variablen werden nur für installierte Plugins validiert. Der Demo-Modus entbindet SIGNL4/Kuma/Chat von produktiven Provider-Pflichtwerten; Kontakt und Inhaltsdatei bleiben erforderlich.
 
