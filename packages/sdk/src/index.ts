@@ -130,6 +130,8 @@ export interface ChatSupportConfig {
   tenantId?: string;
   clientId?: string;
   scope?: string;
+  /** Same-origin path that ends the gateway session (`auth: "session"`). */
+  logoutUrl?: string;
 }
 export interface ChatEvent {
   type: 'responder' | 'sources' | 'delta' | 'done';

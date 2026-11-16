@@ -238,3 +238,29 @@ it('passes Swetrix defaults to browser config and rejects unsafe endpoints', () 
     ).toThrow('Analytics endpoint');
   }
 });
+it('accepts logoutUrl only as same-origin path with session authentication', () => {
+  const chatSupport = {
+    mode: 'teams',
+    auth: 'session',
+    tenantId: '12e29f7c-8633-4490-ab9d-95ba84981681',
+    clientId: '88a2d0d0-971b-4963-b59f-805b08738f36',
+    scope: 'api://88a2d0d0-971b-4963-b59f-805b08738f36/Chat.Access',
+  };
+  const plugins = ['@kieksme/csp-plugin-chat', '@kieksme/csp-plugin-teams'];
+  const load = (override: Record<string, unknown>) =>
+    loadProfile(
+      fixture({ chatSupport: { ...chatSupport, ...override }, plugins }).file,
+    );
+  expect(
+    load({ logoutUrl: '/oauth2/sign_out?rd=%2Foauth2%2Fsign_in' }).config
+      .chatSupport?.logoutUrl,
+  ).toBe('/oauth2/sign_out?rd=%2Foauth2%2Fsign_in');
+  for (const logoutUrl of [
+    'https://evil.example/logout',
+    '//evil.example/logout',
+    '/\\evil.example',
+    'logout',
+  ])
+    expect(() => load({ logoutUrl })).toThrow();
+  expect(() => load({ auth: 'msal', logoutUrl: '/logout' })).toThrow();
+});

@@ -10,6 +10,7 @@ import type {
 } from '@kieksme/csp-sdk';
 import { answerParts, sourceHref } from './answer.js';
 import { SupportChat } from './support-chat.js';
+import { sharedSupportSession } from './support-session.js';
 import {
   ChatHeading,
   ChatWelcome,
@@ -376,8 +377,23 @@ function LegacyChat(ctx: BrowserContext) {
     </div>
   );
 }
+/** Resolves the portal login early so the header can show the signed-in account. */
+function AccountIntegration(ctx: BrowserContext) {
+  const support = ctx.config.chatSupport;
+  const authenticated =
+    !!support && support.mode !== 'demo' && support.auth !== 'anonymous';
+  useEffect(() => {
+    if (!authenticated) return;
+    void sharedSupportSession(ctx)
+      // The cookie session loads its identity on first use; errors surface in the chat.
+      .then((session) => session.token())
+      .catch(() => {});
+  }, [authenticated, ctx.config]);
+  return null;
+}
 export default {
   id: 'chat',
+  integration: AccountIntegration,
   sdkVersion: cspPlugin.sdkVersion,
   tools: chatTools,
   sections: [

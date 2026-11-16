@@ -2,7 +2,10 @@ import { emitAnalytics } from '@kieksme/csp-sdk/browser';
 import { useEffect, useRef, useState } from 'react';
 import type { BrowserContext, ChatResponder } from '@kieksme/csp-sdk';
 import { answerParts } from './answer.js';
-import { supportSession } from './support-session.js';
+import {
+  sharedSupportSession,
+  type supportSession,
+} from './support-session.js';
 import {
   ChatHeading,
   ChatWelcome,
@@ -78,7 +81,7 @@ export function SupportChat(ctx: BrowserContext) {
     const controller = new AbortController();
     async function init() {
       try {
-        const identity = await supportSession(ctx);
+        const identity = await sharedSupportSession(ctx);
         if (!alive) return;
         setAuth(identity);
         const request = async (path: string, init: RequestInit = {}) => {
